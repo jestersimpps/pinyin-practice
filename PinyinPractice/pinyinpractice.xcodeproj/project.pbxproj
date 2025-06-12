@@ -1,0 +1,563 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXContainerItemProxy section */
+		877C0EE12DFB1AA4004D6622 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 877C0EC82DFB1AA2004D6622 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 877C0ECF2DFB1AA2004D6622;
+			remoteInfo = pinyinpractice;
+		};
+		877C0EEB2DFB1AA4004D6622 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 877C0EC82DFB1AA2004D6622 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 877C0ECF2DFB1AA2004D6622;
+			remoteInfo = pinyinpractice;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		877C0ED02DFB1AA2004D6622 /* pinyinpractice.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = pinyinpractice.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		877C0EE02DFB1AA4004D6622 /* pinyinpracticeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = pinyinpracticeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		877C0EEA2DFB1AA4004D6622 /* pinyinpracticeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = pinyinpracticeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		877C0ED22DFB1AA2004D6622 /* pinyinpractice */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = pinyinpractice;
+			sourceTree = "<group>";
+		};
+		877C0EE32DFB1AA4004D6622 /* pinyinpracticeTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = pinyinpracticeTests;
+			sourceTree = "<group>";
+		};
+		877C0EED2DFB1AA4004D6622 /* pinyinpracticeUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = pinyinpracticeUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		877C0ECD2DFB1AA2004D6622 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		877C0EDD2DFB1AA4004D6622 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		877C0EE72DFB1AA4004D6622 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		877C0EC72DFB1AA2004D6622 = {
+			isa = PBXGroup;
+			children = (
+				877C0ED22DFB1AA2004D6622 /* pinyinpractice */,
+				877C0EE32DFB1AA4004D6622 /* pinyinpracticeTests */,
+				877C0EED2DFB1AA4004D6622 /* pinyinpracticeUITests */,
+				877C0ED12DFB1AA2004D6622 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		877C0ED12DFB1AA2004D6622 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				877C0ED02DFB1AA2004D6622 /* pinyinpractice.app */,
+				877C0EE02DFB1AA4004D6622 /* pinyinpracticeTests.xctest */,
+				877C0EEA2DFB1AA4004D6622 /* pinyinpracticeUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		877C0ECF2DFB1AA2004D6622 /* pinyinpractice */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 877C0EF42DFB1AA4004D6622 /* Build configuration list for PBXNativeTarget "pinyinpractice" */;
+			buildPhases = (
+				877C0ECC2DFB1AA2004D6622 /* Sources */,
+				877C0ECD2DFB1AA2004D6622 /* Frameworks */,
+				877C0ECE2DFB1AA2004D6622 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				877C0ED22DFB1AA2004D6622 /* pinyinpractice */,
+			);
+			name = pinyinpractice;
+			packageProductDependencies = (
+			);
+			productName = pinyinpractice;
+			productReference = 877C0ED02DFB1AA2004D6622 /* pinyinpractice.app */;
+			productType = "com.apple.product-type.application";
+		};
+		877C0EDF2DFB1AA4004D6622 /* pinyinpracticeTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 877C0EF72DFB1AA4004D6622 /* Build configuration list for PBXNativeTarget "pinyinpracticeTests" */;
+			buildPhases = (
+				877C0EDC2DFB1AA4004D6622 /* Sources */,
+				877C0EDD2DFB1AA4004D6622 /* Frameworks */,
+				877C0EDE2DFB1AA4004D6622 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				877C0EE22DFB1AA4004D6622 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				877C0EE32DFB1AA4004D6622 /* pinyinpracticeTests */,
+			);
+			name = pinyinpracticeTests;
+			packageProductDependencies = (
+			);
+			productName = pinyinpracticeTests;
+			productReference = 877C0EE02DFB1AA4004D6622 /* pinyinpracticeTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		877C0EE92DFB1AA4004D6622 /* pinyinpracticeUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 877C0EFA2DFB1AA4004D6622 /* Build configuration list for PBXNativeTarget "pinyinpracticeUITests" */;
+			buildPhases = (
+				877C0EE62DFB1AA4004D6622 /* Sources */,
+				877C0EE72DFB1AA4004D6622 /* Frameworks */,
+				877C0EE82DFB1AA4004D6622 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				877C0EEC2DFB1AA4004D6622 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				877C0EED2DFB1AA4004D6622 /* pinyinpracticeUITests */,
+			);
+			name = pinyinpracticeUITests;
+			packageProductDependencies = (
+			);
+			productName = pinyinpracticeUITests;
+			productReference = 877C0EEA2DFB1AA4004D6622 /* pinyinpracticeUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		877C0EC82DFB1AA2004D6622 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1620;
+				LastUpgradeCheck = 1620;
+				TargetAttributes = {
+					877C0ECF2DFB1AA2004D6622 = {
+						CreatedOnToolsVersion = 16.2;
+					};
+					877C0EDF2DFB1AA4004D6622 = {
+						CreatedOnToolsVersion = 16.2;
+						TestTargetID = 877C0ECF2DFB1AA2004D6622;
+					};
+					877C0EE92DFB1AA4004D6622 = {
+						CreatedOnToolsVersion = 16.2;
+						TestTargetID = 877C0ECF2DFB1AA2004D6622;
+					};
+				};
+			};
+			buildConfigurationList = 877C0ECB2DFB1AA2004D6622 /* Build configuration list for PBXProject "pinyinpractice" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 877C0EC72DFB1AA2004D6622;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 877C0ED12DFB1AA2004D6622 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				877C0ECF2DFB1AA2004D6622 /* pinyinpractice */,
+				877C0EDF2DFB1AA4004D6622 /* pinyinpracticeTests */,
+				877C0EE92DFB1AA4004D6622 /* pinyinpracticeUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		877C0ECE2DFB1AA2004D6622 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		877C0EDE2DFB1AA4004D6622 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		877C0EE82DFB1AA4004D6622 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		877C0ECC2DFB1AA2004D6622 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		877C0EDC2DFB1AA4004D6622 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		877C0EE62DFB1AA4004D6622 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		877C0EE22DFB1AA4004D6622 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 877C0ECF2DFB1AA2004D6622 /* pinyinpractice */;
+			targetProxy = 877C0EE12DFB1AA4004D6622 /* PBXContainerItemProxy */;
+		};
+		877C0EEC2DFB1AA4004D6622 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 877C0ECF2DFB1AA2004D6622 /* pinyinpractice */;
+			targetProxy = 877C0EEB2DFB1AA4004D6622 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		877C0EF22DFB1AA4004D6622 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		877C0EF32DFB1AA4004D6622 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		877C0EF52DFB1AA4004D6622 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"pinyinpractice/Preview Content\"";
+				DEVELOPMENT_TEAM = AUJKH36V8X;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = bicraw.pinyinpractice;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		877C0EF62DFB1AA4004D6622 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"pinyinpractice/Preview Content\"";
+				DEVELOPMENT_TEAM = AUJKH36V8X;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = bicraw.pinyinpractice;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		877C0EF82DFB1AA4004D6622 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = AUJKH36V8X;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = bicraw.pinyinpracticeTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/pinyinpractice.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/pinyinpractice";
+			};
+			name = Debug;
+		};
+		877C0EF92DFB1AA4004D6622 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = AUJKH36V8X;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = bicraw.pinyinpracticeTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/pinyinpractice.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/pinyinpractice";
+			};
+			name = Release;
+		};
+		877C0EFB2DFB1AA4004D6622 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = AUJKH36V8X;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = bicraw.pinyinpracticeUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = pinyinpractice;
+			};
+			name = Debug;
+		};
+		877C0EFC2DFB1AA4004D6622 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = AUJKH36V8X;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = bicraw.pinyinpracticeUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = pinyinpractice;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		877C0ECB2DFB1AA2004D6622 /* Build configuration list for PBXProject "pinyinpractice" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				877C0EF22DFB1AA4004D6622 /* Debug */,
+				877C0EF32DFB1AA4004D6622 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		877C0EF42DFB1AA4004D6622 /* Build configuration list for PBXNativeTarget "pinyinpractice" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				877C0EF52DFB1AA4004D6622 /* Debug */,
+				877C0EF62DFB1AA4004D6622 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		877C0EF72DFB1AA4004D6622 /* Build configuration list for PBXNativeTarget "pinyinpracticeTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				877C0EF82DFB1AA4004D6622 /* Debug */,
+				877C0EF92DFB1AA4004D6622 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		877C0EFA2DFB1AA4004D6622 /* Build configuration list for PBXNativeTarget "pinyinpracticeUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				877C0EFB2DFB1AA4004D6622 /* Debug */,
+				877C0EFC2DFB1AA4004D6622 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 877C0EC82DFB1AA2004D6622 /* Project object */;
+}
