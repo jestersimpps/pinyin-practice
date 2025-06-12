@@ -142,6 +142,36 @@ struct SettingsView: View {
                     description: "Enable hint button for difficult words",
                     isOn: $progressService.settings.showHints
                 )
+                
+                Divider()
+                    .background(Color.gray.opacity(0.3))
+                    .padding(.horizontal, 16)
+                
+                ToggleRow(
+                    title: "Show Additional Info",
+                    description: "Display extra info after answering",
+                    isOn: $progressService.settings.showAdditionalInfo
+                )
+                
+                Divider()
+                    .background(Color.gray.opacity(0.3))
+                    .padding(.horizontal, 16)
+                
+                ToggleRow(
+                    title: "Use Traditional Characters",
+                    description: "Practice with traditional instead of simplified",
+                    isOn: $progressService.settings.useTraditional
+                )
+                
+                Divider()
+                    .background(Color.gray.opacity(0.3))
+                    .padding(.horizontal, 16)
+                
+                ToggleRow(
+                    title: "Show Full Meanings",
+                    description: "Include linguistic notes in translations",
+                    isOn: $progressService.settings.showFullMeaning
+                )
             }
             .background(
                 RoundedRectangle(cornerRadius: 12)

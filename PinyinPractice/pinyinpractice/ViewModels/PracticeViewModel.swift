@@ -12,6 +12,7 @@ class PracticeViewModel: ObservableObject {
     @Published var feedbackState: FeedbackState = .none
     @Published var wordsCompleted: Int = 0
     @Published var sessionStartTime: Date?
+    @Published var wasSkipped: Bool = false
     
     private var autoCheckTimer: Timer?
     
@@ -49,27 +50,34 @@ class PracticeViewModel: ObservableObject {
         sessionStartTime = progressService.startNewSession()
     }
     
+    func reloadWordsIfNeeded() {
+        loadWords()
+    }
+    
     func loadWords() {
         let settings = progressService.settings
         
         switch settings.practiceMode {
         case .sequential:
-            availableWords = vocabularyService.getFilteredVocabulary(
-                levels: settings.selectedHSKLevels,
-                categories: settings.selectedCategories
-            ).sorted { $0.id < $1.id }
+            availableWords = vocabularyService.getVocabularyForLevels(settings.selectedHSKLevels)
+                .sorted { $0.frequency < $1.frequency }
             
         case .random:
-            availableWords = vocabularyService.getFilteredVocabulary(
-                levels: settings.selectedHSKLevels,
-                categories: settings.selectedCategories
-            ).shuffled()
+            availableWords = vocabularyService.getVocabularyForLevels(settings.selectedHSKLevels)
             
+            // First shuffle all words
+            availableWords.shuffle()
+            
+            // Then prioritize unseen words
             let seenWords = progressService.progress.seenWords
             availableWords.sort { word1, word2 in
                 let word1Seen = seenWords.contains(word1.id)
                 let word2Seen = seenWords.contains(word2.id)
+                
+                // If both seen or both unseen, maintain shuffled order
                 if word1Seen == word2Seen { return false }
+                
+                // Otherwise, prioritize unseen words
                 return !word1Seen && word2Seen
             }
             
@@ -78,6 +86,10 @@ class PracticeViewModel: ObservableObject {
                 incorrectWordIds: progressService.progress.incorrectWords
             ).shuffled()
         }
+        
+        // Reset current index when reloading
+        currentIndex = 0
+        wordsCompleted = 0
         
         loadNextWord()
     }
@@ -92,6 +104,7 @@ class PracticeViewModel: ObservableObject {
         userInput = ""
         showHint = false
         feedbackState = .none
+        wasSkipped = false
     }
     
     func checkAnswer() {
@@ -128,7 +141,8 @@ class PracticeViewModel: ObservableObject {
         if let word = currentWord {
             progressService.recordAnswer(for: word, isCorrect: false)
         }
-        nextWord()
+        wasSkipped = true
+        feedbackState = .incorrect
     }
     
     func toggleHint() {

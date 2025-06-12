@@ -8,6 +8,15 @@ struct ResponsiveCharacterDisplay: View {
     let hint: String?
     let showHint: Bool
     let isCompact: Bool
+    let additionalInfo: AdditionalInfo?
+    let showAdditionalInfo: Bool
+    
+    struct AdditionalInfo {
+        let traditional: String?
+        let radical: String?
+        let partOfSpeech: [String]?
+        let frequency: Int?
+    }
     
     enum FeedbackState {
         case none, correct, incorrect, partial
@@ -37,14 +46,73 @@ struct ResponsiveCharacterDisplay: View {
             }
             .frame(minHeight: isCompact ? 80 : 120)
             
-            if showTranslation, let translation = translation, !isCompact {
-                Text(translation)
-                    .font(.system(size: 16, weight: .regular))
-                    .foregroundColor(Color("SecondaryText"))
-                    .multilineTextAlignment(.center)
-                    .opacity(0.8)
-                    .transition(.opacity)
-                    .padding(.horizontal, 20)
+            if showTranslation, let translation = translation {
+                ScrollView(.vertical, showsIndicators: false) {
+                    Text(translation)
+                        .font(.system(size: isCompact ? 14 : 16, weight: .regular))
+                        .foregroundColor(Color("SecondaryText"))
+                        .multilineTextAlignment(.center)
+                        .opacity(0.8)
+                        .transition(.opacity)
+                        .padding(.horizontal, 20)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .frame(maxHeight: isCompact ? 60 : 100)
+            }
+            
+            if showAdditionalInfo, let info = additionalInfo, (feedbackState == .incorrect || feedbackState == .correct || feedbackState == .partial) {
+                HStack(spacing: 16) {
+                    if let traditional = info.traditional, traditional != character {
+                        VStack(spacing: 4) {
+                            Text(UserProgressService.shared.settings.useTraditional ? "Simplified" : "Traditional")
+                                .font(.caption2)
+                                .foregroundColor(Color("SecondaryText"))
+                            Text(traditional)
+                                .font(.system(size: 24, weight: .medium))
+                                .foregroundColor(Color("PrimaryText"))
+                        }
+                    }
+                    
+                    if let radical = info.radical {
+                        VStack(spacing: 4) {
+                            Text("Radical")
+                                .font(.caption2)
+                                .foregroundColor(Color("SecondaryText"))
+                            Text(radical)
+                                .font(.system(size: 24, weight: .medium))
+                                .foregroundColor(Color("PrimaryText"))
+                        }
+                    }
+                    
+                    if let pos = info.partOfSpeech, !pos.isEmpty {
+                        VStack(spacing: 4) {
+                            Text("Type")
+                                .font(.caption2)
+                                .foregroundColor(Color("SecondaryText"))
+                            Text(pos.prefix(3).joined(separator: ", "))
+                                .font(.caption)
+                                .foregroundColor(Color("PrimaryText"))
+                        }
+                    }
+                    
+                    if let freq = info.frequency {
+                        VStack(spacing: 4) {
+                            Text("Freq.")
+                                .font(.caption2)
+                                .foregroundColor(Color("SecondaryText"))
+                            Text("#\(freq)")
+                                .font(.caption)
+                                .foregroundColor(Color("PrimaryText"))
+                        }
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(Color("SecondaryBackground").opacity(0.5))
+                )
+                .transition(.opacity.combined(with: .move(edge: .bottom)))
             }
             
             if showHint, let hint = hint {
@@ -77,7 +145,7 @@ struct ResponsiveCharacterDisplay: View {
                         .stroke(borderColor.opacity(0.5), lineWidth: 2)
                 )
         )
-        .onChange(of: feedbackState) { newState in
+        .onChange(of: feedbackState) { oldState, newState in
             if newState == .correct {
                 showFeedbackAnimation = true
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {

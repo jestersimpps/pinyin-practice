@@ -53,14 +53,23 @@ struct UserProgress: Codable {
 }
 
 struct PracticeSession: Codable {
-    let id: UUID = UUID()
+    let id: UUID
     let date: Date
     let duration: TimeInterval
     let wordsStudied: Int
     let correctAnswers: Int
     let accuracy: Double
-    let hskLevels: [HSKLevel]
-    let categories: [VocabularyCategory]
+    let hskLevels: [Int]
+    
+    init(id: UUID = UUID(), date: Date, duration: TimeInterval, wordsStudied: Int, correctAnswers: Int, accuracy: Double, hskLevels: [Int]) {
+        self.id = id
+        self.date = date
+        self.duration = duration
+        self.wordsStudied = wordsStudied
+        self.correctAnswers = correctAnswers
+        self.accuracy = accuracy
+        self.hskLevels = hskLevels
+    }
     
     var formattedDate: String {
         let formatter = DateFormatter()
@@ -77,13 +86,15 @@ struct PracticeSession: Codable {
 }
 
 struct PracticeSettings: Codable {
-    var selectedHSKLevels: Set<HSKLevel> = [.hsk1]
-    var selectedCategories: Set<VocabularyCategory> = Set(VocabularyCategory.allCases)
+    var selectedHSKLevels: Set<Int> = [1]
     var practiceMode: PracticeMode = .sequential
     var showToneNumbers: Bool = true
     var showEnglishTranslation: Bool = true
     var showHints: Bool = true
-    var requireTones: Bool = true
+    var requireTones: Bool = false
+    var showAdditionalInfo: Bool = true
+    var useTraditional: Bool = false
+    var showFullMeaning: Bool = false
     
     enum PracticeMode: String, CaseIterable, Codable {
         case sequential = "Sequential"

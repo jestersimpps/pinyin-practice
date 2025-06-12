@@ -132,9 +132,8 @@ struct SetupView: View {
     }
     
     private var availableWordCount: Int {
-        vocabularyService.getFilteredVocabulary(
-            levels: progressService.settings.selectedHSKLevels,
-            categories: progressService.settings.selectedCategories
+        vocabularyService.getVocabularyForLevels(
+            progressService.settings.selectedHSKLevels
         ).count
     }
     
@@ -152,7 +151,7 @@ struct SetupView: View {
     }
     
     private func startQuickPractice() {
-        progressService.settings.practiceMode = .sequential
+        // Don't override the saved practice mode
         showingPractice = true
     }
     

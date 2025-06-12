@@ -4,7 +4,6 @@ struct CustomPracticeSetupView: View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject private var progressService = UserProgressService.shared
     @ObservedObject private var vocabularyService = VocabularyService.shared
-    @State private var selectedTab = 0
     @State private var showingPractice = false
     
     private var settings: Binding<PracticeSettings> {
@@ -21,14 +20,7 @@ struct CustomPracticeSetupView: View {
                     ScrollView {
                         VStack(spacing: 24) {
                             availableWordsCard
-                            
-                            tabSelector
-                            
-                            if selectedTab == 0 {
-                                levelSelectionSection
-                            } else {
-                                categorySelectionSection
-                            }
+                            levelSelectionSection
                         }
                         .padding(.horizontal, 20)
                         .padding(.vertical, 20)
@@ -75,32 +67,10 @@ struct CustomPracticeSetupView: View {
         )
     }
     
-    private var tabSelector: some View {
-        HStack(spacing: 0) {
-            ForEach(0..<2) { index in
-                Button(action: { withAnimation { selectedTab = index } }) {
-                    Text(index == 0 ? "HSK Levels" : "Categories")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(selectedTab == index ? .white : Color("SecondaryText"))
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 12)
-                        .background(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(selectedTab == index ? Color(red: 0.1, green: 0.3, blue: 0.4) : Color.clear)
-                        )
-                }
-            }
-        }
-        .padding(4)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color("SecondaryBackground").opacity(0.5))
-        )
-    }
     
     private var levelSelectionSection: some View {
         VStack(spacing: 12) {
-            ForEach(HSKLevel.allCases, id: \.self) { level in
+            ForEach(1...6, id: \.self) { level in
                 LevelSelectionCard(
                     level: level,
                     isSelected: settings.wrappedValue.selectedHSKLevels.contains(level),
@@ -131,17 +101,6 @@ struct CustomPracticeSetupView: View {
         }
     }
     
-    private var categorySelectionSection: some View {
-        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-            ForEach(VocabularyCategory.allCases, id: \.self) { category in
-                CategorySelectionCard(
-                    category: category,
-                    isSelected: settings.wrappedValue.selectedCategories.contains(category),
-                    action: { toggleCategory(category) }
-                )
-            }
-        }
-    }
     
     private var bottomBar: some View {
         VStack(spacing: 0) {
@@ -189,17 +148,16 @@ struct CustomPracticeSetupView: View {
     }
     
     private var availableWordCount: Int {
-        vocabularyService.getFilteredVocabulary(
-            levels: settings.wrappedValue.selectedHSKLevels,
-            categories: settings.wrappedValue.selectedCategories
+        vocabularyService.getVocabularyForLevels(
+            settings.wrappedValue.selectedHSKLevels
         ).count
     }
     
-    private func getWordCount(for level: HSKLevel) -> Int {
-        vocabularyService.allVocabulary.filter { $0.hskLevel == level }.count
+    private func getWordCount(for level: Int) -> Int {
+        vocabularyService.getVocabularyForLevel(level).count
     }
     
-    private func toggleLevel(_ level: HSKLevel) {
+    private func toggleLevel(_ level: Int) {
         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
             if settings.wrappedValue.selectedHSKLevels.contains(level) {
                 settings.wrappedValue.selectedHSKLevels.remove(level)
@@ -209,19 +167,10 @@ struct CustomPracticeSetupView: View {
         }
     }
     
-    private func toggleCategory(_ category: VocabularyCategory) {
-        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-            if settings.wrappedValue.selectedCategories.contains(category) {
-                settings.wrappedValue.selectedCategories.remove(category)
-            } else {
-                settings.wrappedValue.selectedCategories.insert(category)
-            }
-        }
-    }
     
     private func selectAllLevels() {
         withAnimation {
-            settings.wrappedValue.selectedHSKLevels = Set(HSKLevel.allCases)
+            settings.wrappedValue.selectedHSKLevels = Set(1...6)
         }
     }
     
@@ -233,7 +182,7 @@ struct CustomPracticeSetupView: View {
 }
 
 private struct LevelSelectionCard: View {
-    let level: HSKLevel
+    let level: Int
     let isSelected: Bool
     let wordCount: Int
     let action: () -> Void
@@ -242,7 +191,7 @@ private struct LevelSelectionCard: View {
         Button(action: action) {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(level.displayName)
+                    Text("HSK \(level)")
                         .font(.system(size: 20, weight: .semibold))
                         .foregroundColor(isSelected ? .white : Color("PrimaryText"))
                     
@@ -271,38 +220,3 @@ private struct LevelSelectionCard: View {
     }
 }
 
-private struct CategorySelectionCard: View {
-    let category: VocabularyCategory
-    let isSelected: Bool
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            VStack(spacing: 12) {
-                ZStack {
-                    Circle()
-                        .fill(isSelected ? Color(red: 0.1, green: 0.3, blue: 0.4) : Color("SecondaryBackground").opacity(0.5))
-                        .frame(width: 60, height: 60)
-                    
-                    Image(systemName: category.icon)
-                        .font(.title2)
-                        .foregroundColor(isSelected ? .white : Color(red: 0.1, green: 0.3, blue: 0.4))
-                }
-                
-                Text(category.displayName)
-                    .font(.system(size: 14, weight: .regular))
-                    .foregroundColor(isSelected ? Color("PrimaryText") : Color("SecondaryText"))
-                    .multilineTextAlignment(.center)
-                    .lineLimit(2)
-                    .minimumScaleFactor(0.8)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 16)
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(isSelected ? Color(red: 0.1, green: 0.3, blue: 0.4) : Color.gray.opacity(0.3), lineWidth: 1)
-            )
-        }
-        .buttonStyle(PlainButtonStyle())
-    }
-}

@@ -6,6 +6,7 @@ struct PracticeView: View {
     @State private var showingSettings = false
     @State private var keyboardHeight: CGFloat = 0
     @FocusState private var isInputFocused: Bool
+    @State private var previousPracticeMode: PracticeSettings.PracticeMode?
     
     var body: some View {
         ZStack {
@@ -28,7 +29,7 @@ struct PracticeView: View {
                 
                 GeometryReader { geometry in
                     VStack(spacing: 0) {
-                        if keyboardHeight == 0 {
+                        if viewModel.feedbackState != .incorrect && !viewModel.wasSkipped {
                             CompactStatsBar(
                                 progress: "\(viewModel.wordsCompleted)/\(viewModel.totalWords)",
                                 accuracy: viewModel.accuracy,
@@ -37,22 +38,40 @@ struct PracticeView: View {
                             .padding(.horizontal, 20)
                             .padding(.top, 16)
                             .transition(.move(edge: .top).combined(with: .opacity))
+                            .animation(.easeInOut(duration: 0.3), value: viewModel.feedbackState)
                         }
                         
                         ScrollView {
                             VStack(spacing: 16) {
+                                FeedbackMessage(
+                                    feedbackState: mapMessageFeedbackState(viewModel.feedbackState),
+                                    correctAnswer: viewModel.feedbackState == .incorrect ? getCorrectAnswer() : nil,
+                                    requireTones: UserProgressService.shared.settings.requireTones
+                                )
+                                .padding(.horizontal, 20)
+                                .padding(.top, 8)
+                                
                                 if let word = viewModel.currentWord {
                                     ResponsiveCharacterDisplay(
-                                        character: word.chinese,
+                                        character: UserProgressService.shared.settings.useTraditional ? word.traditional : word.simplified,
                                         translation: word.english,
-                                        showTranslation: UserProgressService.shared.settings.showEnglishTranslation,
+                                        showTranslation: UserProgressService.shared.settings.showEnglishTranslation || viewModel.feedbackState == .incorrect || viewModel.wasSkipped,
                                         feedbackState: mapFeedbackState(viewModel.feedbackState),
-                                        hint: word.hint,
+                                        hint: generateHint(for: word),
                                         showHint: viewModel.showHint,
-                                        isCompact: keyboardHeight > 0
+                                        isCompact: keyboardHeight > 0,
+                                        additionalInfo: ResponsiveCharacterDisplay.AdditionalInfo(
+                                            traditional: UserProgressService.shared.settings.useTraditional ? 
+                                                (word.simplified != word.traditional ? word.simplified : nil) : 
+                                                (word.traditional != word.simplified ? word.traditional : nil),
+                                            radical: word.radical,
+                                            partOfSpeech: word.partOfSpeech.map(mapPartOfSpeech),
+                                            frequency: word.frequency
+                                        ),
+                                        showAdditionalInfo: UserProgressService.shared.settings.showAdditionalInfo && (viewModel.feedbackState == .incorrect || viewModel.wasSkipped)
                                     )
                                     .padding(.horizontal, 20)
-                                    .padding(.top, keyboardHeight > 0 ? 12 : 20)
+                                    .padding(.top, keyboardHeight > 0 && viewModel.feedbackState != .none ? 4 : (keyboardHeight > 0 ? 12 : 20))
                                 }
                                 
                                 inputSection
@@ -77,6 +96,17 @@ struct PracticeView: View {
         .sheet(isPresented: $showingSettings) {
             SettingsView()
         }
+        .onChange(of: showingSettings) { oldValue, newValue in
+            if oldValue && !newValue {
+                // Sheet was dismissed
+                if previousPracticeMode != UserProgressService.shared.settings.practiceMode {
+                    viewModel.reloadWordsIfNeeded()
+                }
+            } else if !oldValue && newValue {
+                // Sheet is being presented
+                previousPracticeMode = UserProgressService.shared.settings.practiceMode
+            }
+        }
     }
     
     private var practiceSubtitle: String? {
@@ -92,24 +122,6 @@ struct PracticeView: View {
     
     private var inputSection: some View {
         VStack(spacing: 12) {
-            if !UserProgressService.shared.settings.requireTones && viewModel.feedbackState == .none {
-                HStack {
-                    Image(systemName: "info.circle.fill")
-                        .foregroundColor(.orange)
-                        .font(.caption)
-                    Text("Tones not required")
-                        .font(.system(size: 14, weight: .regular))
-                        .foregroundColor(.orange)
-                }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                .background(
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(Color.orange.opacity(0.1))
-                )
-                .transition(.opacity.combined(with: .scale))
-            }
-            
             HStack(spacing: 12) {
                 PinyinInputField(
                     text: $viewModel.userInput,
@@ -130,19 +142,12 @@ struct PracticeView: View {
                 actionButtons
                     .transition(.opacity)
             }
-            
-            FeedbackMessage(
-                feedbackState: mapMessageFeedbackState(viewModel.feedbackState),
-                correctAnswer: viewModel.feedbackState == .incorrect ? getCorrectAnswer() : nil,
-                requireTones: UserProgressService.shared.settings.requireTones
-            )
         }
     }
     
     private var actionButtons: some View {
         HStack(spacing: 12) {
             if UserProgressService.shared.settings.showHints && 
-               viewModel.currentWord?.hint != nil && 
                viewModel.feedbackState == .none {
                 Button(action: {
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
@@ -161,7 +166,29 @@ struct PracticeView: View {
                 .transition(.scale.combined(with: .opacity))
             }
             
-            if viewModel.feedbackState != .none {
+            if viewModel.feedbackState == .none {
+                Button(action: {
+                    withAnimation {
+                        viewModel.skipWord()
+                        isInputFocused = true
+                    }
+                }) {
+                    HStack {
+                        Text("Skip")
+                            .font(.system(size: 16, weight: .semibold))
+                        Image(systemName: "forward.fill")
+                            .font(.caption)
+                    }
+                    .foregroundColor(Color("SecondaryText"))
+                    .padding(.horizontal, 16)
+                    .frame(height: 44)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color("SecondaryBackground").opacity(0.5))
+                    )
+                }
+                .transition(.scale.combined(with: .opacity))
+            } else {
                 Button(action: {
                     withAnimation {
                         viewModel.nextWord()
@@ -253,27 +280,71 @@ struct PracticeView: View {
     
     private func getCorrectAnswer() -> String? {
         guard let word = viewModel.currentWord else { return nil }
-        return UserProgressService.shared.settings.requireTones ? word.pinyin : removeTones(from: word.pinyin)
+        if UserProgressService.shared.settings.requireTones {
+            return word.pinyin
+        } else {
+            // Use numeric pinyin and remove numbers for tone-free display
+            return word.pinyinNumeric.replacingOccurrences(of: "[1-5]", with: "", options: .regularExpression)
+        }
     }
     
-    private func removeTones(from pinyin: String) -> String {
-        var result = pinyin
+    private func generateHint(for word: VocabularyItem) -> String? {
+        let syllableCount = word.pinyin.split(separator: " ").count
+        let firstChar = word.pinyin.prefix(1)
         
-        let toneMap = [
-            "ā": "a", "á": "a", "ǎ": "a", "à": "a",
-            "ē": "e", "é": "e", "ě": "e", "è": "e",
-            "ī": "i", "í": "i", "ǐ": "i", "ì": "i",
-            "ō": "o", "ó": "o", "ǒ": "o", "ò": "o",
-            "ū": "u", "ú": "u", "ǔ": "u", "ù": "u",
-            "ǖ": "ü", "ǘ": "ü", "ǚ": "ü", "ǜ": "ü"
-        ]
-        
-        for (toned, plain) in toneMap {
-            result = result.replacingOccurrences(of: toned, with: plain)
+        if syllableCount == 1 {
+            return "Starts with '\(firstChar)'"
+        } else {
+            return "\(syllableCount) syllables, starts with '\(firstChar)'"
         }
-        
-        result = result.replacingOccurrences(of: "[1-4]", with: "", options: .regularExpression)
-        
-        return result
+    }
+    
+    private func mapPartOfSpeech(_ pos: String) -> String {
+        let mapping: [String: String] = [
+            "a": "adj.",
+            "ad": "adv.",
+            "ag": "adj. morph.",
+            "an": "adj./n.",
+            "b": "non-pred. adj.",
+            "c": "conj.",
+            "d": "adv.",
+            "dg": "adv. morph.",
+            "e": "interj.",
+            "f": "direction",
+            "g": "morph.",
+            "h": "prefix",
+            "i": "idiom",
+            "j": "abbr.",
+            "k": "suffix",
+            "l": "fixed expr.",
+            "m": "num.",
+            "mg": "num. morph.",
+            "n": "noun",
+            "ng": "noun morph.",
+            "nr": "name",
+            "ns": "place",
+            "nt": "org.",
+            "nx": "nom. string",
+            "nz": "proper n.",
+            "o": "onom.",
+            "p": "prep.",
+            "q": "class.",
+            "qt": "time class.",
+            "r": "pron.",
+            "rg": "pron. morph.",
+            "s": "space",
+            "t": "time",
+            "tg": "time morph.",
+            "u": "aux.",
+            "v": "verb",
+            "vd": "v. adv.",
+            "vg": "verb morph.",
+            "vn": "v./n.",
+            "w": "punct.",
+            "x": "other",
+            "y": "modal",
+            "z": "desc."
+        ]
+        return mapping[pos] ?? pos
     }
 }

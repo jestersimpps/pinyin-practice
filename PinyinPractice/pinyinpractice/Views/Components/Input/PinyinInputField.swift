@@ -23,7 +23,7 @@ struct PinyinInputField: View {
                 .autocapitalization(.none)
                 .disableAutocorrection(true)
                 .focused($isFocused)
-                .onChange(of: text) { _ in
+                .onChange(of: text) { oldValue, newValue in
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                         scale = 1.05
                     }

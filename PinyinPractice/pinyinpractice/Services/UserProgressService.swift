@@ -33,9 +33,14 @@ class UserProgressService: ObservableObject {
         if let data = UserDefaults.standard.data(forKey: settingsKey),
            let decoded = try? JSONDecoder().decode(PracticeSettings.self, from: data) {
             self.settings = decoded
+            print("Loaded settings from UserDefaults")
         } else {
             self.settings = PracticeSettings()
+            print("Using default settings")
         }
+        
+        // Ensure settings are saved after loading to persist any new default values
+        saveSettings()
         
         if let data = UserDefaults.standard.data(forKey: sessionsKey),
            let decoded = try? JSONDecoder().decode([PracticeSession].self, from: data) {
@@ -82,8 +87,7 @@ class UserProgressService: ObservableObject {
             wordsStudied: wordsStudied,
             correctAnswers: correctInSession,
             accuracy: accuracy,
-            hskLevels: Array(settings.selectedHSKLevels),
-            categories: Array(settings.selectedCategories)
+            hskLevels: Array(settings.selectedHSKLevels)
         )
         
         sessions.append(session)
@@ -112,13 +116,8 @@ class UserProgressService: ObservableObject {
         progress.incorrectWords
     }
     
-    func getWordsLearnedForLevel(_ level: HSKLevel) -> Int {
+    func getWordsLearnedForLevel(_ level: Int) -> Int {
         let vocabulary = VocabularyService.shared.getVocabularyForLevel(level)
-        return vocabulary.filter { progress.seenWords.contains($0.id) }.count
-    }
-    
-    func getWordsLearnedForCategory(_ category: VocabularyCategory) -> Int {
-        let vocabulary = VocabularyService.shared.getVocabularyForCategory(category)
         return vocabulary.filter { progress.seenWords.contains($0.id) }.count
     }
     

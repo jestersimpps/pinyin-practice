@@ -26,7 +26,6 @@ struct ProgressStatsView: View {
                         streakSection
                         accuracyChartSection
                         levelProgressSection
-                        categoryBreakdownSection
                         achievementsSection
                     }
                     .padding(.horizontal, 20)
@@ -145,33 +144,58 @@ struct ProgressStatsView: View {
             }
             
             if #available(iOS 16.0, *) {
-                Chart {
-                    ForEach(mockAccuracyData(), id: \.date) { dataPoint in
-                        LineMark(
-                            x: .value("Date", dataPoint.date),
-                            y: .value("Accuracy", dataPoint.accuracy)
-                        )
-                        .foregroundStyle(Color("VibrantOrange"))
+                let accuracyData = getAccuracyData()
+                
+                if accuracyData.isEmpty {
+                    VStack(spacing: 12) {
+                        Image(systemName: "chart.line.uptrend.xyaxis")
+                            .font(.largeTitle)
+                            .foregroundColor(Color("SecondaryText").opacity(0.5))
                         
-                        AreaMark(
-                            x: .value("Date", dataPoint.date),
-                            y: .value("Accuracy", dataPoint.accuracy)
-                        )
-                        .foregroundStyle(
-                            LinearGradient(
-                                colors: [Color("VibrantOrange").opacity(0.3), Color("VibrantOrange").opacity(0.05)],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                        )
+                        Text("No practice data yet")
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(Color("SecondaryText"))
+                        
+                        Text("Complete some practice sessions to see your progress")
+                            .font(.system(size: 14, weight: .regular))
+                            .foregroundColor(Color("SecondaryText").opacity(0.8))
+                            .multilineTextAlignment(.center)
                     }
+                    .frame(height: 200)
+                    .frame(maxWidth: .infinity)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(Color("SecondaryBackground"))
+                    )
+                } else {
+                    Chart {
+                        ForEach(accuracyData, id: \.date) { dataPoint in
+                            LineMark(
+                                x: .value("Date", dataPoint.date),
+                                y: .value("Accuracy", dataPoint.accuracy)
+                            )
+                            .foregroundStyle(Color("VibrantOrange"))
+                            
+                            AreaMark(
+                                x: .value("Date", dataPoint.date),
+                                y: .value("Accuracy", dataPoint.accuracy)
+                            )
+                            .foregroundStyle(
+                                LinearGradient(
+                                    colors: [Color("VibrantOrange").opacity(0.3), Color("VibrantOrange").opacity(0.05)],
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                )
+                            )
+                        }
+                    }
+                    .frame(height: 200)
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(Color("SecondaryBackground"))
+                    )
                 }
-                .frame(height: 200)
-                .padding()
-                .background(
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(Color("SecondaryBackground"))
-                )
             } else {
                 Text("Chart requires iOS 16.0 or later")
                     .frame(height: 200)
@@ -189,7 +213,7 @@ struct ProgressStatsView: View {
             SectionHeader(title: "Level Progress", icon: "chart.bar.fill")
             
             VStack(spacing: 12) {
-                ForEach(HSKLevel.allCases, id: \.self) { level in
+                ForEach(1...6, id: \.self) { level in
                     LevelProgressRow(
                         level: level,
                         learned: progressService.getWordsLearnedForLevel(level),
@@ -205,21 +229,6 @@ struct ProgressStatsView: View {
         }
     }
     
-    private var categoryBreakdownSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            SectionHeader(title: "Category Mastery", icon: "square.grid.2x2.fill")
-            
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                ForEach(VocabularyCategory.allCases, id: \.self) { category in
-                    CategoryProgressCard(
-                        category: category,
-                        learned: progressService.getWordsLearnedForCategory(category),
-                        total: vocabularyService.getVocabularyForCategory(category).count
-                    )
-                }
-            }
-        }
-    }
     
     private var achievementsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -254,8 +263,8 @@ struct ProgressStatsView: View {
                     title: "HSK Champion",
                     description: "Complete all HSK1 words",
                     icon: "graduationcap.fill",
-                    isUnlocked: progressService.getWordsLearnedForLevel(.hsk1) == vocabularyService.getVocabularyForLevel(.hsk1).count,
-                    progress: Double(progressService.getWordsLearnedForLevel(.hsk1)) / Double(max(1, vocabularyService.getVocabularyForLevel(.hsk1).count))
+                    isUnlocked: progressService.getWordsLearnedForLevel(1) == vocabularyService.getVocabularyForLevel(1).count,
+                    progress: Double(progressService.getWordsLearnedForLevel(1)) / Double(max(1, vocabularyService.getVocabularyForLevel(1).count))
                 )
             }
             .padding(16)
@@ -266,18 +275,18 @@ struct ProgressStatsView: View {
         }
     }
     
-    private func mockAccuracyData() -> [(date: Date, accuracy: Double)] {
-        var data: [(date: Date, accuracy: Double)] = []
-        let calendar = Calendar.current
-        
-        for i in 0..<7 {
-            if let date = calendar.date(byAdding: .day, value: -i, to: Date()) {
-                let accuracy = Double.random(in: 70...95)
-                data.append((date: date, accuracy: accuracy))
-            }
+    private func getAccuracyData() -> [(date: Date, accuracy: Double)] {
+        let days: Int
+        switch selectedTimeRange {
+        case .week:
+            days = 7
+        case .month:
+            days = 30
+        case .all:
+            days = 0
         }
         
-        return data.reversed()
+        return progressService.getAccuracyTrend(days: days)
     }
 }
 
@@ -331,7 +340,7 @@ private struct StatCard: View {
 }
 
 private struct LevelProgressRow: View {
-    let level: HSKLevel
+    let level: Int
     let learned: Int
     let total: Int
     
@@ -343,7 +352,7 @@ private struct LevelProgressRow: View {
     var body: some View {
         VStack(spacing: 8) {
             HStack {
-                Text(level.displayName)
+                Text("HSK \(level)")
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(Color("PrimaryText"))
                 
@@ -371,56 +380,6 @@ private struct LevelProgressRow: View {
             }
             .frame(height: 8)
         }
-    }
-}
-
-private struct CategoryProgressCard: View {
-    let category: VocabularyCategory
-    let learned: Int
-    let total: Int
-    
-    var progress: Double {
-        guard total > 0 else { return 0 }
-        return Double(learned) / Double(total)
-    }
-    
-    var body: some View {
-        VStack(spacing: 12) {
-            ZStack {
-                Circle()
-                    .stroke(Color.gray.opacity(0.2), lineWidth: 8)
-                    .frame(width: 80, height: 80)
-                
-                Circle()
-                    .trim(from: 0, to: progress)
-                    .stroke(
-                        progress == 1.0 ? Color("SuccessGreen") : Color("VibrantOrange"),
-                        style: StrokeStyle(lineWidth: 8, lineCap: .round)
-                    )
-                    .frame(width: 80, height: 80)
-                    .rotationEffect(.degrees(-90))
-                
-                Text(String(format: "%.0f%%", progress * 100))
-                    .font(.system(size: 18, weight: .bold, design: .rounded))
-                    .foregroundColor(Color("PrimaryText"))
-            }
-            
-            VStack(spacing: 4) {
-                Text(category.displayName)
-                    .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(Color("PrimaryText"))
-                
-                Text("\(learned)/\(total)")
-                    .font(.system(size: 12, weight: .regular))
-                    .foregroundColor(Color("SecondaryText"))
-            }
-        }
-        .padding(16)
-        .frame(maxWidth: .infinity)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color("SecondaryBackground"))
-        )
     }
 }
 
