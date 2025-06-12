@@ -111,4 +111,25 @@ class UserProgressService: ObservableObject {
     func getIncorrectWords() -> Set<String> {
         progress.incorrectWords
     }
+    
+    func getWordsLearnedForLevel(_ level: HSKLevel) -> Int {
+        let vocabulary = VocabularyService.shared.getVocabularyForLevel(level)
+        return vocabulary.filter { progress.seenWords.contains($0.id) }.count
+    }
+    
+    func getWordsLearnedForCategory(_ category: VocabularyCategory) -> Int {
+        let vocabulary = VocabularyService.shared.getVocabularyForCategory(category)
+        return vocabulary.filter { progress.seenWords.contains($0.id) }.count
+    }
+    
+    func getSessionsForTimeRange(_ days: Int) -> [PracticeSession] {
+        guard days > 0 else { return sessions }
+        let cutoffDate = Calendar.current.date(byAdding: .day, value: -days, to: Date()) ?? Date()
+        return sessions.filter { $0.date >= cutoffDate }
+    }
+    
+    func getAccuracyTrend(days: Int) -> [(date: Date, accuracy: Double)] {
+        let sessionsInRange = getSessionsForTimeRange(days)
+        return sessionsInRange.map { ($0.date, $0.accuracy) }
+    }
 }

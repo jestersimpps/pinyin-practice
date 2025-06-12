@@ -28,6 +28,18 @@ class VocabularyService: ObservableObject {
         return allVocabulary.filter { incorrectWordIds.contains($0.id) }
     }
     
+    func getAllVocabulary() -> [VocabularyItem] {
+        return allVocabulary
+    }
+    
+    func getVocabularyForLevel(_ level: HSKLevel) -> [VocabularyItem] {
+        return allVocabulary.filter { $0.hskLevel == level }
+    }
+    
+    func getVocabularyForCategory(_ category: VocabularyCategory) -> [VocabularyItem] {
+        return allVocabulary.filter { $0.category == category }
+    }
+    
     static func getSampleVocabulary() -> [VocabularyItem] {
         return [
             VocabularyItem(

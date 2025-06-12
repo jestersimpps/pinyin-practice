@@ -6,6 +6,7 @@ struct SetupView: View {
     @State private var showingPractice = false
     @State private var showingSettings = false
     @State private var showingCustomPractice = false
+    @State private var showingProgress = false
     @State private var animateStats = false
     
     var body: some View {
@@ -34,6 +35,9 @@ struct SetupView: View {
             }
             .sheet(isPresented: $showingCustomPractice) {
                 CustomPracticeSetupView()
+            }
+            .sheet(isPresented: $showingProgress) {
+                ProgressStatsView()
             }
         }
         .onAppear {
@@ -116,7 +120,7 @@ struct SetupView: View {
             SecondaryActionButton(
                 title: "Progress",
                 icon: "chart.line.uptrend.xyaxis",
-                action: { }
+                action: { showingProgress = true }
             )
             
             SecondaryActionButton(
