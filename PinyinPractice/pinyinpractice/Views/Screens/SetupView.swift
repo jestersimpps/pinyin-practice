@@ -185,7 +185,7 @@ private struct StatBox: View {
         .frame(maxWidth: .infinity)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color("SecondaryBackground").opacity(0.5))
+                .fill(Color("SecondaryBackground"))
                 .overlay(
                     RoundedRectangle(cornerRadius: 16)
                         .stroke(color.opacity(0.2), lineWidth: 1)
@@ -214,7 +214,7 @@ private struct SecondaryActionButton: View {
             .padding(.vertical, 16)
             .background(
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(Color("SecondaryBackground").opacity(0.3))
+                    .fill(Color("SecondaryBackground"))
                     .overlay(
                         RoundedRectangle(cornerRadius: 16)
                             .stroke(Color.gray.opacity(0.2), lineWidth: 1)

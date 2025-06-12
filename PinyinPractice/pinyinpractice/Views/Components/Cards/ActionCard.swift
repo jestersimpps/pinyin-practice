@@ -29,7 +29,7 @@ struct ActionCard: View {
                     if let badge = badge {
                         Text(badge)
                             .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(.white)
+                            .foregroundColor(Color("PrimaryBackground"))
                             .padding(.horizontal, 12)
                             .padding(.vertical, 6)
                             .background(
@@ -58,7 +58,7 @@ struct ActionCard: View {
             .frame(height: 140)
             .background(
                 RoundedRectangle(cornerRadius: 20)
-                    .fill(Color("SecondaryBackground").opacity(0.3))
+                    .fill(Color("SecondaryBackground"))
                     .overlay(
                         RoundedRectangle(cornerRadius: 20)
                             .stroke(

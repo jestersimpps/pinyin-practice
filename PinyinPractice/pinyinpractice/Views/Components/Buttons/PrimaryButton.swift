@@ -26,7 +26,7 @@ struct PrimaryButton: View {
             HStack {
                 if isLoading {
                     ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                        .progressViewStyle(CircularProgressViewStyle(tint: Color("PrimaryBackground")))
                         .scaleEffect(0.8)
                 } else if let icon = icon {
                     Image(systemName: icon)
@@ -36,14 +36,14 @@ struct PrimaryButton: View {
                 Text(title)
                     .font(.system(size: 16, weight: .semibold))
             }
-            .foregroundColor(.white)
+            .foregroundColor(Color("PrimaryBackground"))
             .frame(maxWidth: .infinity)
             .padding(.vertical, 16)
             .background(
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(isDisabled ? Color.gray : Color(red: 0.1, green: 0.3, blue: 0.4))
+                    .fill(isDisabled ? Color("SecondaryText") : Color("MidnightGreen"))
                     .shadow(
-                        color: isDisabled ? Color.clear : Color(red: 0.1, green: 0.3, blue: 0.4).opacity(0.3),
+                        color: isDisabled ? Color.clear : Color("MidnightGreen").opacity(0.3),
                         radius: 10, x: 0, y: 5
                     )
             )
