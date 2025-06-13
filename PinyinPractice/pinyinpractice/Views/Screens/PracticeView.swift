@@ -58,7 +58,10 @@ struct PracticeView: View {
                                         showTranslation: UserProgressService.shared.settings.showEnglishTranslation || viewModel.feedbackState == .incorrect || viewModel.wasSkipped,
                                         feedbackState: mapFeedbackState(viewModel.feedbackState),
                                         hint: generateHint(for: word),
+                                        characterHint: word.characterHint,
                                         showHint: viewModel.showHint,
+                                        showPronunciationHint: UserProgressService.shared.settings.showPronunciationHints,
+                                        showCharacterHint: UserProgressService.shared.settings.showCharacterHints,
                                         isCompact: keyboardHeight > 0,
                                         additionalInfo: ResponsiveCharacterDisplay.AdditionalInfo(
                                             traditional: UserProgressService.shared.settings.useTraditional ? 
@@ -147,7 +150,7 @@ struct PracticeView: View {
     
     private var actionButtons: some View {
         HStack(spacing: 12) {
-            if UserProgressService.shared.settings.showHints && 
+            if UserProgressService.shared.settings.showPronunciationHints && 
                viewModel.feedbackState == .none {
                 Button(action: {
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
@@ -289,6 +292,13 @@ struct PracticeView: View {
     }
     
     private func generateHint(for word: VocabularyItem) -> String? {
+        // Use our enhanced pronunciation hint if available
+        if !word.pronunciationHint.isEmpty && 
+           !word.pronunciationHint.starts(with: "Pronunciation hint for") {
+            return word.pronunciationHint
+        }
+        
+        // Fallback to basic hint
         let syllableCount = word.pinyin.split(separator: " ").count
         let firstChar = word.pinyin.prefix(1)
         

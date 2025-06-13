@@ -90,11 +90,35 @@ struct PracticeSettings: Codable {
     var practiceMode: PracticeMode = .sequential
     var showToneNumbers: Bool = true
     var showEnglishTranslation: Bool = true
-    var showHints: Bool = true
+    var showHints: Bool = true  // Legacy - will be deprecated
+    var showPronunciationHints: Bool = true
+    var showCharacterHints: Bool = true
     var requireTones: Bool = false
     var showAdditionalInfo: Bool = true
     var useTraditional: Bool = false
     var showFullMeaning: Bool = false
+    
+    init() {
+        // Default initializer uses the default values
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        selectedHSKLevels = try container.decodeIfPresent(Set<Int>.self, forKey: .selectedHSKLevels) ?? [1]
+        practiceMode = try container.decodeIfPresent(PracticeMode.self, forKey: .practiceMode) ?? .sequential
+        showToneNumbers = try container.decodeIfPresent(Bool.self, forKey: .showToneNumbers) ?? true
+        showEnglishTranslation = try container.decodeIfPresent(Bool.self, forKey: .showEnglishTranslation) ?? true
+        showHints = try container.decodeIfPresent(Bool.self, forKey: .showHints) ?? true
+        requireTones = try container.decodeIfPresent(Bool.self, forKey: .requireTones) ?? false
+        showAdditionalInfo = try container.decodeIfPresent(Bool.self, forKey: .showAdditionalInfo) ?? true
+        useTraditional = try container.decodeIfPresent(Bool.self, forKey: .useTraditional) ?? false
+        showFullMeaning = try container.decodeIfPresent(Bool.self, forKey: .showFullMeaning) ?? false
+        
+        // Migration: if new hint settings don't exist, use the legacy showHints value
+        showPronunciationHints = try container.decodeIfPresent(Bool.self, forKey: .showPronunciationHints) ?? showHints
+        showCharacterHints = try container.decodeIfPresent(Bool.self, forKey: .showCharacterHints) ?? showHints
+    }
     
     enum PracticeMode: String, CaseIterable, Codable {
         case sequential = "Sequential"

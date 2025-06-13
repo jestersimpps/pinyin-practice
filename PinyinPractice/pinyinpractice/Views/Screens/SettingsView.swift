@@ -138,9 +138,19 @@ struct SettingsView: View {
                     .padding(.horizontal, 16)
                 
                 ToggleRow(
-                    title: "Show Hints",
-                    description: "Enable hint button for difficult words",
-                    isOn: $progressService.settings.showHints
+                    title: "Pronunciation Hints",
+                    description: "Memory aids for pinyin pronunciation",
+                    isOn: $progressService.settings.showPronunciationHints
+                )
+                
+                Divider()
+                    .background(Color.gray.opacity(0.3))
+                    .padding(.horizontal, 16)
+                
+                ToggleRow(
+                    title: "Character Hints", 
+                    description: "Memory aids for character meaning",
+                    isOn: $progressService.settings.showCharacterHints
                 )
                 
                 Divider()

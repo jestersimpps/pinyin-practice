@@ -6,7 +6,10 @@ struct ResponsiveCharacterDisplay: View {
     let showTranslation: Bool
     let feedbackState: FeedbackState
     let hint: String?
+    let characterHint: String?
     let showHint: Bool
+    let showPronunciationHint: Bool
+    let showCharacterHint: Bool
     let isCompact: Bool
     let additionalInfo: AdditionalInfo?
     let showAdditionalInfo: Bool
@@ -115,23 +118,51 @@ struct ResponsiveCharacterDisplay: View {
                 .transition(.opacity.combined(with: .move(edge: .bottom)))
             }
             
-            if showHint, let hint = hint {
-                HStack {
-                    Image(systemName: "lightbulb.fill")
-                        .font(.caption)
-                        .foregroundColor(.orange)
+            if showHint || feedbackState == .incorrect {
+                VStack(spacing: 8) {
+                    // Character hint
+                    if showCharacterHint,
+                       let characterHint = characterHint,
+                       !characterHint.isEmpty,
+                       !characterHint.starts(with: "Character hint for") {
+                        HStack {
+                            Image(systemName: "character.book.closed.fill")
+                                .font(.caption)
+                                .foregroundColor(.purple)
+                            
+                            Text(characterHint)
+                                .font(.system(size: 14, weight: .regular))
+                                .foregroundColor(.purple)
+                                .multilineTextAlignment(.center)
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(Color.purple.opacity(0.1))
+                        )
+                    }
                     
-                    Text(hint)
-                        .font(.system(size: 14, weight: .regular))
-                        .foregroundColor(.orange)
-                        .multilineTextAlignment(.center)
+                    // Pronunciation hint
+                    if showPronunciationHint, let hint = hint {
+                        HStack {
+                            Image(systemName: "lightbulb.fill")
+                                .font(.caption)
+                                .foregroundColor(.orange)
+                            
+                            Text(hint)
+                                .font(.system(size: 14, weight: .regular))
+                                .foregroundColor(.orange)
+                                .multilineTextAlignment(.center)
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(Color.orange.opacity(0.1))
+                        )
+                    }
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(Color.orange.opacity(0.1))
-                )
                 .transition(.opacity.combined(with: .scale))
             }
         }
