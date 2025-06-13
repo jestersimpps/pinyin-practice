@@ -71,9 +71,9 @@ struct CustomPracticeSetupView: View {
             .fullScreenCover(isPresented: $showingPractice) {
                 PracticeView()
             }
-            .onAppear {
-                // Reset practice mode to sequential when entering custom practice
-                progressService.settings.practiceMode = .sequential
+            .onDisappear {
+                // Clear selected chapters when leaving custom practice to avoid interference with chapter practice
+                progressService.settings.selectedChapters = []
             }
         }
     }
@@ -153,7 +153,7 @@ struct CustomPracticeSetupView: View {
     }
     
     private func startCustomPractice() {
-        // Update settings with selected chapters
+        // Update settings with selected chapters for this practice session
         progressService.settings.selectedChapters = selectedChapters
         
         // Calculate selected HSK levels from all selected chapters
@@ -166,6 +166,7 @@ struct CustomPracticeSetupView: View {
             }
         }
         progressService.settings.selectedHSKLevels = selectedLevels
+        
         
         showingPractice = true
     }

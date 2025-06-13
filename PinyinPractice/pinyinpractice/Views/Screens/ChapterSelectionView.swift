@@ -55,6 +55,10 @@ struct ChapterSelectionView: View {
             .fullScreenCover(isPresented: $showingPractice) {
                 PracticeView()
             }
+            .onAppear {
+                // Clean up any selected chapters that are now locked
+                progressService.cleanupSelectedChapters()
+            }
         }
     }
     
@@ -136,7 +140,6 @@ struct ChapterSelectionView: View {
     }
     
     private func startChapterPractice() {
-        settings.wrappedValue.practiceMode = .chapter
         showingPractice = true
     }
 }

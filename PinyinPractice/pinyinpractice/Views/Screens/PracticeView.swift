@@ -19,12 +19,8 @@ struct PracticeView: View {
                 }
             
             VStack(spacing: 0) {
-                // Adaptive header
-                if keyboardHeight == 0 {
-                    fullHeader
-                } else {
-                    compactHeader
-                }
+                // Always use compact header
+                compactHeader
                 
                 // Main content
                 ScrollViewReader { proxy in
@@ -84,6 +80,18 @@ struct PracticeView: View {
         .navigationBarHidden(true)
         .onAppear {
             setupKeyboardObservers()
+            
+            // Initialize learning mode based on current settings
+            let settings = UserProgressService.shared.settings
+            if !settings.selectedChapters.isEmpty {
+                viewModel.startChapterPractice(chapters: settings.selectedChapters)
+            } else if !UserProgressService.shared.progress.incorrectWords.isEmpty && 
+                      UserProgressService.shared.canPracticeReview {
+                viewModel.startReviewPractice(incorrectWords: UserProgressService.shared.progress.incorrectWords)
+            } else {
+                viewModel.startCustomPractice(levels: settings.selectedHSKLevels)
+            }
+            
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 isInputFocused = true
             }
@@ -189,10 +197,9 @@ struct PracticeView: View {
                         .font(.subheadline)
                         .fontWeight(.medium)
                 }
-                
-                Spacer()
             }
             .foregroundColor(Color("PrimaryText"))
+            .frame(maxWidth: .infinity)
             .padding(.horizontal, 20)
             .padding(.vertical, 12)
             .background(Color("SecondaryBackground").opacity(0.3))
@@ -200,8 +207,9 @@ struct PracticeView: View {
     }
     
     private var compactHeader: some View {
-        VStack(spacing: 8) {
-            HStack(spacing: 12) {
+        VStack(spacing: 0) {
+            // Navigation row with title
+            HStack {
                 // Back button
                 Button(action: { dismiss() }) {
                     Image(systemName: "chevron.left")
@@ -214,15 +222,22 @@ struct PracticeView: View {
                         )
                 }
                 
-                // Minimal progress indicator
-                GeometryReader { geometry in
-                    Rectangle()
-                        .fill(Color(red: 0.2, green: 0.8, blue: 0.4))
-                        .frame(width: geometry.size.width * viewModel.progressPercentage)
+                Spacer()
+                
+                // Title with subtitle
+                VStack(spacing: 2) {
+                    Text("Practice")
+                        .font(.system(size: 18, weight: .bold))
+                        .foregroundColor(Color("PrimaryText"))
+                    
+                    if let subtitle = practiceSubtitle {
+                        Text(subtitle)
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundColor(Color("SecondaryText"))
+                    }
                 }
-                .frame(height: 3)
-                .background(Color("SecondaryBackground").opacity(0.3))
-                .clipShape(Capsule())
+                
+                Spacer()
                 
                 // Settings button
                 Button(action: { showingSettings = true }) {
@@ -236,46 +251,50 @@ struct PracticeView: View {
                         )
                 }
             }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 16)
             
-            // Compact stats row
-            HStack(spacing: 16) {
+            // Progress bar
+            ProgressBar(progress: viewModel.progressPercentage)
+            
+            // Stats row
+            HStack(spacing: 20) {
                 // Progress
-                HStack(spacing: 4) {
+                HStack(spacing: 6) {
                     Image(systemName: "flag.fill")
-                        .font(.caption2)
+                        .font(.caption)
                         .foregroundColor(.blue)
                     Text("\(viewModel.wordsCompleted)/\(viewModel.totalWords)")
-                        .font(.caption)
+                        .font(.subheadline)
                         .fontWeight(.medium)
                 }
                 
                 // Accuracy
-                HStack(spacing: 4) {
+                HStack(spacing: 6) {
                     Image(systemName: "target")
-                        .font(.caption2)
+                        .font(.caption)
                         .foregroundColor(viewModel.accuracy == "0%" ? Color("SecondaryText") : Color(red: 0.2, green: 0.8, blue: 0.4))
                     Text(viewModel.accuracy)
-                        .font(.caption)
+                        .font(.subheadline)
                         .fontWeight(.medium)
                 }
                 
                 // Streak
-                HStack(spacing: 4) {
+                HStack(spacing: 6) {
                     Image(systemName: "flame.fill")
-                        .font(.caption2)
+                        .font(.caption)
                         .foregroundColor(viewModel.currentStreak == 0 ? Color("SecondaryText") : .orange)
                     Text("\(viewModel.currentStreak)")
-                        .font(.caption)
+                        .font(.subheadline)
                         .fontWeight(.medium)
                 }
-                
-                Spacer()
             }
             .foregroundColor(Color("PrimaryText"))
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 12)
+            .background(Color("SecondaryBackground").opacity(0.3))
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
-        .background(Color("PrimaryBackground"))
     }
     
     // MARK: - Helper Methods
@@ -319,11 +338,19 @@ struct PracticeView: View {
     // MARK: - Computed Properties
     
     private var practiceSubtitle: String? {
-        switch UserProgressService.shared.settings.practiceMode {
-        case .reviewMistakes: return "Review Mode"
-        case .random: return "Random Mode"
-        default: return nil
+        // Determine subtitle based on the actual learning mode being used
+        if let learningMode = viewModel.currentLearningMode {
+            switch learningMode {
+            case .chapters:
+                return "Chapter Practice"
+            case .review:
+                return "Review Mode"
+            case .levels:
+                // For custom practice, show the ordering mode
+                return UserProgressService.shared.settings.practiceMode == .random ? "Random Mode" : nil
+            }
         }
+        return nil
     }
     
     // MARK: - State Mapping

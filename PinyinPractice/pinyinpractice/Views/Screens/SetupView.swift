@@ -174,19 +174,14 @@ struct SetupView: View {
     }
     
     private func startQuickPractice() {
-        // Quick practice always continues with the current mode
-        // If in chapter or review mode, switch to sequential
-        if progressService.settings.practiceMode == .chapter || 
-           progressService.settings.practiceMode == .reviewMistakes {
-            progressService.settings.practiceMode = .sequential
-        }
-        // Otherwise keep the current mode (sequential or random)
-        
+        // Clear any selected chapters to ensure custom practice mode
+        progressService.settings.selectedChapters = []
         showingPractice = true
     }
     
     private func startReviewMode() {
-        progressService.settings.practiceMode = .reviewMistakes
+        // Clear any selected chapters to ensure review mode is triggered
+        progressService.settings.selectedChapters = []
         showingPractice = true
     }
 }

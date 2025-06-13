@@ -85,7 +85,7 @@ struct UserProgress: Codable {
         if chapter == 1 { return true }
         
         // Check if previous chapter is 80% complete
-        let previousChapterId = "hsk\(level)_chapter\(chapter - 1)"
+        let previousChapterId = "chapter_\(chapter - 1)"
         if let previousProgress = chapterProgress[previousChapterId] {
             return previousProgress.completionPercentage >= 80.0
         }
@@ -168,15 +168,11 @@ struct PracticeSettings: Codable {
     enum PracticeMode: String, CaseIterable, Codable {
         case sequential = "Sequential"
         case random = "Random"
-        case reviewMistakes = "Review Mistakes"
-        case chapter = "Chapter"
         
         var icon: String {
             switch self {
             case .sequential: return "list.number"
             case .random: return "shuffle"
-            case .reviewMistakes: return "exclamationmark.triangle"
-            case .chapter: return "book.closed"
             }
         }
         
@@ -184,9 +180,13 @@ struct PracticeSettings: Codable {
             switch self {
             case .sequential: return "Study words in HSK order"
             case .random: return "Random order, prioritizing new words"
-            case .reviewMistakes: return "Focus on words you got wrong"
-            case .chapter: return "Study by chapter progression"
             }
         }
+    }
+    
+    enum LearningMode {
+        case levels(Set<Int>)    // Custom practice with HSK levels
+        case chapters(Set<String>) // Chapter practice
+        case review(Set<String>)   // Review mistakes
     }
 }

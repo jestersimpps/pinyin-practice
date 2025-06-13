@@ -83,6 +83,22 @@ class UserProgressService: ObservableObject {
         return progress.isChapterUnlocked(level: level, chapter: chapter)
     }
     
+    func cleanupSelectedChapters() {
+        // Remove any selected chapters that are now locked
+        var validChapters: Set<String> = []
+        
+        for chapterId in settings.selectedChapters {
+            if let chapterNumber = Int(chapterId.replacingOccurrences(of: "chapter_", with: "")) {
+                let chapterInfo = ChapterCurriculum.getChapterInfo(chapter: chapterNumber)
+                if isChapterUnlocked(level: chapterInfo.hskLevel, chapter: chapterNumber) {
+                    validChapters.insert(chapterId)
+                }
+            }
+        }
+        
+        settings.selectedChapters = validChapters
+    }
+    
     func startNewSession() -> Date {
         return Date()
     }
@@ -129,7 +145,7 @@ class UserProgressService: ObservableObject {
     }
     
     var canPracticeReview: Bool {
-        settings.practiceMode == .reviewMistakes && hasIncorrectWords
+        hasIncorrectWords
     }
     
     func getTotalWordsLearned() -> Int {

@@ -23,6 +23,11 @@ class PracticeViewModel: ObservableObject {
     private var progressService = UserProgressService.shared
     private var availableWords: [VocabularyItem] = []
     private var currentIndex: Int = 0
+    private var _currentLearningMode: PracticeSettings.LearningMode?
+    
+    var currentLearningMode: PracticeSettings.LearningMode? {
+        return _currentLearningMode
+    }
     
     // Session tracking
     private var sessionCorrectAnswers: Int = 0
@@ -61,6 +66,21 @@ class PracticeViewModel: ObservableObject {
         loadWords()
     }
     
+    func startCustomPractice(levels: Set<Int>) {
+        _currentLearningMode = .levels(levels)
+        loadWords()
+    }
+    
+    func startChapterPractice(chapters: Set<String>) {
+        _currentLearningMode = .chapters(chapters)
+        loadWords()
+    }
+    
+    func startReviewPractice(incorrectWords: Set<String>) {
+        _currentLearningMode = .review(incorrectWords)
+        loadWords()
+    }
+    
     func loadNextChapter() {
         guard let currentChapter = completedChapter else { return }
         
@@ -75,13 +95,32 @@ class PracticeViewModel: ObservableObject {
     func loadWords() {
         let settings = progressService.settings
         
+        // Determine words to study based on learning mode
+        var wordsToStudy: [VocabularyItem] = []
+        
+        if let learningMode = _currentLearningMode {
+            switch learningMode {
+            case .levels(let levels):
+                wordsToStudy = vocabularyService.getVocabularyForLevels(levels)
+                
+            case .chapters(let chapters):
+                wordsToStudy = vocabularyService.getVocabularyForChapters(chapters)
+                
+            case .review(let incorrectWords):
+                wordsToStudy = vocabularyService.getReviewVocabulary(incorrectWordIds: incorrectWords)
+            }
+        } else {
+            // Fallback to settings-based approach for backward compatibility
+            wordsToStudy = vocabularyService.getVocabularyForLevels(settings.selectedHSKLevels)
+        }
+        
+        // Apply ordering based on practice mode (sequential vs random)
         switch settings.practiceMode {
         case .sequential:
-            availableWords = vocabularyService.getVocabularyForLevels(settings.selectedHSKLevels)
-                .sorted { $0.frequency < $1.frequency }
+            availableWords = wordsToStudy.sorted { $0.frequency < $1.frequency }
             
         case .random:
-            availableWords = vocabularyService.getVocabularyForLevels(settings.selectedHSKLevels)
+            availableWords = wordsToStudy
             
             // First shuffle all words
             availableWords.shuffle()
@@ -93,27 +132,6 @@ class PracticeViewModel: ObservableObject {
                 let word2Seen = seenWords.contains(word2.id)
                 
                 // If both seen or both unseen, maintain shuffled order
-                if word1Seen == word2Seen { return false }
-                
-                // Otherwise, prioritize unseen words
-                return !word1Seen && word2Seen
-            }
-            
-        case .reviewMistakes:
-            availableWords = vocabularyService.getReviewVocabulary(
-                incorrectWordIds: progressService.progress.incorrectWords
-            ).shuffled()
-            
-        case .chapter:
-            availableWords = vocabularyService.getVocabularyForChapters(settings.selectedChapters)
-            
-            // Prioritize words not yet completed in chapters
-            let seenWords = progressService.progress.seenWords
-            availableWords.sort { word1, word2 in
-                let word1Seen = seenWords.contains(word1.id)
-                let word2Seen = seenWords.contains(word2.id)
-                
-                // If both seen or both unseen, maintain order
                 if word1Seen == word2Seen { return false }
                 
                 // Otherwise, prioritize unseen words
@@ -157,7 +175,7 @@ class PracticeViewModel: ObservableObject {
             sessionCorrectAnswers += 1
             
             // Update chapter progress if in chapter mode
-            if progressService.settings.practiceMode == .chapter {
+            if case .chapters = _currentLearningMode {
                 updateChapterProgress(for: word)
                 
                 // Check if we should show completion immediately after this word
@@ -237,7 +255,7 @@ class PracticeViewModel: ObservableObject {
         currentIndex += 1
         
         // Check if this was the last word in chapter mode
-        if progressService.settings.practiceMode == .chapter && 
+        if case .chapters = _currentLearningMode,
            currentIndex >= availableWords.count &&
            !showingChapterCompletion {
             checkForChapterCompletion()
@@ -305,7 +323,7 @@ class PracticeViewModel: ObservableObject {
         }
         
         // Check if we're in chapter mode and all words have been completed
-        if progressService.settings.practiceMode == .chapter && 
+        if case .chapters = _currentLearningMode,
            wordsCompleted >= availableWords.count && 
            !showingChapterCompletion {
             // Find the chapter that was just completed
