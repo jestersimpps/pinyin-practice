@@ -163,7 +163,27 @@ struct SetupView: View {
     }
     
     private var quickPracticeSubtitle: String {
-        return "Continue where you left off"
+        let lastMode = progressService.settings.lastPracticeMode
+        
+        switch lastMode {
+        case .review:
+            if progressService.hasIncorrectWords {
+                return "Continue reviewing mistakes"
+            } else {
+                return "Continue with custom practice"
+            }
+            
+        case .chapters:
+            if !progressService.settings.selectedChapters.isEmpty {
+                let count = progressService.settings.selectedChapters.count
+                return "Continue with \(count) chapter\(count == 1 ? "" : "s")"
+            } else {
+                return "Continue with custom practice"
+            }
+            
+        case .quick, .custom:
+            return "Continue where you left off"
+        }
     }
     
     private var quickPracticeBadge: String? {
@@ -174,14 +194,42 @@ struct SetupView: View {
     }
     
     private func startQuickPractice() {
-        // Clear any selected chapters to ensure custom practice mode
-        progressService.settings.selectedChapters = []
+        // Use the last practice mode
+        let lastMode = progressService.settings.lastPracticeMode
+        
+        switch lastMode {
+        case .review:
+            // Check if there are incorrect words to review
+            if progressService.hasIncorrectWords {
+                progressService.settings.selectedChapters = []
+                progressService.settings.isReviewMode = true
+            } else {
+                // Fall back to custom practice if no incorrect words
+                progressService.settings.selectedChapters = []
+                progressService.settings.isReviewMode = false
+                progressService.settings.lastPracticeMode = .custom
+            }
+            
+        case .chapters:
+            // Keep the selected chapters if any, otherwise fall back to custom
+            if progressService.settings.selectedChapters.isEmpty {
+                progressService.settings.lastPracticeMode = .custom
+            }
+            progressService.settings.isReviewMode = false
+            
+        case .quick, .custom:
+            // Continue with custom practice mode
+            progressService.settings.selectedChapters = []
+            progressService.settings.isReviewMode = false
+        }
+        
         showingPractice = true
     }
     
     private func startReviewMode() {
-        // Clear any selected chapters to ensure review mode is triggered
+        // Set review mode flag and clear other selections
         progressService.settings.selectedChapters = []
+        progressService.settings.isReviewMode = true
         showingPractice = true
     }
 }

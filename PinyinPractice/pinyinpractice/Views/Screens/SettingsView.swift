@@ -158,16 +158,6 @@ struct SettingsView: View {
                     .padding(.horizontal, 16)
                 
                 ToggleRow(
-                    title: "Show Additional Info",
-                    description: "Display extra info after answering",
-                    isOn: $progressService.settings.showAdditionalInfo
-                )
-                
-                Divider()
-                    .background(Color.gray.opacity(0.3))
-                    .padding(.horizontal, 16)
-                
-                ToggleRow(
                     title: "Use Traditional Characters",
                     description: "Practice with traditional instead of simplified",
                     isOn: $progressService.settings.useTraditional

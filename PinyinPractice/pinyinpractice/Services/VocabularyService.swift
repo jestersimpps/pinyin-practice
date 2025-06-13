@@ -64,6 +64,7 @@ class VocabularyService: ObservableObject {
                 let chapterId = "chapter\(chapterNum)"
                 vocabularyByChapter[chapterId] = chapterItems
                 
+                
                 let chapter = Chapter(
                     id: chapterId,
                     hskLevel: level,

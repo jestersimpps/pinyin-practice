@@ -33,22 +33,23 @@ struct ChapterCurriculum {
         12: ("工作 Work", "What do you do, professions, busy", "briefcase"),
         13: ("爱好 Hobbies", "What do you like, activities, movies/books", "heart"),
         14: ("位置 Locations", "Where is, directions, inside/outside, here/there", "map"),
-        15: ("复习 Review", "Comprehensive review of all HSK 1 vocabulary", "arrow.clockwise"),
+        // Chapter 15 is reserved for HSK 1 review
         
         // HSK 2
-        16: ("衣服 Clothing", "Clothing items, colors, wear, beautiful/ugly", "tshirt"),
-        17: ("身体 Body and Health", "Body parts, illness, pain, hospital/medicine", "heart.text.square"),
-        18: ("运动 Sports and Exercise", "Sports, play, exercise, tired/rest", "figure.run"),
-        19: ("旅行 Travel", "Travel, transportation, tickets, hotel", "airplane"),
-        20: ("节日 Festivals and Celebrations", "Festivals, celebrate, gifts, happy", "gift"),
-        21: ("学校生活 School Life", "School facilities, subjects, homework, exams", "graduationcap"),
-        22: ("比较 Comparisons", "Comparative sentences, more/less, same/different", "arrow.up.arrow.down"),
-        23: ("动作 Actions and Activities", "Daily actions, walking, opening/closing, begin/finish", "figure.walk"),
-        24: ("情感 Emotions", "Happy/sad, angry, worried, love", "face.smiling"),
-        25: ("方向 Directions", "Asking for directions, turn left/right, far/near", "arrow.turn.right.up"),
-        26: ("助动词 Modal Verbs", "Can/able to, should, want to, have to", "bubble.left.and.bubble.right"),
-        27: ("完成时态 Completed Actions", "Aspect particles 了/过, currently happening, about to", "checkmark.circle"),
-        28: ("复习与测试 Review and Testing", "HSK 2 comprehensive review", "arrow.triangle.2.circlepath"),
+        15: ("衣服 Clothing", "Clothing items, colors, wear, beautiful/ugly", "tshirt"),
+        16: ("身体 Body and Health", "Body parts, illness, pain, hospital/medicine", "heart.text.square"),
+        17: ("运动 Sports and Exercise", "Sports, play, exercise, tired/rest", "figure.run"),
+        18: ("旅行 Travel", "Travel, transportation, tickets, hotel", "airplane"),
+        19: ("节日 Festivals and Celebrations", "Festivals, celebrate, gifts, happy", "gift"),
+        20: ("学校生活 School Life", "School facilities, subjects, homework, exams", "graduationcap"),
+        21: ("比较 Comparisons", "Comparative sentences, more/less, same/different", "arrow.up.arrow.down"),
+        22: ("动作 Actions and Activities", "Daily actions, walking, opening/closing, begin/finish", "figure.walk"),
+        23: ("情感 Emotions", "Happy/sad, angry, worried, love", "face.smiling"),
+        24: ("方向 Directions", "Asking for directions, turn left/right, far/near", "arrow.turn.right.up"),
+        25: ("助动词 Modal Verbs", "Can/able to, should, want to, have to", "bubble.left.and.bubble.right"),
+        26: ("完成时态 Completed Actions", "Aspect particles 了/过, currently happening, about to", "checkmark.circle"),
+        27: ("家人称呼 Family Terms", "Extended family, relatives, in-laws", "figure.2.and.child.holdinghands"),
+        // Chapter 28 is reserved for HSK 2 review
         
         // HSK 3
         29: ("描述人物 Describing People", "Physical appearance, personality, character traits", "person.crop.circle"),
@@ -64,7 +65,7 @@ struct ChapterCurriculum {
         39: ("社会关系 Social Relationships", "Friends, relationships, society, help each other", "person.2"),
         40: ("表达观点 Expressing Opinions", "I think, opinion, agree/disagree, reason", "bubble.left"),
         41: ("时间表达 Time Expressions", "Time periods, duration, frequency, recently", "timer"),
-        42: ("复习与应用 Review and Application", "HSK 3 comprehensive review", "arrow.clockwise.circle"),
+        // Chapter 42 is reserved for HSK 3 review
         
         // HSK 4
         43: ("社会现象 Social Phenomena", "Social issues, development, change, influence", "person.3"),
@@ -80,7 +81,7 @@ struct ChapterCurriculum {
         53: ("文学艺术 Literature and Arts", "Literature, poetry, novel, artistic", "book.pages"),
         54: ("体育竞技 Sports and Competition", "Competition, team, victory, championship", "trophy"),
         55: ("环境保护 Environmental Protection", "Environment, protect, pollution, resource", "leaf.circle"),
-        56: ("复习强化 Review and Reinforcement", "HSK 4 comprehensive review", "arrow.triangle.2.circlepath.circle"),
+        // Chapter 56 is reserved for HSK 4 review
         
         // HSK 5
         57: ("政治制度 Political Systems", "Politics, government, democracy, policy", "building.columns"),
@@ -94,7 +95,7 @@ struct ChapterCurriculum {
         65: ("教育制度 Education System", "Education system, curriculum, teaching method, academic", "building.2"),
         66: ("文化传承 Cultural Heritage", "Heritage, tradition, inherit, preserve", "building.columns.circle"),
         67: ("经济发展 Economic Development", "Development, growth, industry, agriculture", "chart.bar"),
-        68: ("复习综合 Comprehensive Review", "HSK 5 comprehensive review", "arrow.counterclockwise.circle"),
+        // Chapter 68 is reserved for HSK 5 review
         
         // HSK 6
         69: ("学术研究 Academic Research", "Academic, research methodology, thesis, analysis", "doc.text"),
@@ -108,7 +109,7 @@ struct ChapterCurriculum {
         77: ("社会政策 Social Policy", "Social policy, welfare, reform, implementation", "doc.badge.gearshape"),
         78: ("国际贸易 International Trade", "International trade, export, import, globalization", "shippingbox"),
         79: ("文化交流 Cultural Exchange", "Cultural exchange, cross-cultural, integration, diversity", "globe.europe.africa"),
-        80: ("综合应用 Comprehensive Application", "HSK 6 final review, professional communication", "checkmark.seal")
+        // Chapter 80 is reserved for HSK 6 review
     ]
     
     static func getChapterInfo(chapter: Int) -> (title: String, description: String, hskLevel: Int, icon: String) {

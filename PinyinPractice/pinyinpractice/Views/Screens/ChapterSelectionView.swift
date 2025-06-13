@@ -140,6 +140,8 @@ struct ChapterSelectionView: View {
     }
     
     private func startChapterPractice() {
+        // Ensure review mode is disabled when starting chapter practice
+        progressService.settings.isReviewMode = false
         showingPractice = true
     }
 }

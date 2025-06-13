@@ -16,8 +16,18 @@ class PracticeViewModel: ObservableObject {
     @Published var showingChapterCompletion = false
     @Published var completedChapter: Chapter?
     @Published var completedChapterProgress: ChapterProgress?
+    @Published var showingPracticeCompletion = false
+    @Published var sessionStats: PracticeCompletionView.SessionStats?
     
     private var autoCheckTimer: Timer?
+    
+    var isPracticeComplete: Bool {
+        currentIndex >= availableWords.count
+    }
+    
+    var isLastWord: Bool {
+        currentIndex == availableWords.count - 1
+    }
     
     private var vocabularyService = VocabularyService.shared
     private var progressService = UserProgressService.shared
@@ -63,6 +73,14 @@ class PracticeViewModel: ObservableObject {
     }
     
     func reloadWordsIfNeeded() {
+        // Reset session tracking for new session
+        sessionStartTime = progressService.startNewSession()
+        sessionCorrectAnswers = 0
+        sessionTotalAttempts = 0
+        wordsCompleted = 0
+        showingPracticeCompletion = false
+        showingChapterCompletion = false
+        
         loadWords()
     }
     
@@ -148,7 +166,19 @@ class PracticeViewModel: ObservableObject {
     
     func loadNextWord() {
         guard currentIndex < availableWords.count else {
-            endSession()
+            // We've completed all words, trigger the appropriate completion screen
+            if case .chapters = _currentLearningMode {
+                // Chapter completion is handled separately
+                if !showingChapterCompletion {
+                    checkForChapterCompletion()
+                }
+            } else {
+                // For non-chapter modes, show practice completion
+                if !showingPracticeCompletion {
+                    endSession()
+                }
+            }
+            // Don't clear currentWord to prevent empty UI state
             return
         }
         
@@ -184,8 +214,14 @@ class PracticeViewModel: ObservableObject {
                 }
             }
             
-            // Only auto-advance if not showing chapter completion
-            if !showingChapterCompletion {
+            // Check if this was the last word
+            if currentIndex == availableWords.count - 1 {
+                // Last word answered correctly - show completion after delay
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    self.nextWord()
+                }
+            } else if !showingChapterCompletion {
+                // Auto-advance for non-last words
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                     self.nextWord()
                 }
@@ -193,9 +229,19 @@ class PracticeViewModel: ObservableObject {
         } else if isPartial {
             feedbackState = .partial
             progressService.recordAnswer(for: word, isCorrect: false)
+            
+            // Auto-advance after delay to allow user to see correct answer
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                self.nextWord()
+            }
         } else {
             feedbackState = .incorrect
             progressService.recordAnswer(for: word, isCorrect: false)
+            
+            // Auto-advance after delay to allow user to see correct answer
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+                self.nextWord()
+            }
         }
     }
     
@@ -222,7 +268,37 @@ class PracticeViewModel: ObservableObject {
                 // Check if chapter was just completed
                 if wasCompleted {
                     // Get chapter info from curriculum
-                    if let chapterNumber = Int(chapterId.replacingOccurrences(of: "chapter_", with: "")) {
+                    // Handle different chapter ID formats
+                    var chapterNumber: Int? = nil
+                    
+                    if chapterId.hasPrefix("chapter") && !chapterId.contains("_") {
+                        // Format: "chapter1", "chapter15", etc.
+                        chapterNumber = Int(chapterId.replacingOccurrences(of: "chapter", with: ""))
+                    } else if chapterId.contains("chapter_") {
+                        // Legacy format: "chapter_1", "chapter_15", etc.
+                        chapterNumber = Int(chapterId.replacingOccurrences(of: "chapter_", with: ""))
+                    } else if chapterId.contains("hsk") && chapterId.contains("_chapter") {
+                        // Format: "hsk1_chapter1", "hsk2_chapter1", etc.
+                        let components = chapterId.components(separatedBy: "_chapter")
+                        if components.count == 2 {
+                            let levelStr = components[0].replacingOccurrences(of: "hsk", with: "")
+                            if let level = Int(levelStr),
+                               let localChapterNum = Int(components[1]) {
+                            // Convert local chapter number to global chapter number
+                            switch level {
+                            case 1: chapterNumber = localChapterNum
+                            case 2: chapterNumber = 15 + localChapterNum
+                            case 3: chapterNumber = 28 + localChapterNum
+                            case 4: chapterNumber = 42 + localChapterNum
+                            case 5: chapterNumber = 56 + localChapterNum
+                            case 6: chapterNumber = 68 + localChapterNum
+                            default: break
+                            }
+                            }
+                        }
+                    }
+                    
+                    if let chapterNumber = chapterNumber {
                         let chapterInfo = ChapterCurriculum.getChapterInfo(chapter: chapterNumber)
                         
                         // Create chapter object
@@ -251,53 +327,67 @@ class PracticeViewModel: ObservableObject {
     }
     
     func nextWord() {
+        // Don't advance if we're already at the end
+        guard currentIndex < availableWords.count else {
+            // We're already at the end, trigger completion if not already shown
+            if case .chapters = _currentLearningMode {
+                if !showingChapterCompletion {
+                    checkForChapterCompletion()
+                }
+            } else {
+                if !showingPracticeCompletion {
+                    endSession()
+                }
+            }
+            return
+        }
+        
         wordsCompleted += 1
         currentIndex += 1
-        
-        // Check if this was the last word in chapter mode
-        if case .chapters = _currentLearningMode,
-           currentIndex >= availableWords.count &&
-           !showingChapterCompletion {
-            checkForChapterCompletion()
-        }
         
         loadNextWord()
     }
     
     private func checkForChapterCompletion() {
+        // When we've gone through all words in a chapter session, show completion
+        // regardless of whether the chapter was already marked complete before
+        guard case .chapters(let chapters) = _currentLearningMode else { return }
         
-        // Check all selected chapters for completion
-        for chapterId in progressService.settings.selectedChapters {
-            
-            if let progress = progressService.progress.chapterProgress[chapterId] {
+        // Get the first selected chapter (usually only one is selected)
+        if let chapterId = chapters.first {
+            // Show completion if we've practiced all available words in this session
+            if wordsCompleted >= availableWords.count && !showingChapterCompletion {
+                // Get or create chapter progress
+                let progress = progressService.progress.chapterProgress[chapterId] ?? ChapterProgress(
+                    chapterId: chapterId,
+                    wordsCompleted: [],
+                    totalWords: availableWords.count,
+                    isCompleted: false,
+                    completionDate: nil
+                )
                 
-                if progress.isCompleted && !showingChapterCompletion {
+                // Get chapter info from curriculum
+                if let chapterNumber = Int(chapterId.replacingOccurrences(of: "chapter_", with: "")) {
+                    let chapterInfo = ChapterCurriculum.getChapterInfo(chapter: chapterNumber)
                     
-                    // Get chapter info from curriculum
-                    if let chapterNumber = Int(chapterId.replacingOccurrences(of: "chapter_", with: "")) {
-                        let chapterInfo = ChapterCurriculum.getChapterInfo(chapter: chapterNumber)
-                        
-                        // Create chapter object
-                        completedChapter = Chapter(
-                            id: chapterId,
-                            hskLevel: chapterInfo.hskLevel,
-                            chapterNumber: chapterNumber,
-                            title: chapterInfo.title,
-                            description: chapterInfo.description,
-                            wordCount: progress.totalWords,
-                            isUnlocked: true,
-                            icon: chapterInfo.icon
-                        )
-                        
-                        // Get the chapter progress
-                        completedChapterProgress = progress
-                        
-                        // Show completion view
-                        showingChapterCompletion = true
-                        break
-                    }
+                    // Create chapter object
+                    completedChapter = Chapter(
+                        id: chapterId,
+                        hskLevel: chapterInfo.hskLevel,
+                        chapterNumber: chapterNumber,
+                        title: chapterInfo.title,
+                        description: chapterInfo.description,
+                        wordCount: availableWords.count,
+                        isUnlocked: true,
+                        icon: chapterInfo.icon
+                    )
+                    
+                    // Get the chapter progress
+                    completedChapterProgress = progress
+                    
+                    // Show completion view
+                    showingChapterCompletion = true
                 }
-            } else {
             }
         }
     }
@@ -308,10 +398,20 @@ class PracticeViewModel: ObservableObject {
         }
         wasSkipped = true
         feedbackState = .incorrect
+        
+        // Auto-advance after brief delay
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            self.nextWord()
+        }
     }
     
     
     private func endSession() {
+        guard wordsCompleted > 0 else { return }
+        
+        let duration = Date().timeIntervalSince(sessionStartTime ?? Date())
+        
+        // Always save the session stats
         if let startTime = sessionStartTime {
             progressService.endSession(
                 startTime: startTime, 
@@ -323,33 +423,56 @@ class PracticeViewModel: ObservableObject {
         }
         
         // Check if we're in chapter mode and all words have been completed
-        if case .chapters = _currentLearningMode,
+        if case .chapters(let chapters) = _currentLearningMode,
            wordsCompleted >= availableWords.count && 
            !showingChapterCompletion {
-            // Find the chapter that was just completed
-            for chapterId in progressService.settings.selectedChapters {
-                if let progress = progressService.progress.chapterProgress[chapterId],
-                   progress.isCompleted {
-                    // Get chapter info
-                    if let chapterNumber = Int(chapterId.replacingOccurrences(of: "chapter_", with: "")) {
-                        let chapterInfo = ChapterCurriculum.getChapterInfo(chapter: chapterNumber)
-                        
-                        completedChapter = Chapter(
-                            id: chapterId,
-                            hskLevel: chapterInfo.hskLevel,
-                            chapterNumber: chapterNumber,
-                            title: chapterInfo.title,
-                            description: chapterInfo.description,
-                            wordCount: progress.totalWords,
-                            isUnlocked: true,
-                            icon: chapterInfo.icon
-                        )
-                        
-                        completedChapterProgress = progress
-                        showingChapterCompletion = true
-                        break
-                    }
+            // Get the first selected chapter
+            if let chapterId = chapters.first {
+                // Get or create chapter progress
+                let progress = progressService.progress.chapterProgress[chapterId] ?? ChapterProgress(
+                    chapterId: chapterId,
+                    wordsCompleted: [],
+                    totalWords: availableWords.count,
+                    isCompleted: false,
+                    completionDate: nil
+                )
+                
+                // Get chapter info
+                if let chapterNumber = Int(chapterId.replacingOccurrences(of: "chapter_", with: "")) {
+                    let chapterInfo = ChapterCurriculum.getChapterInfo(chapter: chapterNumber)
+                    
+                    completedChapter = Chapter(
+                        id: chapterId,
+                        hskLevel: chapterInfo.hskLevel,
+                        chapterNumber: chapterNumber,
+                        title: chapterInfo.title,
+                        description: chapterInfo.description,
+                        wordCount: availableWords.count,
+                        isUnlocked: true,
+                        icon: chapterInfo.icon
+                    )
+                    
+                    completedChapterProgress = progress
+                    showingChapterCompletion = true
                 }
+            }
+        } else if !showingChapterCompletion && !showingPracticeCompletion && wordsCompleted > 0 {
+            // Show general practice completion for other modes when we've completed all words
+            let practiceModeName = getPracticeModeName()
+            
+            sessionStats = PracticeCompletionView.SessionStats(
+                wordsStudied: wordsCompleted,
+                correctAnswers: sessionCorrectAnswers,
+                totalAttempts: sessionTotalAttempts,
+                practiceMode: practiceModeName,
+                duration: duration,
+                currentStreak: progressService.progress.currentStreak,
+                bestStreak: progressService.progress.bestStreak
+            )
+            
+            // Use async to ensure UI updates properly
+            DispatchQueue.main.async {
+                self.showingPracticeCompletion = true
             }
         }
     }
@@ -430,5 +553,21 @@ class PracticeViewModel: ObservableObject {
         }
         
         return false
+    }
+    
+    private func getPracticeModeName() -> String {
+        if let mode = _currentLearningMode {
+            switch mode {
+            case .levels(let levels):
+                let levelsStr = levels.sorted().map { "HSK \($0)" }.joined(separator: ", ")
+                let practiceType = progressService.settings.practiceMode == .random ? "Random Practice" : "Sequential Practice"
+                return "\(practiceType) - \(levelsStr)"
+            case .chapters:
+                return "Chapter Practice"
+            case .review:
+                return "Review Mistakes"
+            }
+        }
+        return "Practice"
     }
 }

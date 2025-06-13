@@ -155,6 +155,8 @@ struct CustomPracticeSetupView: View {
     private func startCustomPractice() {
         // Update settings with selected chapters for this practice session
         progressService.settings.selectedChapters = selectedChapters
+        progressService.settings.isReviewMode = false
+        progressService.settings.lastPracticeMode = .custom
         
         // Calculate selected HSK levels from all selected chapters
         var selectedLevels: Set<Int> = []

@@ -49,6 +49,12 @@ struct PracticeView: View {
                         .padding(.vertical, 16)
                     }
                     .scrollIndicators(.hidden)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        if keyboardHeight > 0 {
+                            isInputFocused = false
+                        }
+                    }
                     .onChange(of: keyboardHeight) { _, newValue in
                         if newValue > 0 {
                             withAnimation {
@@ -73,6 +79,7 @@ struct PracticeView: View {
                     showHintButton: UserProgressService.shared.settings.showPronunciationHints && viewModel.feedbackState == .none,
                     showSkipButton: viewModel.feedbackState == .none
                 )
+                .disabled(viewModel.isPracticeComplete)
                 .padding(.horizontal, 16)
                 .padding(.bottom, 16)
             }
@@ -83,13 +90,22 @@ struct PracticeView: View {
             
             // Initialize learning mode based on current settings
             let settings = UserProgressService.shared.settings
-            if !settings.selectedChapters.isEmpty {
+            if settings.isReviewMode {
+                // Review mistakes mode
+                let incorrectWords = UserProgressService.shared.progress.incorrectWords
+                viewModel.startReviewPractice(incorrectWords: incorrectWords)
+                // Reset the flag after starting
+                UserProgressService.shared.settings.isReviewMode = false
+                // Save as last practice mode
+                UserProgressService.shared.settings.lastPracticeMode = .review
+            } else if !settings.selectedChapters.isEmpty {
                 viewModel.startChapterPractice(chapters: settings.selectedChapters)
-            } else if !UserProgressService.shared.progress.incorrectWords.isEmpty && 
-                      UserProgressService.shared.canPracticeReview {
-                viewModel.startReviewPractice(incorrectWords: UserProgressService.shared.progress.incorrectWords)
+                // Save as last practice mode
+                UserProgressService.shared.settings.lastPracticeMode = .chapters
             } else {
+                // Quick Practice and Custom Practice - always use custom practice mode
                 viewModel.startCustomPractice(levels: settings.selectedHSKLevels)
+                // Don't update lastPracticeMode here - it's already set by the calling view
             }
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -120,6 +136,25 @@ struct PracticeView: View {
                         // Start review mode for this chapter
                         viewModel.showingChapterCompletion = false
                         viewModel.reloadWordsIfNeeded()
+                    }
+                )
+            }
+        }
+        .sheet(isPresented: $viewModel.showingPracticeCompletion) {
+            if let stats = viewModel.sessionStats {
+                PracticeCompletionView(
+                    sessionStats: stats,
+                    onContinue: {
+                        // Continue with same practice mode
+                        viewModel.showingPracticeCompletion = false
+                        viewModel.reloadWordsIfNeeded()
+                        // Reset state for new session
+                        showHint = false
+                        isInputFocused = true
+                    },
+                    onReview: {
+                        // Go back to home
+                        dismiss()
                     }
                 )
             }
@@ -300,6 +335,9 @@ struct PracticeView: View {
     // MARK: - Helper Methods
     
     private func handleSubmit() {
+        // Don't process if practice is complete
+        guard !viewModel.isPracticeComplete else { return }
+        
         if viewModel.feedbackState == .none {
             viewModel.checkAnswer()
         } else {

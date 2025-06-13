@@ -67,7 +67,7 @@ struct AdaptiveCharacterDisplay: View {
                         .font(.caption)
                     
                     Text("Correct answer: \(word.pinyin)")
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(.system(size: 13, weight: .medium))
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 .foregroundColor(Color(red: 0.2, green: 0.8, blue: 0.4))
@@ -75,10 +75,9 @@ struct AdaptiveCharacterDisplay: View {
                 .padding(.vertical, 6)
                 .frame(maxWidth: .infinity)
                 .background(
-                    RoundedRectangle(cornerRadius: 8)
+                    RoundedRectangle(cornerRadius: 12)
                         .fill(Color(red: 0.2, green: 0.8, blue: 0.4).opacity(0.15))
                 )
-                .padding(.horizontal, 4)
                 .transition(.opacity)
             }
             
@@ -100,12 +99,11 @@ struct AdaptiveCharacterDisplay: View {
                     .padding(.vertical, 6)
                     .frame(maxWidth: .infinity)
                     .background(
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: 12)
                             .fill(Color(red: 0.2, green: 0.8, blue: 0.4).opacity(0.15))
                     )
                 }
                 .buttonStyle(PlainButtonStyle())
-                .padding(.horizontal, 4)
                 .transition(.opacity)
             }
             
@@ -154,18 +152,17 @@ struct AdaptiveCharacterDisplay: View {
                         .font(.body)
                     
                     Text("Correct answer: \(word.pinyin)")
-                        .font(.system(size: 18, weight: .semibold))
+                        .font(.system(size: 16, weight: .medium))
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 .foregroundColor(Color(red: 0.2, green: 0.8, blue: 0.4))
                 .padding(.horizontal, 16)
-                .padding(.vertical, 10)
+                .padding(.vertical, 12)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(
-                    RoundedRectangle(cornerRadius: 10)
+                    RoundedRectangle(cornerRadius: 12)
                         .fill(Color(red: 0.2, green: 0.8, blue: 0.4).opacity(0.15))
                 )
-                .padding(.horizontal)
                 .transition(.opacity)
             }
             
@@ -189,15 +186,14 @@ struct AdaptiveCharacterDisplay: View {
                     }
                     .foregroundColor(Color(red: 0.2, green: 0.8, blue: 0.4))
                     .padding(.horizontal, 16)
-                    .padding(.vertical, 10)
+                    .padding(.vertical, 12)
                     .frame(maxWidth: .infinity)
                     .background(
-                        RoundedRectangle(cornerRadius: 10)
+                        RoundedRectangle(cornerRadius: 12)
                             .fill(Color(red: 0.2, green: 0.8, blue: 0.4).opacity(0.15))
                     )
                 }
                 .buttonStyle(PlainButtonStyle())
-                .padding(.horizontal)
                 .transition(.opacity)
             }
             
@@ -207,11 +203,6 @@ struct AdaptiveCharacterDisplay: View {
                     .transition(.move(edge: .bottom).combined(with: .opacity))
             }
             
-            // Additional info
-            if settings.showAdditionalInfo && feedbackState != .none {
-                additionalInfo
-                    .transition(.opacity)
-            }
         }
         .animation(.spring(response: 0.3, dampingFraction: 0.8), value: feedbackState)
         .animation(.easeInOut(duration: 0.2), value: showHint)
@@ -240,7 +231,6 @@ struct AdaptiveCharacterDisplay: View {
                 )
             }
         }
-        .padding(.horizontal, 4)
     }
     
     // MARK: - Full Hints
@@ -266,32 +256,6 @@ struct AdaptiveCharacterDisplay: View {
         }
     }
     
-    // MARK: - Additional Info
-    private var additionalInfo: some View {
-        HStack(spacing: 20) {
-            if settings.useTraditional && word.simplified != word.traditional {
-                InfoItem(label: "Simplified", value: word.simplified)
-            } else if !settings.useTraditional && word.traditional != word.simplified {
-                InfoItem(label: "Traditional", value: word.traditional)
-            }
-            
-            InfoItem(label: "Radical", value: word.radical)
-            
-            if !word.partOfSpeech.isEmpty {
-                InfoItem(
-                    label: "Type",
-                    value: word.partOfSpeech.prefix(2).map(mapPartOfSpeech).joined(separator: ", ")
-                )
-            }
-            
-            InfoItem(label: "Freq", value: "#\(word.frequency)")
-        }
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color("SecondaryBackground").opacity(0.5))
-        )
-    }
     
     // MARK: - Helper Views
     private var feedbackIcon: some View {
@@ -391,7 +355,7 @@ struct HintPill: View {
             .padding(.vertical, 6)
             .frame(maxWidth: .infinity)
             .background(
-                RoundedRectangle(cornerRadius: 8)
+                RoundedRectangle(cornerRadius: 12)
                     .fill(color.opacity(0.15))
             )
         }
@@ -407,37 +371,23 @@ struct HintCard: View {
     var body: some View {
         HStack(alignment: .top, spacing: 8) {
             Image(systemName: icon)
-                .font(.caption)
+                .font(.body)
                 .foregroundColor(color)
                 .padding(.top, 2)
             
             Text(text)
-                .font(.system(size: 14, weight: .regular))
+                .font(.system(size: 16, weight: .medium))
                 .foregroundColor(color)
                 .multilineTextAlignment(.leading)
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(12)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
-            RoundedRectangle(cornerRadius: 10)
-                .fill(color.opacity(0.1))
+            RoundedRectangle(cornerRadius: 12)
+                .fill(color.opacity(0.15))
         )
     }
 }
 
-struct InfoItem: View {
-    let label: String
-    let value: String
-    
-    var body: some View {
-        VStack(spacing: 4) {
-            Text(label)
-                .font(.caption2)
-                .foregroundColor(Color("SecondaryText"))
-            
-            Text(value)
-                .font(.system(size: 16, weight: .medium))
-                .foregroundColor(Color("PrimaryText"))
-        }
-    }
-}

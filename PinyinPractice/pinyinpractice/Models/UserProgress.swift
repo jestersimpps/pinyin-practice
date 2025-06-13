@@ -60,6 +60,7 @@ struct UserProgress: Codable {
     mutating func updateChapterProgress(chapterId: String, wordId: String, totalWords: Int) -> Bool {
         var wasJustCompleted = false
         
+        
         if chapterProgress[chapterId] == nil {
             chapterProgress[chapterId] = ChapterProgress(
                 chapterId: chapterId,
@@ -74,6 +75,7 @@ struct UserProgress: Codable {
         chapterProgress[chapterId]?.markWordCompleted(wordId)
         let isNowCompleted = chapterProgress[chapterId]?.isCompleted ?? false
         
+        
         // Return true if the chapter was just completed (wasn't complete before, but is now)
         wasJustCompleted = !wasCompleted && isNowCompleted
         
@@ -81,14 +83,37 @@ struct UserProgress: Codable {
     }
     
     func isChapterUnlocked(level: Int, chapter: Int) -> Bool {
-        // First chapter is always unlocked
-        if chapter == 1 { return true }
+        // Review chapters are never unlocked (they have no content)
+        let reviewChapters = [15, 28, 42, 56, 68, 80]
+        if reviewChapters.contains(chapter) { return false }
+        
+        // First chapter of each level is always unlocked
+        if chapter == 1 { return true }  // HSK1 start
+        if chapter == 16 { return true } // HSK2 start
+        if chapter == 29 { return true } // HSK3 start
+        if chapter == 43 { return true } // HSK4 start
+        if chapter == 57 { return true } // HSK5 start
+        if chapter == 69 { return true } // HSK6 start
+        
+        // Find the previous non-review chapter
+        var previousChapter = chapter - 1
+        while reviewChapters.contains(previousChapter) && previousChapter > 0 {
+            previousChapter -= 1
+        }
         
         // Check if previous chapter is 80% complete
-        let previousChapterId = "chapter_\(chapter - 1)"
+        // The chapter ID format is "chapter1", "chapter2", etc. for curriculum-based organization
+        let previousChapterId = "chapter\(previousChapter)"
+        
+        
         if let previousProgress = chapterProgress[previousChapterId] {
-            return previousProgress.completionPercentage >= 80.0
+            let percentage = previousProgress.completionPercentage
+            let isUnlocked = percentage >= 80.0
+            
+            
+            return isUnlocked
         }
+        
         
         return false
     }
@@ -136,10 +161,11 @@ struct PracticeSettings: Codable {
     var showPronunciationHints: Bool = true
     var showCharacterHints: Bool = true
     var requireTones: Bool = false
-    var showAdditionalInfo: Bool = true
     var useTraditional: Bool = false
     var showFullMeaning: Bool = false
     var selectedChapters: Set<String> = []  // Format: "hsk1_chapter1"
+    var isReviewMode: Bool = false  // Flag to indicate review mistakes mode
+    var lastPracticeMode: LastPracticeMode = .quick  // Track the last practice mode used
     
     init() {
         // Default initializer uses the default values
@@ -154,7 +180,6 @@ struct PracticeSettings: Codable {
         showEnglishTranslation = try container.decodeIfPresent(Bool.self, forKey: .showEnglishTranslation) ?? true
         showHints = try container.decodeIfPresent(Bool.self, forKey: .showHints) ?? true
         requireTones = try container.decodeIfPresent(Bool.self, forKey: .requireTones) ?? false
-        showAdditionalInfo = try container.decodeIfPresent(Bool.self, forKey: .showAdditionalInfo) ?? true
         useTraditional = try container.decodeIfPresent(Bool.self, forKey: .useTraditional) ?? false
         showFullMeaning = try container.decodeIfPresent(Bool.self, forKey: .showFullMeaning) ?? false
         
@@ -163,6 +188,8 @@ struct PracticeSettings: Codable {
         showCharacterHints = try container.decodeIfPresent(Bool.self, forKey: .showCharacterHints) ?? showHints
         
         selectedChapters = try container.decodeIfPresent(Set<String>.self, forKey: .selectedChapters) ?? []
+        isReviewMode = try container.decodeIfPresent(Bool.self, forKey: .isReviewMode) ?? false
+        lastPracticeMode = try container.decodeIfPresent(LastPracticeMode.self, forKey: .lastPracticeMode) ?? .quick
     }
     
     enum PracticeMode: String, CaseIterable, Codable {
@@ -188,5 +215,12 @@ struct PracticeSettings: Codable {
         case levels(Set<Int>)    // Custom practice with HSK levels
         case chapters(Set<String>) // Chapter practice
         case review(Set<String>)   // Review mistakes
+    }
+    
+    enum LastPracticeMode: String, Codable {
+        case quick = "quick"           // Quick practice (default)
+        case custom = "custom"         // Custom practice with selected levels
+        case chapters = "chapters"     // Chapter-based practice
+        case review = "review"         // Review mistakes
     }
 }
