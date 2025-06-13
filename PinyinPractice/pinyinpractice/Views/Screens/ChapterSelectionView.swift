@@ -152,6 +152,16 @@ private struct ChapterCard: View {
         Button(action: action) {
             VStack(spacing: 12) {
                 HStack {
+                    // Chapter icon
+                    Image(systemName: chapter.icon)
+                        .font(.system(size: 28, weight: .medium))
+                        .foregroundColor(iconColor)
+                        .frame(width: 48, height: 48)
+                        .background(
+                            Circle()
+                                .fill(iconBackgroundColor)
+                        )
+                    
                     VStack(alignment: .leading, spacing: 6) {
                         Text(chapter.displayTitle)
                             .font(.system(size: 18, weight: .semibold))
@@ -268,6 +278,26 @@ private struct ChapterCard: View {
             return Color("VibrantOrange")
         } else {
             return Color(red: 0.1, green: 0.3, blue: 0.4)
+        }
+    }
+    
+    private var iconColor: Color {
+        if !isUnlocked {
+            return Color("SecondaryText").opacity(0.4)
+        } else if isSelected {
+            return .white
+        } else {
+            return Color(red: 0.1, green: 0.3, blue: 0.4)
+        }
+    }
+    
+    private var iconBackgroundColor: Color {
+        if !isUnlocked {
+            return Color("SecondaryText").opacity(0.1)
+        } else if isSelected {
+            return Color.white.opacity(0.2)
+        } else {
+            return Color(red: 0.1, green: 0.3, blue: 0.4).opacity(0.1)
         }
     }
 }

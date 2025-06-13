@@ -316,15 +316,6 @@ struct PracticeView: View {
         }
     }
     
-    private func getCorrectAnswer() -> String? {
-        guard let word = viewModel.currentWord else { return nil }
-        if UserProgressService.shared.settings.requireTones {
-            return word.pinyin
-        } else {
-            return word.pinyin.replacingOccurrences(of: "[1-5]", with: "", options: .regularExpression)
-        }
-    }
-    
     // MARK: - Computed Properties
     
     private var practiceSubtitle: String? {
@@ -332,33 +323,6 @@ struct PracticeView: View {
         case .reviewMistakes: return "Review Mode"
         case .random: return "Random Mode"
         default: return nil
-        }
-    }
-    
-    private var feedbackIcon: String {
-        switch viewModel.feedbackState {
-        case .correct: return "checkmark.circle.fill"
-        case .incorrect: return "xmark.circle.fill"
-        case .partial: return "exclamationmark.circle.fill"
-        case .none: return ""
-        }
-    }
-    
-    private var feedbackText: String {
-        switch viewModel.feedbackState {
-        case .correct: return "Correct!"
-        case .incorrect: return "Try again"
-        case .partial: return "Check tones"
-        case .none: return ""
-        }
-    }
-    
-    private var feedbackColor: Color {
-        switch viewModel.feedbackState {
-        case .correct: return Color(red: 0.2, green: 0.8, blue: 0.4)
-        case .incorrect: return .red
-        case .partial: return .orange
-        case .none: return .clear
         }
     }
     
@@ -382,31 +346,7 @@ struct PracticeView: View {
         }
     }
     
-    private func mapMessageFeedbackState(_ state: PracticeViewModel.FeedbackState) -> FeedbackMessage.FeedbackState {
-        switch state {
-        case .none: return .none
-        case .correct: return .correct
-        case .incorrect: return .incorrect
-        case .partial: return .partial
-        }
-    }
 }
 
 // MARK: - Supporting Views
 
-struct StatItem: View {
-    let label: String
-    let value: String
-    
-    var body: some View {
-        VStack(spacing: 4) {
-            Text(label)
-                .font(.caption)
-                .foregroundColor(Color("SecondaryText"))
-            
-            Text(value)
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundColor(Color("PrimaryText"))
-        }
-    }
-}

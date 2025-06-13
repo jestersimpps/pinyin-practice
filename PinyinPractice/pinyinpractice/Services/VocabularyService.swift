@@ -71,7 +71,8 @@ class VocabularyService: ObservableObject {
                     title: chapterInfo.title,
                     description: chapterInfo.description,
                     wordCount: chapterItems.count,
-                    isUnlocked: chapterNum == 1 || isChapterUnlocked(chapterNum)
+                    isUnlocked: chapterNum == 1 || isChapterUnlocked(chapterNum),
+                    icon: chapterInfo.icon
                 )
                 
                 chapters.append(chapter)
@@ -125,7 +126,8 @@ class VocabularyService: ObservableObject {
                 title: chapterInfo.title,
                 description: chapterInfo.description,
                 wordCount: chapterWords.count,
-                isUnlocked: chapterNum == 1 // First chapter always unlocked
+                isUnlocked: chapterNum == 1, // First chapter always unlocked
+                icon: chapterInfo.icon
             )
             
             chapters.append(chapter)
@@ -141,7 +143,6 @@ class VocabularyService: ObservableObject {
     
     private func loadVocabularyFromJSON(level: Int) -> [VocabularyItem]? {
         guard let url = Bundle.main.url(forResource: "\(level).min", withExtension: "json") else {
-            print("Could not find \(level).min.json")
             return nil
         }
         
@@ -150,7 +151,6 @@ class VocabularyService: ObservableObject {
             let items = try JSONDecoder().decode([VocabularyItem].self, from: data)
             return items
         } catch {
-            print("Error loading vocabulary for level \(level): \(error)")
             return nil
         }
     }

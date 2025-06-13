@@ -91,12 +91,12 @@ struct SetupView: View {
         VStack(spacing: 16) {
             ActionCard(
                 title: "Quick Practice",
-                subtitle: "Continue where you left off",
+                subtitle: quickPracticeSubtitle,
                 icon: "play.circle.fill",
                 color: Color("MidnightGreen"),
                 action: startQuickPractice,
-                badge: availableWordCount > 0 ? "\(availableWordCount) words" : nil,
-                isDisabled: availableWordCount == 0
+                badge: quickPracticeBadge,
+                isDisabled: availableWordCount == 0 && incorrectWordCount == 0
             )
             
             ActionCard(
@@ -162,8 +162,26 @@ struct SetupView: View {
         }
     }
     
+    private var quickPracticeSubtitle: String {
+        return "Continue where you left off"
+    }
+    
+    private var quickPracticeBadge: String? {
+        if availableWordCount > 0 {
+            return "\(availableWordCount) words"
+        }
+        return nil
+    }
+    
     private func startQuickPractice() {
-        // Don't override the saved practice mode
+        // Quick practice always continues with the current mode
+        // If in chapter or review mode, switch to sequential
+        if progressService.settings.practiceMode == .chapter || 
+           progressService.settings.practiceMode == .reviewMistakes {
+            progressService.settings.practiceMode = .sequential
+        }
+        // Otherwise keep the current mode (sequential or random)
+        
         showingPractice = true
     }
     

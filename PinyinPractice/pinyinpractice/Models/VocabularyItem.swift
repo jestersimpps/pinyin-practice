@@ -8,9 +8,6 @@ enum HSKLevel: Int, CaseIterable, Codable {
     case hsk5 = 5
     case hsk6 = 6
     
-    var displayName: String {
-        return "HSK \(rawValue)"
-    }
 }
 
 struct VocabularyItem: Identifiable, Codable {
@@ -33,7 +30,6 @@ struct VocabularyItem: Identifiable, Codable {
     var frequency: Int { q }
     var partOfSpeech: [String] { p }
     var meanings: [String] { m }
-    var classifiers: [String]? { c }
     var characterHint: String { ch }
     var pronunciationHint: String { ph }
     var toneNumbers: String { tn }
@@ -53,10 +49,6 @@ struct VocabularyItem: Identifiable, Codable {
         return toneNumbers
     }
     
-    var pinyinNumeric: String {
-        // Return the numeric pinyin format
-        return toneNumbers
-    }
     
     var english: String {
         UserProgressService.shared.settings.showFullMeaning ? englishFull : englishClean

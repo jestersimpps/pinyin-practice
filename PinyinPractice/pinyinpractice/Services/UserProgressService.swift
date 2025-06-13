@@ -33,10 +33,8 @@ class UserProgressService: ObservableObject {
         if let data = UserDefaults.standard.data(forKey: settingsKey),
            let decoded = try? JSONDecoder().decode(PracticeSettings.self, from: data) {
             self.settings = decoded
-            print("Loaded settings from UserDefaults")
         } else {
             self.settings = PracticeSettings()
-            print("Using default settings")
         }
         
         // Ensure settings are saved after loading to persist any new default values

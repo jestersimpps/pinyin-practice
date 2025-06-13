@@ -7,11 +7,12 @@ struct ChapterCompletionView: View {
     let onReview: () -> Void
     @Environment(\.dismiss) var dismiss
     
-    private var nextChapterInfo: (title: String, description: String, hskLevel: Int)? {
-        if chapter.chapterNumber < ChapterCurriculum.totalChapters {
-            return ChapterCurriculum.getChapterInfo(chapter: chapter.chapterNumber + 1)
+    private var nextChapterInfo: (title: String, description: String, hskLevel: Int, icon: String)? {
+        guard chapter.chapterNumber < ChapterCurriculum.totalChapters else {
+            return nil
         }
-        return nil
+        let info = ChapterCurriculum.getChapterInfo(chapter: chapter.chapterNumber + 1)
+        return (info.title, info.description, info.hskLevel, info.icon)
     }
     
     var body: some View {

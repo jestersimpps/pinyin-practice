@@ -8,6 +8,7 @@ struct Chapter: Identifiable, Codable {
     let description: String
     let wordCount: Int
     let isUnlocked: Bool
+    let icon: String
     
     var displayTitle: String {
         "Chapter \(chapterNumber): \(title)"
