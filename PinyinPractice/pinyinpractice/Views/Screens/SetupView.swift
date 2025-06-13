@@ -7,6 +7,7 @@ struct SetupView: View {
     @State private var showingSettings = false
     @State private var showingCustomPractice = false
     @State private var showingProgress = false
+    @State private var showingChapterSelection = false
     @State private var animateStats = false
     
     var body: some View {
@@ -38,6 +39,9 @@ struct SetupView: View {
             }
             .sheet(isPresented: $showingProgress) {
                 ProgressStatsView()
+            }
+            .sheet(isPresented: $showingChapterSelection) {
+                ChapterSelectionView()
             }
         }
         .onAppear {
@@ -93,6 +97,14 @@ struct SetupView: View {
                 action: startQuickPractice,
                 badge: availableWordCount > 0 ? "\(availableWordCount) words" : nil,
                 isDisabled: availableWordCount == 0
+            )
+            
+            ActionCard(
+                title: "Chapter Practice",
+                subtitle: "Study by structured lessons",
+                icon: "book.closed.fill",
+                color: Color.purple,
+                action: { showingChapterSelection = true }
             )
             
             ActionCard(

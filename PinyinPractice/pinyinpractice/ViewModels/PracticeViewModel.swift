@@ -89,6 +89,22 @@ class PracticeViewModel: ObservableObject {
             availableWords = vocabularyService.getReviewVocabulary(
                 incorrectWordIds: progressService.progress.incorrectWords
             ).shuffled()
+            
+        case .chapter:
+            availableWords = vocabularyService.getVocabularyForChapters(settings.selectedChapters)
+            
+            // Prioritize words not yet completed in chapters
+            let seenWords = progressService.progress.seenWords
+            availableWords.sort { word1, word2 in
+                let word1Seen = seenWords.contains(word1.id)
+                let word2Seen = seenWords.contains(word2.id)
+                
+                // If both seen or both unseen, maintain order
+                if word1Seen == word2Seen { return false }
+                
+                // Otherwise, prioritize unseen words
+                return !word1Seen && word2Seen
+            }
         }
         
         // Reset current index when reloading
@@ -126,6 +142,11 @@ class PracticeViewModel: ObservableObject {
             progressService.recordAnswer(for: word, isCorrect: true)
             sessionCorrectAnswers += 1
             
+            // Update chapter progress if in chapter mode
+            if progressService.settings.practiceMode == .chapter {
+                updateChapterProgress(for: word)
+            }
+            
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 self.nextWord()
             }
@@ -135,6 +156,20 @@ class PracticeViewModel: ObservableObject {
         } else {
             feedbackState = .incorrect
             progressService.recordAnswer(for: word, isCorrect: false)
+        }
+    }
+    
+    private func updateChapterProgress(for word: VocabularyItem) {
+        // Find which chapter this word belongs to
+        for (chapterId, words) in vocabularyService.vocabularyByChapter {
+            if words.contains(where: { $0.id == word.id }) {
+                progressService.updateChapterProgress(
+                    chapterId: chapterId,
+                    wordId: word.id,
+                    totalWords: words.count
+                )
+                break
+            }
         }
     }
     

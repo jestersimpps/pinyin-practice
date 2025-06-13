@@ -24,6 +24,7 @@ struct VocabularyItem: Identifiable, Codable {
     let ch: String
     let ph: String
     let tn: String
+    let cp: Int?  // Chapter progression (1-80)
     
     var id: String { s }
     var simplified: String { s }
@@ -36,6 +37,16 @@ struct VocabularyItem: Identifiable, Codable {
     var characterHint: String { ch }
     var pronunciationHint: String { ph }
     var toneNumbers: String { tn }
+    
+    var chapter: Int {
+        // Use cp (content progression) if available, otherwise default to 1
+        return cp ?? 1
+    }
+    
+    var chapterProgression: Int? {
+        // Returns the curriculum chapter number (1-80) if available
+        return cp
+    }
     
     var pinyin: String {
         // Convert tone numbers to pinyin with tone marks

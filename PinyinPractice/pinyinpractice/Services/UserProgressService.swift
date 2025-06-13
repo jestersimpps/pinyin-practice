@@ -72,6 +72,18 @@ class UserProgressService: ObservableObject {
         progress.recordAnswer(wordId: word.id, isCorrect: isCorrect)
     }
     
+    func updateChapterProgress(chapterId: String, wordId: String, totalWords: Int) {
+        progress.updateChapterProgress(chapterId: chapterId, wordId: wordId, totalWords: totalWords)
+    }
+    
+    func getChapterProgress(chapterId: String) -> ChapterProgress? {
+        return progress.getChapterProgress(chapterId: chapterId)
+    }
+    
+    func isChapterUnlocked(level: Int, chapter: Int) -> Bool {
+        return progress.isChapterUnlocked(level: level, chapter: chapter)
+    }
+    
     func startNewSession() -> Date {
         return Date()
     }

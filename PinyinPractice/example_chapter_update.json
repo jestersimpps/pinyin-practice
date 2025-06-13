@@ -1,0 +1,52 @@
+{
+  "description": "Example of how to update vocabulary items with chapter progression (cp) values",
+  "example_items": [
+    {
+      "s": "你好",
+      "t": "你好",
+      "r": "亻",
+      "q": 1,
+      "p": ["e"],
+      "m": ["hello; hi"],
+      "c": [],
+      "ch": "You person saying hello",
+      "ph": "Sounds like 'knee how' - greet on your knee, how polite!",
+      "tn": "ni3 hao3",
+      "cp": 1
+    },
+    {
+      "s": "再见",
+      "t": "再見",
+      "r": "冂",
+      "q": 100,
+      "p": ["v"],
+      "m": ["goodbye; see you again later"],
+      "c": [],
+      "ch": "See again - goodbye",
+      "ph": "'Zigh-jee-an' - sigh, I'll see you again",
+      "tn": "zai4 jian4",
+      "cp": 1
+    },
+    {
+      "s": "名字",
+      "t": "名字",
+      "r": "口",
+      "q": 829,
+      "p": ["n"],
+      "m": ["name (of a person or thing)"],
+      "c": ["个"],
+      "ch": "Evening word - name",
+      "ph": "'Ming-zuh' - my name rings a bell",
+      "tn": "ming2 zi5",
+      "cp": 2
+    }
+  ],
+  "chapter_assignments": {
+    "HSK1": {
+      "Chapter 1 (你好 Hello)": ["你好", "再见", "我", "你", "他", "她", "是", "零", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十"],
+      "Chapter 2 (姓名 Names)": ["叫", "什么", "名字", "姓", "这", "是"],
+      "Chapter 3 (国家 Countries)": ["哪", "国", "人", "中国", "美国", "汉语", "英语"],
+      "Chapter 4 (家庭 Family)": ["爸爸", "妈妈", "儿子", "女儿", "几", "个", "的", "多大", "岁"]
+    }
+  }
+}

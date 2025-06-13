@@ -10,6 +10,7 @@ struct UserProgress: Codable {
     var seenWords: Set<String> = []
     var lastSeenWordId: String?
     var lastPracticeDate: Date?
+    var chapterProgress: [String: ChapterProgress] = [:]
     
     var accuracy: Double {
         guard totalAttempts > 0 else { return 0 }
@@ -49,6 +50,37 @@ struct UserProgress: Codable {
         seenWords.removeAll()
         lastSeenWordId = nil
         lastPracticeDate = nil
+        chapterProgress.removeAll()
+    }
+    
+    func getChapterProgress(chapterId: String) -> ChapterProgress? {
+        return chapterProgress[chapterId]
+    }
+    
+    mutating func updateChapterProgress(chapterId: String, wordId: String, totalWords: Int) {
+        if chapterProgress[chapterId] == nil {
+            chapterProgress[chapterId] = ChapterProgress(
+                chapterId: chapterId,
+                wordsCompleted: [],
+                totalWords: totalWords,
+                isCompleted: false,
+                completionDate: nil
+            )
+        }
+        chapterProgress[chapterId]?.markWordCompleted(wordId)
+    }
+    
+    func isChapterUnlocked(level: Int, chapter: Int) -> Bool {
+        // First chapter is always unlocked
+        if chapter == 1 { return true }
+        
+        // Check if previous chapter is 80% complete
+        let previousChapterId = "hsk\(level)_chapter\(chapter - 1)"
+        if let previousProgress = chapterProgress[previousChapterId] {
+            return previousProgress.completionPercentage >= 80.0
+        }
+        
+        return false
     }
 }
 
@@ -97,6 +129,7 @@ struct PracticeSettings: Codable {
     var showAdditionalInfo: Bool = true
     var useTraditional: Bool = false
     var showFullMeaning: Bool = false
+    var selectedChapters: Set<String> = []  // Format: "hsk1_chapter1"
     
     init() {
         // Default initializer uses the default values
@@ -118,18 +151,22 @@ struct PracticeSettings: Codable {
         // Migration: if new hint settings don't exist, use the legacy showHints value
         showPronunciationHints = try container.decodeIfPresent(Bool.self, forKey: .showPronunciationHints) ?? showHints
         showCharacterHints = try container.decodeIfPresent(Bool.self, forKey: .showCharacterHints) ?? showHints
+        
+        selectedChapters = try container.decodeIfPresent(Set<String>.self, forKey: .selectedChapters) ?? []
     }
     
     enum PracticeMode: String, CaseIterable, Codable {
         case sequential = "Sequential"
         case random = "Random"
         case reviewMistakes = "Review Mistakes"
+        case chapter = "Chapter"
         
         var icon: String {
             switch self {
             case .sequential: return "list.number"
             case .random: return "shuffle"
             case .reviewMistakes: return "exclamationmark.triangle"
+            case .chapter: return "book.closed"
             }
         }
         
@@ -138,6 +175,7 @@ struct PracticeSettings: Codable {
             case .sequential: return "Study words in HSK order"
             case .random: return "Random order, prioritizing new words"
             case .reviewMistakes: return "Focus on words you got wrong"
+            case .chapter: return "Study by chapter progression"
             }
         }
     }
