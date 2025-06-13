@@ -1,0 +1,24 @@
+"/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Components/Cards/AdaptiveCharacterDisplay.swift":
+  dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/AdaptiveCharacterDisplay.d"
+  swift-dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/AdaptiveCharacterDisplay.swiftdeps"
+  object: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/AdaptiveCharacterDisplay.o"
+  const-values: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/AdaptiveCharacterDisplay.swiftconstvalues"
+  diagnostics: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/AdaptiveCharacterDisplay.dia"
+"/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Components/Cards/ActionCard.swift":
+  object: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ActionCard.o"
+  swift-dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ActionCard.swiftdeps"
+  diagnostics: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ActionCard.dia"
+  const-values: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ActionCard.swiftconstvalues"
+  dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ActionCard.d"
+"/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Components/Cards/SelectableCard.swift":
+  const-values: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SelectableCard.swiftconstvalues"
+  swift-dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SelectableCard.swiftdeps"
+  dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SelectableCard.d"
+  object: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SelectableCard.o"
+  diagnostics: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SelectableCard.dia"
+"/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Components/Cards/ResponsiveCharacterDisplay.swift":
+  dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ResponsiveCharacterDisplay.d"
+  object: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ResponsiveCharacterDisplay.o"
+  swift-dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ResponsiveCharacterDisplay.swiftdeps"
+  diagnostics: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ResponsiveCharacterDisplay.dia"
+  const-values: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ResponsiveCharacterDisplay.swiftconstvalues"

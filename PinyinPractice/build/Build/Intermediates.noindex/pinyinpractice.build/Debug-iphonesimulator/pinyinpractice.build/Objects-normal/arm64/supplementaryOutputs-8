@@ -1,0 +1,18 @@
+"/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Screens/SetupView.swift":
+  dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SetupView.d"
+  diagnostics: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SetupView.dia"
+  object: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SetupView.o"
+  swift-dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SetupView.swiftdeps"
+  const-values: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SetupView.swiftconstvalues"
+"/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/DerivedSources/GeneratedAssetSymbols.swift":
+  diagnostics: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/GeneratedAssetSymbols.dia"
+  object: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/GeneratedAssetSymbols.o"
+  dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/GeneratedAssetSymbols.d"
+  const-values: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/GeneratedAssetSymbols.swiftconstvalues"
+  swift-dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/GeneratedAssetSymbols.swiftdeps"
+"/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/pinyinpracticeApp.swift":
+  dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/pinyinpracticeApp.d"
+  object: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/pinyinpracticeApp.o"
+  const-values: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/pinyinpracticeApp.swiftconstvalues"
+  swift-dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/pinyinpracticeApp.swiftdeps"
+  diagnostics: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/pinyinpracticeApp.dia"

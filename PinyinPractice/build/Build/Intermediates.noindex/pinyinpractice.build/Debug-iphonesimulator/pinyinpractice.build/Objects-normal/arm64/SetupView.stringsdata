@@ -1,0 +1,16 @@
+{
+  "source": "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Screens/SetupView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Ready to practice your pinyin?",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 58
+        }
+      }
+    ]
+  },
+  "version": 1
+}

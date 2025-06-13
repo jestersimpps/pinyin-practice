@@ -57,7 +57,9 @@ struct UserProgress: Codable {
         return chapterProgress[chapterId]
     }
     
-    mutating func updateChapterProgress(chapterId: String, wordId: String, totalWords: Int) {
+    mutating func updateChapterProgress(chapterId: String, wordId: String, totalWords: Int) -> Bool {
+        var wasJustCompleted = false
+        
         if chapterProgress[chapterId] == nil {
             chapterProgress[chapterId] = ChapterProgress(
                 chapterId: chapterId,
@@ -67,7 +69,15 @@ struct UserProgress: Codable {
                 completionDate: nil
             )
         }
+        
+        let wasCompleted = chapterProgress[chapterId]?.isCompleted ?? false
         chapterProgress[chapterId]?.markWordCompleted(wordId)
+        let isNowCompleted = chapterProgress[chapterId]?.isCompleted ?? false
+        
+        // Return true if the chapter was just completed (wasn't complete before, but is now)
+        wasJustCompleted = !wasCompleted && isNowCompleted
+        
+        return wasJustCompleted
     }
     
     func isChapterUnlocked(level: Int, chapter: Int) -> Bool {

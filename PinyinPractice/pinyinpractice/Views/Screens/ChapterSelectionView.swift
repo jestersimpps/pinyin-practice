@@ -157,8 +157,14 @@ private struct ChapterCard: View {
                             .font(.system(size: 18, weight: .semibold))
                             .foregroundColor(textColor)
                         
+                        Text(chapter.description)
+                            .font(.system(size: 13, weight: .regular))
+                            .foregroundColor(secondaryTextColor)
+                            .lineLimit(2)
+                            .multilineTextAlignment(.leading)
+                        
                         Text("\(chapter.wordCount) words")
-                            .font(.system(size: 14, weight: .regular))
+                            .font(.system(size: 12, weight: .medium))
                             .foregroundColor(secondaryTextColor)
                     }
                     
@@ -201,7 +207,7 @@ private struct ChapterCard: View {
                     }
                 }
             }
-            .padding(16)
+            .padding(20)
             .background(
                 RoundedRectangle(cornerRadius: 16)
                     .fill(backgroundColor)

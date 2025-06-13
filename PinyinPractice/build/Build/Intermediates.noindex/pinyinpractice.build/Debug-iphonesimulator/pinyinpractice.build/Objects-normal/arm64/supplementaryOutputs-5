@@ -1,0 +1,24 @@
+"/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Components/Navigation/CircularIconButton.swift":
+  const-values: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/CircularIconButton.swiftconstvalues"
+  diagnostics: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/CircularIconButton.dia"
+  object: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/CircularIconButton.o"
+  dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/CircularIconButton.d"
+  swift-dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/CircularIconButton.swiftdeps"
+"/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Components/Layout/SectionHeader.swift":
+  dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SectionHeader.d"
+  const-values: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SectionHeader.swiftconstvalues"
+  diagnostics: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SectionHeader.dia"
+  object: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SectionHeader.o"
+  swift-dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SectionHeader.swiftdeps"
+"/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Components/Layout/ProgressBar.swift":
+  const-values: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ProgressBar.swiftconstvalues"
+  object: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ProgressBar.o"
+  dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ProgressBar.d"
+  swift-dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ProgressBar.swiftdeps"
+  diagnostics: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ProgressBar.dia"
+"/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Components/Navigation/NavigationHeader.swift":
+  const-values: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/NavigationHeader.swiftconstvalues"
+  swift-dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/NavigationHeader.swiftdeps"
+  diagnostics: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/NavigationHeader.dia"
+  dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/NavigationHeader.d"
+  object: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/NavigationHeader.o"

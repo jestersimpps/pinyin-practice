@@ -94,6 +94,28 @@ struct PracticeView: View {
         .sheet(isPresented: $showingSettings) {
             SettingsView()
         }
+        .sheet(isPresented: $viewModel.showingChapterCompletion) {
+            if let chapter = viewModel.completedChapter,
+               let progress = viewModel.completedChapterProgress {
+                ChapterCompletionView(
+                    chapter: chapter,
+                    chapterProgress: progress,
+                    onContinue: {
+                        // Load next chapter
+                        viewModel.showingChapterCompletion = false
+                        viewModel.loadNextChapter()
+                        // Reset state for new chapter
+                        showHint = false
+                        isInputFocused = true
+                    },
+                    onReview: {
+                        // Start review mode for this chapter
+                        viewModel.showingChapterCompletion = false
+                        viewModel.reloadWordsIfNeeded()
+                    }
+                )
+            }
+        }
         .onChange(of: viewModel.feedbackState) { _, newState in
             if newState == .correct {
                 showHint = false

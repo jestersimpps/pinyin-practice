@@ -86,13 +86,25 @@ class VocabularyService: ObservableObject {
         // Original frequency-based organization
         let sortedItems = items.sorted { $0.frequency < $1.frequency }
         
-        let chaptersCount = ChapterConfiguration.chaptersPerLevel[level] ?? 10
+        let chaptersCount = ChapterCurriculum.chaptersForLevel(level)
         let wordsPerChapter = items.count / chaptersCount
         let remainder = items.count % chaptersCount
         
         var currentIndex = 0
         
         for chapterNum in 1...chaptersCount {
+            // Calculate global chapter number for curriculum lookup
+            let globalChapterNum: Int
+            switch level {
+            case 1: globalChapterNum = chapterNum  // 1-15
+            case 2: globalChapterNum = 15 + chapterNum  // 16-28
+            case 3: globalChapterNum = 28 + chapterNum  // 29-42
+            case 4: globalChapterNum = 42 + chapterNum  // 43-56
+            case 5: globalChapterNum = 56 + chapterNum  // 57-68
+            case 6: globalChapterNum = 68 + chapterNum  // 69-80
+            default: globalChapterNum = chapterNum
+            }
+            
             // Distribute remainder words across first chapters
             let chapterSize = wordsPerChapter + (chapterNum <= remainder ? 1 : 0)
             let endIndex = min(currentIndex + chapterSize, items.count)
@@ -102,13 +114,16 @@ class VocabularyService: ObservableObject {
             
             vocabularyByChapter[chapterId] = chapterWords
             
+            // Get chapter info from ChapterCurriculum which has all chapter titles
+            let chapterInfo = ChapterCurriculum.getChapterInfo(chapter: globalChapterNum)
+            
             // Create chapter metadata
             let chapter = Chapter(
                 id: chapterId,
                 hskLevel: level,
                 chapterNumber: chapterNum,
-                title: ChapterConfiguration.getChapterTitle(level: level, chapter: chapterNum),
-                description: "Study \(chapterWords.count) essential HSK\(level) words",
+                title: chapterInfo.title,
+                description: chapterInfo.description,
                 wordCount: chapterWords.count,
                 isUnlocked: chapterNum == 1 // First chapter always unlocked
             )

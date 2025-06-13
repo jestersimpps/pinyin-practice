@@ -1,0 +1,16 @@
+{
+  "source": "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Components/Input/FeedbackMessage.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Correct: %@",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 24
+        }
+      }
+    ]
+  },
+  "version": 1
+}

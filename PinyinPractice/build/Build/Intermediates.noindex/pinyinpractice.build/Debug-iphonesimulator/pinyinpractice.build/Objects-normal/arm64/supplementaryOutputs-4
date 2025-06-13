@@ -1,0 +1,24 @@
+"/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Components/Layout/CompactStatsBar.swift":
+  dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/CompactStatsBar.d"
+  swift-dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/CompactStatsBar.swiftdeps"
+  object: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/CompactStatsBar.o"
+  diagnostics: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/CompactStatsBar.dia"
+  const-values: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/CompactStatsBar.swiftconstvalues"
+"/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Components/Input/FeedbackMessage.swift":
+  dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/FeedbackMessage.d"
+  const-values: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/FeedbackMessage.swiftconstvalues"
+  diagnostics: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/FeedbackMessage.dia"
+  swift-dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/FeedbackMessage.swiftdeps"
+  object: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/FeedbackMessage.o"
+"/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Components/Input/PinyinInputField.swift":
+  dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PinyinInputField.d"
+  object: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PinyinInputField.o"
+  swift-dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PinyinInputField.swiftdeps"
+  const-values: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PinyinInputField.swiftconstvalues"
+  diagnostics: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PinyinInputField.dia"
+"/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Components/Input/MobileInputZone.swift":
+  diagnostics: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/MobileInputZone.dia"
+  swift-dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/MobileInputZone.swiftdeps"
+  dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/MobileInputZone.d"
+  object: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/MobileInputZone.o"
+  const-values: "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/MobileInputZone.swiftconstvalues"

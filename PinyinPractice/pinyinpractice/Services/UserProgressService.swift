@@ -72,8 +72,9 @@ class UserProgressService: ObservableObject {
         progress.recordAnswer(wordId: word.id, isCorrect: isCorrect)
     }
     
-    func updateChapterProgress(chapterId: String, wordId: String, totalWords: Int) {
-        progress.updateChapterProgress(chapterId: chapterId, wordId: wordId, totalWords: totalWords)
+    @discardableResult
+    func updateChapterProgress(chapterId: String, wordId: String, totalWords: Int) -> Bool {
+        return progress.updateChapterProgress(chapterId: chapterId, wordId: wordId, totalWords: totalWords)
     }
     
     func getChapterProgress(chapterId: String) -> ChapterProgress? {

@@ -1,0 +1,56 @@
+{
+  "source": "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Components/Cards/ResponsiveCharacterDisplay.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Simplified",
+        "location": {
+          "startingColumn": 87,
+          "startingLine": 70
+        }
+      },
+      {
+        "comment": "",
+        "key": "Traditional",
+        "location": {
+          "startingColumn": 102,
+          "startingLine": 70
+        }
+      },
+      {
+        "comment": "",
+        "key": "Radical",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 81
+        }
+      },
+      {
+        "comment": "",
+        "key": "Type",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 92
+        }
+      },
+      {
+        "comment": "",
+        "key": "Freq.",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 103
+        }
+      },
+      {
+        "comment": "",
+        "key": "#%lld",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 106
+        }
+      }
+    ]
+  },
+  "version": 1
+}
