@@ -25,6 +25,8 @@ struct ProgressStatsView: View {
                         overviewSection
                         streakSection
                         accuracyChartSection
+                        dailyWordsChartSection
+                        dailyPracticeTimeChartSection
                         levelProgressSection
                         achievementsSection
                     }
@@ -69,9 +71,9 @@ struct ProgressStatsView: View {
             HStack(spacing: 16) {
                 StatCard(
                     title: "Total Practice",
-                    value: "\(progressService.progress.totalAttempts)",
-                    subtitle: "attempts made",
-                    icon: "pencil.circle.fill",
+                    value: formatPracticeTime(progressService.getTotalPracticeMinutes()),
+                    subtitle: "\(progressService.progress.totalAttempts) attempts",
+                    icon: "clock.fill",
                     color: Color("VibrantOrange")
                 )
                 
@@ -102,7 +104,7 @@ struct ProgressStatsView: View {
                             .foregroundColor(progressService.progress.currentStreak > 0 ? Color("VibrantOrange") : Color("SecondaryText"))
                     }
                     
-                    Text("Current Streak")
+                    Text(progressService.progress.currentStreak == 1 ? "1 Day Streak" : "\(progressService.progress.currentStreak) Days Streak")
                         .font(.system(size: 14, weight: .regular))
                         .foregroundColor(Color("SecondaryText"))
                 }
@@ -114,7 +116,7 @@ struct ProgressStatsView: View {
                         .font(.system(size: 32, weight: .semibold, design: .rounded))
                         .foregroundColor(Color("PrimaryText"))
                     
-                    Text("Best Streak")
+                    Text(progressService.progress.bestStreak == 1 ? "Best: 1 Day" : "Best: \(progressService.progress.bestStreak) Days")
                         .font(.system(size: 14, weight: .regular))
                         .foregroundColor(Color("SecondaryText"))
                 }
@@ -187,6 +189,128 @@ struct ProgressStatsView: View {
                                     endPoint: .bottom
                                 )
                             )
+                        }
+                    }
+                    .frame(height: 200)
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(Color("SecondaryBackground"))
+                    )
+                }
+            } else {
+                Text("Chart requires iOS 16.0 or later")
+                    .frame(height: 200)
+                    .frame(maxWidth: .infinity)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(Color("SecondaryBackground"))
+                    )
+            }
+        }
+    }
+    
+    private var dailyWordsChartSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                SectionHeader(title: "Daily Words Learned", icon: "calendar")
+                Spacer()
+            }
+            
+            if #available(iOS 16.0, *) {
+                let wordsData = getDailyWordsData()
+                
+                if wordsData.isEmpty {
+                    VStack(spacing: 12) {
+                        Image(systemName: "book.closed")
+                            .font(.largeTitle)
+                            .foregroundColor(Color("SecondaryText").opacity(0.5))
+                        
+                        Text("No practice data yet")
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(Color("SecondaryText"))
+                        
+                        Text("Complete some practice sessions to see your daily progress")
+                            .font(.system(size: 14, weight: .regular))
+                            .foregroundColor(Color("SecondaryText").opacity(0.8))
+                            .multilineTextAlignment(.center)
+                    }
+                    .frame(height: 200)
+                    .frame(maxWidth: .infinity)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(Color("SecondaryBackground"))
+                    )
+                } else {
+                    Chart {
+                        ForEach(wordsData, id: \.date) { dataPoint in
+                            BarMark(
+                                x: .value("Date", dataPoint.date, unit: .day),
+                                y: .value("Words", dataPoint.words)
+                            )
+                            .foregroundStyle(Color("MidnightGreen"))
+                            .cornerRadius(4)
+                        }
+                    }
+                    .frame(height: 200)
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(Color("SecondaryBackground"))
+                    )
+                }
+            } else {
+                Text("Chart requires iOS 16.0 or later")
+                    .frame(height: 200)
+                    .frame(maxWidth: .infinity)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(Color("SecondaryBackground"))
+                    )
+            }
+        }
+    }
+    
+    private var dailyPracticeTimeChartSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                SectionHeader(title: "Daily Practice Time", icon: "clock")
+                Spacer()
+            }
+            
+            if #available(iOS 16.0, *) {
+                let timeData = getDailyPracticeTimeData()
+                
+                if timeData.isEmpty {
+                    VStack(spacing: 12) {
+                        Image(systemName: "clock")
+                            .font(.largeTitle)
+                            .foregroundColor(Color("SecondaryText").opacity(0.5))
+                        
+                        Text("No practice data yet")
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(Color("SecondaryText"))
+                        
+                        Text("Complete some practice sessions to see your daily time")
+                            .font(.system(size: 14, weight: .regular))
+                            .foregroundColor(Color("SecondaryText").opacity(0.8))
+                            .multilineTextAlignment(.center)
+                    }
+                    .frame(height: 200)
+                    .frame(maxWidth: .infinity)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(Color("SecondaryBackground"))
+                    )
+                } else {
+                    Chart {
+                        ForEach(timeData, id: \.date) { dataPoint in
+                            BarMark(
+                                x: .value("Date", dataPoint.date, unit: .day),
+                                y: .value("Minutes", dataPoint.minutes)
+                            )
+                            .foregroundStyle(Color("VibrantOrange"))
+                            .cornerRadius(4)
                         }
                     }
                     .frame(height: 200)
@@ -287,6 +411,48 @@ struct ProgressStatsView: View {
         }
         
         return progressService.getAccuracyTrend(days: days)
+    }
+    
+    private func getDailyWordsData() -> [(date: Date, words: Int)] {
+        let days: Int
+        switch selectedTimeRange {
+        case .week:
+            days = 7
+        case .month:
+            days = 30
+        case .all:
+            days = 0
+        }
+        
+        return progressService.getDailyWordsLearned(days: days)
+    }
+    
+    private func getDailyPracticeTimeData() -> [(date: Date, minutes: Double)] {
+        let days: Int
+        switch selectedTimeRange {
+        case .week:
+            days = 7
+        case .month:
+            days = 30
+        case .all:
+            days = 0
+        }
+        
+        return progressService.getDailyPracticeTime(days: days)
+    }
+    
+    private func formatPracticeTime(_ totalMinutes: Int) -> String {
+        if totalMinutes < 60 {
+            return "\(totalMinutes)m"
+        } else {
+            let hours = totalMinutes / 60
+            let minutes = totalMinutes % 60
+            if minutes == 0 {
+                return "\(hours)h"
+            } else {
+                return "\(hours)h \(minutes)m"
+            }
+        }
     }
 }
 

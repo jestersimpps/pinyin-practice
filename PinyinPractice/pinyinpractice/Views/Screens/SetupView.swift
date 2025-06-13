@@ -69,7 +69,8 @@ struct SetupView: View {
                 title: "Words Learned",
                 value: "\(progressService.getTotalWordsLearned())",
                 icon: "checkmark.seal.fill",
-                color: Color("SuccessGreen")
+                color: Color("SuccessGreen"),
+                action: { showingProgress = true }
             )
             .scaleEffect(animateStats ? 1 : 0.8)
             .opacity(animateStats ? 1 : 0)
@@ -77,9 +78,10 @@ struct SetupView: View {
             
             StatBox(
                 title: "Current Streak",
-                value: "\(progressService.progress.currentStreak)",
+                value: formatStreak(progressService.progress.currentStreak),
                 icon: "flame.fill",
-                color: progressService.progress.currentStreak > 0 ? Color("VibrantOrange") : Color("SecondaryText")
+                color: progressService.progress.currentStreak > 0 ? Color("VibrantOrange") : Color("SecondaryText"),
+                action: { showingProgress = true }
             )
             .scaleEffect(animateStats ? 1 : 0.8)
             .opacity(animateStats ? 1 : 0)
@@ -232,6 +234,17 @@ struct SetupView: View {
         progressService.settings.isReviewMode = true
         showingPractice = true
     }
+    
+    private func formatStreak(_ streak: Int) -> String {
+        switch streak {
+        case 0:
+            return "0 days"
+        case 1:
+            return "1 day"
+        default:
+            return "\(streak) days"
+        }
+    }
 }
 
 private struct StatBox: View {
@@ -239,6 +252,8 @@ private struct StatBox: View {
     let value: String
     let icon: String
     let color: Color
+    var action: (() -> Void)? = nil
+    @State private var isPressed = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -267,6 +282,23 @@ private struct StatBox: View {
                         .stroke(color.opacity(0.2), lineWidth: 1)
                 )
         )
+        .scaleEffect(isPressed ? 0.95 : 1.0)
+        .onTapGesture {
+            // Haptic feedback
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            
+            // Handle tap with animation
+            withAnimation(.easeInOut(duration: 0.1)) {
+                isPressed = true
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                withAnimation(.easeInOut(duration: 0.1)) {
+                    isPressed = false
+                }
+                // Call the action after animation
+                action?()
+            }
+        }
     }
 }
 
@@ -276,7 +308,10 @@ private struct SecondaryActionButton: View {
     let action: () -> Void
     
     var body: some View {
-        Button(action: action) {
+        Button(action: {
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            action()
+        }) {
             VStack(spacing: 8) {
                 Image(systemName: icon)
                     .font(.title2)

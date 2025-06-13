@@ -171,4 +171,41 @@ class UserProgressService: ObservableObject {
         let sessionsInRange = getSessionsForTimeRange(days)
         return sessionsInRange.map { ($0.date, $0.accuracy) }
     }
+    
+    func getDailyWordsLearned(days: Int) -> [(date: Date, words: Int)] {
+        let sessionsInRange = getSessionsForTimeRange(days)
+        
+        // Group sessions by day
+        let calendar = Calendar.current
+        var dailyWords: [Date: Int] = [:]
+        
+        for session in sessionsInRange {
+            let startOfDay = calendar.startOfDay(for: session.date)
+            dailyWords[startOfDay] = (dailyWords[startOfDay] ?? 0) + session.wordsStudied
+        }
+        
+        // Convert to sorted array
+        return dailyWords.map { ($0.key, $0.value) }.sorted { $0.date < $1.date }
+    }
+    
+    func getDailyPracticeTime(days: Int) -> [(date: Date, minutes: Double)] {
+        let sessionsInRange = getSessionsForTimeRange(days)
+        
+        // Group sessions by day
+        let calendar = Calendar.current
+        var dailyTime: [Date: TimeInterval] = [:]
+        
+        for session in sessionsInRange {
+            let startOfDay = calendar.startOfDay(for: session.date)
+            dailyTime[startOfDay] = (dailyTime[startOfDay] ?? 0) + session.duration
+        }
+        
+        // Convert to sorted array with minutes
+        return dailyTime.map { ($0.key, $0.value / 60.0) }.sorted { $0.date < $1.date }
+    }
+    
+    func getTotalPracticeMinutes() -> Int {
+        let totalSeconds = sessions.reduce(0) { $0 + $1.duration }
+        return Int(totalSeconds / 60)
+    }
 }

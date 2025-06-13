@@ -12,7 +12,12 @@ struct ActionCard: View {
     @State private var isPressed = false
     
     var body: some View {
-        Button(action: action) {
+        Button(action: {
+            if !isDisabled {
+                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            }
+            action()
+        }) {
             VStack(alignment: .leading, spacing: 12) {
                 HStack {
                     Image(systemName: icon)

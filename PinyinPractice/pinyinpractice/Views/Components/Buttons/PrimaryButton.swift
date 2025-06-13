@@ -22,7 +22,12 @@ struct PrimaryButton: View {
     }
     
     var body: some View {
-        Button(action: action) {
+        Button(action: {
+            if !isDisabled && !isLoading {
+                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            }
+            action()
+        }) {
             HStack {
                 if isLoading {
                     ProgressView()

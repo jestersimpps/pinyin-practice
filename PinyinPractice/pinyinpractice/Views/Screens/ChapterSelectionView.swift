@@ -47,6 +47,7 @@ struct ChapterSelectionView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel") {
+                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
                         dismiss()
                     }
                     .foregroundColor(.orange)
@@ -66,7 +67,10 @@ struct ChapterSelectionView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 16) {
                 ForEach(1...6, id: \.self) { level in
-                    Button(action: { selectedLevel = level }) {
+                    Button(action: { 
+                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                        selectedLevel = level 
+                    }) {
                         Text("HSK \(level)")
                             .font(.system(size: 16, weight: .medium))
                             .foregroundColor(selectedLevel == level ? .white : Color("PrimaryText"))
@@ -127,8 +131,13 @@ struct ChapterSelectionView: View {
     
     private func toggleChapter(_ chapter: Chapter) {
         guard progressService.isChapterUnlocked(level: chapter.hskLevel, chapter: chapter.chapterNumber) else {
+            // Haptic feedback for locked chapter
+            UINotificationFeedbackGenerator().notificationOccurred(.warning)
             return
         }
+        
+        // Haptic feedback for selection
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         
         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
             if settings.wrappedValue.selectedChapters.contains(chapter.id) {
@@ -140,6 +149,7 @@ struct ChapterSelectionView: View {
     }
     
     private func startChapterPractice() {
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         // Ensure review mode is disabled when starting chapter practice
         progressService.settings.isReviewMode = false
         showingPractice = true
