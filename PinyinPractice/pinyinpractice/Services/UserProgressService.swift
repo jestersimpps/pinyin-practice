@@ -76,16 +76,29 @@ class UserProgressService: ObservableObject {
         return Date()
     }
     
-    func endSession(startTime: Date, wordsStudied: Int) {
+    func endSession(startTime: Date, wordsStudied: Int, correctAnswers: Int? = nil, totalAttempts: Int? = nil) {
         let duration = Date().timeIntervalSince(startTime)
-        let correctInSession = progress.correctAnswers - (sessions.last?.correctAnswers ?? 0)
-        let accuracy = wordsStudied > 0 ? Double(correctInSession) / Double(wordsStudied) * 100 : 0
+        
+        // Use provided session stats if available, otherwise calculate from total progress
+        let sessionCorrect: Int
+        let sessionTotal: Int
+        
+        if let correct = correctAnswers, let total = totalAttempts {
+            sessionCorrect = correct
+            sessionTotal = total
+        } else {
+            // Fallback to old calculation method
+            sessionCorrect = progress.correctAnswers - (sessions.last?.correctAnswers ?? 0)
+            sessionTotal = wordsStudied
+        }
+        
+        let accuracy = sessionTotal > 0 ? Double(sessionCorrect) / Double(sessionTotal) * 100 : 0
         
         let session = PracticeSession(
             date: Date(),
             duration: duration,
             wordsStudied: wordsStudied,
-            correctAnswers: correctInSession,
+            correctAnswers: sessionCorrect,
             accuracy: accuracy,
             hskLevels: Array(settings.selectedHSKLevels)
         )

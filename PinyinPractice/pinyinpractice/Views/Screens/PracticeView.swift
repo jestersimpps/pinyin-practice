@@ -6,223 +6,267 @@ struct PracticeView: View {
     @State private var showingSettings = false
     @State private var keyboardHeight: CGFloat = 0
     @FocusState private var isInputFocused: Bool
-    @State private var previousPracticeMode: PracticeSettings.PracticeMode?
+    @State private var showHint = false
     
     var body: some View {
         ZStack {
             Color("PrimaryBackground")
                 .ignoresSafeArea()
                 .onTapGesture {
-                    hideKeyboard()
+                    if keyboardHeight > 0 {
+                        isInputFocused = false
+                    }
                 }
             
             VStack(spacing: 0) {
-                NavigationHeader(
-                    title: "Practice",
-                    subtitle: practiceSubtitle,
-                    leftAction: { dismiss() },
-                    rightAction: { showingSettings = true },
-                    rightIcon: "gearshape.fill"
-                )
+                // Adaptive header
+                if keyboardHeight == 0 {
+                    fullHeader
+                } else {
+                    compactHeader
+                }
                 
-                ProgressBar(progress: viewModel.progressPercentage)
-                
-                GeometryReader { geometry in
-                    VStack(spacing: 0) {
-                        if viewModel.feedbackState != .incorrect && !viewModel.wasSkipped {
-                            CompactStatsBar(
-                                progress: "\(viewModel.wordsCompleted)/\(viewModel.totalWords)",
-                                accuracy: viewModel.accuracy,
-                                streak: viewModel.currentStreak
-                            )
-                            .padding(.horizontal, 20)
-                            .padding(.top, 16)
-                            .transition(.move(edge: .top).combined(with: .opacity))
-                            .animation(.easeInOut(duration: 0.3), value: viewModel.feedbackState)
-                        }
-                        
-                        ScrollView {
-                            VStack(spacing: 16) {
-                                FeedbackMessage(
-                                    feedbackState: mapMessageFeedbackState(viewModel.feedbackState),
-                                    correctAnswer: viewModel.feedbackState == .incorrect ? getCorrectAnswer() : nil,
-                                    requireTones: UserProgressService.shared.settings.requireTones
+                // Main content
+                ScrollViewReader { proxy in
+                    ScrollView {
+                        VStack(spacing: 16) {
+                            // Character display
+                            if let word = viewModel.currentWord {
+                                AdaptiveCharacterDisplay(
+                                    word: word,
+                                    feedbackState: mapFeedbackState(viewModel.feedbackState),
+                                    showHint: showHint,
+                                    isKeyboardVisible: keyboardHeight > 0,
+                                    onHintToggle: { showHint.toggle() }
                                 )
-                                .padding(.horizontal, 20)
-                                .padding(.top, 8)
-                                
-                                if let word = viewModel.currentWord {
-                                    ResponsiveCharacterDisplay(
-                                        character: UserProgressService.shared.settings.useTraditional ? word.traditional : word.simplified,
-                                        translation: word.english,
-                                        showTranslation: UserProgressService.shared.settings.showEnglishTranslation || viewModel.feedbackState == .incorrect || viewModel.wasSkipped,
-                                        feedbackState: mapFeedbackState(viewModel.feedbackState),
-                                        hint: generateHint(for: word),
-                                        characterHint: word.characterHint,
-                                        showHint: viewModel.showHint,
-                                        showPronunciationHint: UserProgressService.shared.settings.showPronunciationHints,
-                                        showCharacterHint: UserProgressService.shared.settings.showCharacterHints,
-                                        isCompact: keyboardHeight > 0,
-                                        additionalInfo: ResponsiveCharacterDisplay.AdditionalInfo(
-                                            traditional: UserProgressService.shared.settings.useTraditional ? 
-                                                (word.simplified != word.traditional ? word.simplified : nil) : 
-                                                (word.traditional != word.simplified ? word.traditional : nil),
-                                            radical: word.radical,
-                                            partOfSpeech: word.partOfSpeech.map(mapPartOfSpeech),
-                                            frequency: word.frequency
-                                        ),
-                                        showAdditionalInfo: UserProgressService.shared.settings.showAdditionalInfo && (viewModel.feedbackState == .incorrect || viewModel.wasSkipped)
-                                    )
-                                    .padding(.horizontal, 20)
-                                    .padding(.top, keyboardHeight > 0 && viewModel.feedbackState != .none ? 4 : (keyboardHeight > 0 ? 12 : 20))
-                                }
-                                
-                                inputSection
-                                    .padding(.horizontal, 20)
-                                
-                                if keyboardHeight > 0 {
-                                    Color.clear
-                                        .frame(height: keyboardHeight - geometry.safeAreaInsets.bottom + 20)
-                                }
+                                .padding(.horizontal, 16)
+                                .id("character")
+                            }
+                            
+                            
+                            // Spacer for keyboard
+                            if keyboardHeight > 0 {
+                                Color.clear
+                                    .frame(height: keyboardHeight - 100)
                             }
                         }
-                        .scrollIndicators(.hidden)
+                        .padding(.vertical, 16)
+                    }
+                    .scrollIndicators(.hidden)
+                    .onChange(of: keyboardHeight) { _, newValue in
+                        if newValue > 0 {
+                            withAnimation {
+                                proxy.scrollTo("character", anchor: .top)
+                            }
+                        }
                     }
                 }
+                
+                // Input zone
+                MobileInputZone(
+                    text: $viewModel.userInput,
+                    isFocused: $isInputFocused,
+                    feedbackState: mapInputFeedbackState(viewModel.feedbackState),
+                    onSubmit: handleSubmit,
+                    onSkip: {
+                        viewModel.skipWord()
+                        showHint = false
+                        isInputFocused = true
+                    },
+                    onHintToggle: { showHint.toggle() },
+                    showHintButton: UserProgressService.shared.settings.showPronunciationHints && viewModel.feedbackState == .none,
+                    showSkipButton: viewModel.feedbackState == .none
+                )
+                .padding(.horizontal, 16)
+                .padding(.bottom, 16)
             }
         }
         .navigationBarHidden(true)
         .onAppear {
             setupKeyboardObservers()
-            isInputFocused = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                isInputFocused = true
+            }
+        }
+        .onDisappear {
+            viewModel.saveSessionOnExit()
         }
         .sheet(isPresented: $showingSettings) {
             SettingsView()
         }
-        .onChange(of: showingSettings) { oldValue, newValue in
-            if oldValue && !newValue {
-                // Sheet was dismissed
-                if previousPracticeMode != UserProgressService.shared.settings.practiceMode {
-                    viewModel.reloadWordsIfNeeded()
-                }
-            } else if !oldValue && newValue {
-                // Sheet is being presented
-                previousPracticeMode = UserProgressService.shared.settings.practiceMode
+        .onChange(of: viewModel.feedbackState) { _, newState in
+            if newState == .correct {
+                showHint = false
+                // Haptic feedback
+                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            } else if newState == .incorrect {
+                // Haptic feedback
+                UINotificationFeedbackGenerator().notificationOccurred(.error)
             }
         }
-    }
-    
-    private var practiceSubtitle: String? {
-        switch UserProgressService.shared.settings.practiceMode {
-        case .reviewMistakes:
-            return "Review Mode"
-        case .random:
-            return "Random Mode"
-        default:
-            return UserProgressService.shared.settings.requireTones ? nil : "Simple Mode"
-        }
-    }
-    
-    private var inputSection: some View {
-        VStack(spacing: 12) {
-            HStack(spacing: 12) {
-                PinyinInputField(
-                    text: $viewModel.userInput,
-                    placeholder: "Enter pinyin...",
-                    feedbackState: mapInputFeedbackState(viewModel.feedbackState),
-                    isFocused: _isInputFocused,
-                    onSubmit: handleSubmit,
-                    onClear: { viewModel.userInput = "" }
-                )
-                
-                if keyboardHeight > 0 {
-                    actionButtons
-                        .transition(.move(edge: .trailing).combined(with: .opacity))
-                }
-            }
-            
-            if keyboardHeight == 0 {
-                actionButtons
-                    .transition(.opacity)
-            }
-        }
-    }
-    
-    private var actionButtons: some View {
-        HStack(spacing: 12) {
-            if UserProgressService.shared.settings.showPronunciationHints && 
-               viewModel.feedbackState == .none {
-                Button(action: {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                        viewModel.toggleHint()
+        .gesture(
+            DragGesture()
+                .onEnded { value in
+                    if value.translation.width > 100 && viewModel.feedbackState == .none {
+                        // Swipe right to skip
+                        viewModel.skipWord()
+                        showHint = false
+                        isInputFocused = true
+                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                    } else if value.translation.width < -100 && UserProgressService.shared.settings.showPronunciationHints {
+                        // Swipe left to toggle hints
+                        showHint.toggle()
+                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
                     }
-                }) {
-                    Image(systemName: viewModel.showHint ? "lightbulb.fill" : "lightbulb")
-                        .font(.title3)
-                        .foregroundColor(viewModel.showHint ? .orange : Color("SecondaryText"))
-                        .frame(width: 44, height: 44)
+                }
+        )
+    }
+    
+    // MARK: - Headers
+    
+    private var fullHeader: some View {
+        VStack(spacing: 0) {
+            NavigationHeader(
+                title: "Practice",
+                subtitle: practiceSubtitle,
+                leftAction: { dismiss() },
+                rightAction: { showingSettings = true },
+                rightIcon: "gearshape.fill"
+            )
+            
+            ProgressBar(progress: viewModel.progressPercentage)
+            
+            // Stats row
+            HStack(spacing: 20) {
+                // Progress
+                HStack(spacing: 6) {
+                    Image(systemName: "flag.fill")
+                        .font(.caption)
+                        .foregroundColor(.blue)
+                    Text("\(viewModel.wordsCompleted)/\(viewModel.totalWords)")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                }
+                
+                // Accuracy
+                HStack(spacing: 6) {
+                    Image(systemName: "target")
+                        .font(.caption)
+                        .foregroundColor(viewModel.accuracy == "0%" ? Color("SecondaryText") : Color(red: 0.2, green: 0.8, blue: 0.4))
+                    Text(viewModel.accuracy)
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                }
+                
+                // Streak
+                HStack(spacing: 6) {
+                    Image(systemName: "flame.fill")
+                        .font(.caption)
+                        .foregroundColor(viewModel.currentStreak == 0 ? Color("SecondaryText") : .orange)
+                    Text("\(viewModel.currentStreak)")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                }
+                
+                Spacer()
+            }
+            .foregroundColor(Color("PrimaryText"))
+            .padding(.horizontal, 20)
+            .padding(.vertical, 12)
+            .background(Color("SecondaryBackground").opacity(0.3))
+        }
+    }
+    
+    private var compactHeader: some View {
+        VStack(spacing: 8) {
+            HStack(spacing: 12) {
+                // Back button
+                Button(action: { dismiss() }) {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 20, weight: .semibold))
+                        .foregroundColor(Color("PrimaryText"))
+                        .frame(width: 36, height: 36)
                         .background(
                             Circle()
-                                .fill(viewModel.showHint ? Color.orange.opacity(0.15) : Color("SecondaryBackground").opacity(0.5))
+                                .fill(Color("SecondaryBackground").opacity(0.5))
                         )
                 }
-                .transition(.scale.combined(with: .opacity))
+                
+                // Minimal progress indicator
+                GeometryReader { geometry in
+                    Rectangle()
+                        .fill(Color(red: 0.2, green: 0.8, blue: 0.4))
+                        .frame(width: geometry.size.width * viewModel.progressPercentage)
+                }
+                .frame(height: 3)
+                .background(Color("SecondaryBackground").opacity(0.3))
+                .clipShape(Capsule())
+                
+                // Settings button
+                Button(action: { showingSettings = true }) {
+                    Image(systemName: "gearshape.fill")
+                        .font(.system(size: 20))
+                        .foregroundColor(Color("SecondaryText"))
+                        .frame(width: 36, height: 36)
+                        .background(
+                            Circle()
+                                .fill(Color("SecondaryBackground").opacity(0.5))
+                        )
+                }
             }
             
-            if viewModel.feedbackState == .none {
-                Button(action: {
-                    withAnimation {
-                        viewModel.skipWord()
-                        isInputFocused = true
-                    }
-                }) {
-                    HStack {
-                        Text("Skip")
-                            .font(.system(size: 16, weight: .semibold))
-                        Image(systemName: "forward.fill")
-                            .font(.caption)
-                    }
-                    .foregroundColor(Color("SecondaryText"))
-                    .padding(.horizontal, 16)
-                    .frame(height: 44)
-                    .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Color("SecondaryBackground").opacity(0.5))
-                    )
+            // Compact stats row
+            HStack(spacing: 16) {
+                // Progress
+                HStack(spacing: 4) {
+                    Image(systemName: "flag.fill")
+                        .font(.caption2)
+                        .foregroundColor(.blue)
+                    Text("\(viewModel.wordsCompleted)/\(viewModel.totalWords)")
+                        .font(.caption)
+                        .fontWeight(.medium)
                 }
-                .transition(.scale.combined(with: .opacity))
-            } else {
-                Button(action: {
-                    withAnimation {
-                        viewModel.nextWord()
-                        isInputFocused = true
-                    }
-                }) {
-                    HStack {
-                        Text("Next")
-                            .font(.system(size: 16, weight: .semibold))
-                        Image(systemName: "arrow.right")
-                            .font(.title3)
-                    }
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 20)
-                    .frame(height: 44)
-                    .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Color(red: 0.1, green: 0.3, blue: 0.4))
-                    )
+                
+                // Accuracy
+                HStack(spacing: 4) {
+                    Image(systemName: "target")
+                        .font(.caption2)
+                        .foregroundColor(viewModel.accuracy == "0%" ? Color("SecondaryText") : Color(red: 0.2, green: 0.8, blue: 0.4))
+                    Text(viewModel.accuracy)
+                        .font(.caption)
+                        .fontWeight(.medium)
                 }
-                .transition(.scale.combined(with: .opacity))
+                
+                // Streak
+                HStack(spacing: 4) {
+                    Image(systemName: "flame.fill")
+                        .font(.caption2)
+                        .foregroundColor(viewModel.currentStreak == 0 ? Color("SecondaryText") : .orange)
+                    Text("\(viewModel.currentStreak)")
+                        .font(.caption)
+                        .fontWeight(.medium)
+                }
+                
+                Spacer()
             }
+            .foregroundColor(Color("PrimaryText"))
         }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(Color("PrimaryBackground"))
     }
+    
+    // MARK: - Helper Methods
     
     private func handleSubmit() {
         if viewModel.feedbackState == .none {
             viewModel.checkAnswer()
         } else {
             viewModel.nextWord()
-            isInputFocused = true
+            showHint = false
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                isInputFocused = true
+            }
         }
     }
     
@@ -250,11 +294,55 @@ struct PracticeView: View {
         }
     }
     
-    private func hideKeyboard() {
-        isInputFocused = false
+    private func getCorrectAnswer() -> String? {
+        guard let word = viewModel.currentWord else { return nil }
+        if UserProgressService.shared.settings.requireTones {
+            return word.pinyin
+        } else {
+            return word.pinyin.replacingOccurrences(of: "[1-5]", with: "", options: .regularExpression)
+        }
     }
     
-    private func mapFeedbackState(_ state: PracticeViewModel.FeedbackState) -> ResponsiveCharacterDisplay.FeedbackState {
+    // MARK: - Computed Properties
+    
+    private var practiceSubtitle: String? {
+        switch UserProgressService.shared.settings.practiceMode {
+        case .reviewMistakes: return "Review Mode"
+        case .random: return "Random Mode"
+        default: return nil
+        }
+    }
+    
+    private var feedbackIcon: String {
+        switch viewModel.feedbackState {
+        case .correct: return "checkmark.circle.fill"
+        case .incorrect: return "xmark.circle.fill"
+        case .partial: return "exclamationmark.circle.fill"
+        case .none: return ""
+        }
+    }
+    
+    private var feedbackText: String {
+        switch viewModel.feedbackState {
+        case .correct: return "Correct!"
+        case .incorrect: return "Try again"
+        case .partial: return "Check tones"
+        case .none: return ""
+        }
+    }
+    
+    private var feedbackColor: Color {
+        switch viewModel.feedbackState {
+        case .correct: return Color(red: 0.2, green: 0.8, blue: 0.4)
+        case .incorrect: return .red
+        case .partial: return .orange
+        case .none: return .clear
+        }
+    }
+    
+    // MARK: - State Mapping
+    
+    private func mapFeedbackState(_ state: PracticeViewModel.FeedbackState) -> AdaptiveCharacterDisplay.FeedbackState {
         switch state {
         case .none: return .none
         case .correct: return .correct
@@ -263,7 +351,7 @@ struct PracticeView: View {
         }
     }
     
-    private func mapInputFeedbackState(_ state: PracticeViewModel.FeedbackState) -> PinyinInputField.FeedbackState {
+    private func mapInputFeedbackState(_ state: PracticeViewModel.FeedbackState) -> MobileInputZone.FeedbackState {
         switch state {
         case .none: return .none
         case .correct: return .correct
@@ -280,81 +368,23 @@ struct PracticeView: View {
         case .partial: return .partial
         }
     }
+}
+
+// MARK: - Supporting Views
+
+struct StatItem: View {
+    let label: String
+    let value: String
     
-    private func getCorrectAnswer() -> String? {
-        guard let word = viewModel.currentWord else { return nil }
-        if UserProgressService.shared.settings.requireTones {
-            return word.pinyin
-        } else {
-            // Use numeric pinyin and remove numbers for tone-free display
-            return word.pinyinNumeric.replacingOccurrences(of: "[1-5]", with: "", options: .regularExpression)
+    var body: some View {
+        VStack(spacing: 4) {
+            Text(label)
+                .font(.caption)
+                .foregroundColor(Color("SecondaryText"))
+            
+            Text(value)
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundColor(Color("PrimaryText"))
         }
-    }
-    
-    private func generateHint(for word: VocabularyItem) -> String? {
-        // Use our enhanced pronunciation hint if available
-        if !word.pronunciationHint.isEmpty && 
-           !word.pronunciationHint.starts(with: "Pronunciation hint for") {
-            return word.pronunciationHint
-        }
-        
-        // Fallback to basic hint
-        let syllableCount = word.pinyin.split(separator: " ").count
-        let firstChar = word.pinyin.prefix(1)
-        
-        if syllableCount == 1 {
-            return "Starts with '\(firstChar)'"
-        } else {
-            return "\(syllableCount) syllables, starts with '\(firstChar)'"
-        }
-    }
-    
-    private func mapPartOfSpeech(_ pos: String) -> String {
-        let mapping: [String: String] = [
-            "a": "adj.",
-            "ad": "adv.",
-            "ag": "adj. morph.",
-            "an": "adj./n.",
-            "b": "non-pred. adj.",
-            "c": "conj.",
-            "d": "adv.",
-            "dg": "adv. morph.",
-            "e": "interj.",
-            "f": "direction",
-            "g": "morph.",
-            "h": "prefix",
-            "i": "idiom",
-            "j": "abbr.",
-            "k": "suffix",
-            "l": "fixed expr.",
-            "m": "num.",
-            "mg": "num. morph.",
-            "n": "noun",
-            "ng": "noun morph.",
-            "nr": "name",
-            "ns": "place",
-            "nt": "org.",
-            "nx": "nom. string",
-            "nz": "proper n.",
-            "o": "onom.",
-            "p": "prep.",
-            "q": "class.",
-            "qt": "time class.",
-            "r": "pron.",
-            "rg": "pron. morph.",
-            "s": "space",
-            "t": "time",
-            "tg": "time morph.",
-            "u": "aux.",
-            "v": "verb",
-            "vd": "v. adv.",
-            "vg": "verb morph.",
-            "vn": "v./n.",
-            "w": "punct.",
-            "x": "other",
-            "y": "modal",
-            "z": "desc."
-        ]
-        return mapping[pos] ?? pos
     }
 }

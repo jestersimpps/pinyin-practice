@@ -21,6 +21,10 @@ class PracticeViewModel: ObservableObject {
     private var availableWords: [VocabularyItem] = []
     private var currentIndex: Int = 0
     
+    // Session tracking
+    private var sessionCorrectAnswers: Int = 0
+    private var sessionTotalAttempts: Int = 0
+    
     enum FeedbackState {
         case none
         case correct
@@ -115,9 +119,12 @@ class PracticeViewModel: ObservableObject {
         
         let isPartial = requireTones && !isCorrect && word.isPinyinPartiallyCorrect(userInput)
         
+        sessionTotalAttempts += 1
+        
         if isCorrect {
             feedbackState = .correct
             progressService.recordAnswer(for: word, isCorrect: true)
+            sessionCorrectAnswers += 1
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 self.nextWord()
@@ -156,7 +163,20 @@ class PracticeViewModel: ObservableObject {
     
     private func endSession() {
         if let startTime = sessionStartTime {
-            progressService.endSession(startTime: startTime, wordsStudied: wordsCompleted)
+            progressService.endSession(
+                startTime: startTime, 
+                wordsStudied: wordsCompleted,
+                correctAnswers: sessionCorrectAnswers,
+                totalAttempts: sessionTotalAttempts
+            )
+            sessionStartTime = nil // Prevent duplicate saves
+        }
+    }
+    
+    func saveSessionOnExit() {
+        // Only save if we have studied at least one word and haven't already saved
+        if wordsCompleted > 0 && sessionStartTime != nil {
+            endSession()
         }
     }
     

@@ -7,7 +7,7 @@ struct CompactStatsBar: View {
     
     var body: some View {
         HStack(spacing: 0) {
-            StatItem(
+            CompactStatItem(
                 icon: "checkmark.circle.fill",
                 value: progress,
                 color: Color(red: 0.1, green: 0.3, blue: 0.4)
@@ -17,7 +17,7 @@ struct CompactStatsBar: View {
                 .frame(height: 20)
                 .background(Color("SecondaryText").opacity(0.3))
             
-            StatItem(
+            CompactStatItem(
                 icon: "target",
                 value: accuracy,
                 color: accuracy == "0%" ? Color("SecondaryText") : Color(red: 0.2, green: 0.8, blue: 0.4)
@@ -27,7 +27,7 @@ struct CompactStatsBar: View {
                 .frame(height: 20)
                 .background(Color("SecondaryText").opacity(0.3))
             
-            StatItem(
+            CompactStatItem(
                 icon: "flame.fill",
                 value: streak == 0 ? "0" : "\(streak)",
                 color: streak == 0 ? Color("SecondaryText") : .orange,
@@ -43,7 +43,7 @@ struct CompactStatsBar: View {
     }
 }
 
-private struct StatItem: View {
+private struct CompactStatItem: View {
     let icon: String
     let value: String
     let color: Color

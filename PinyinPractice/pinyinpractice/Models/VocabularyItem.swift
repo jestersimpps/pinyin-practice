@@ -68,17 +68,26 @@ struct VocabularyItem: Identifiable, Codable {
     
     func isPinyinCorrect(_ input: String, requireTones: Bool = true) -> Bool {
         let normalizedInput = input.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
-        let normalizedPinyin = toneNumbers.lowercased()
         
-        if normalizedInput == normalizedPinyin {
-            return true
-        }
+        // Get all possible pronunciations (split by comma if multiple exist)
+        let possiblePinyins = toneNumbers.lowercased()
+            .split(separator: ",")
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
         
-        if !requireTones {
-            let inputWithoutNumbers = normalizedInput.replacingOccurrences(of: "[1-5]", with: "", options: .regularExpression)
-            let pinyinWithoutNumbers = normalizedPinyin.replacingOccurrences(of: "[1-5]", with: "", options: .regularExpression)
+        // Check if input matches any of the possible pronunciations
+        for pinyin in possiblePinyins {
+            if normalizedInput == pinyin {
+                return true
+            }
             
-            return inputWithoutNumbers == pinyinWithoutNumbers
+            if !requireTones {
+                let inputWithoutNumbers = normalizedInput.replacingOccurrences(of: "[1-5]", with: "", options: .regularExpression)
+                let pinyinWithoutNumbers = pinyin.replacingOccurrences(of: "[1-5]", with: "", options: .regularExpression)
+                
+                if inputWithoutNumbers == pinyinWithoutNumbers {
+                    return true
+                }
+            }
         }
         
         return false
@@ -86,11 +95,22 @@ struct VocabularyItem: Identifiable, Codable {
     
     func isPinyinPartiallyCorrect(_ input: String) -> Bool {
         let normalizedInput = input.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
-        let normalizedPinyin = toneNumbers.lowercased()
-        
         let inputWithoutNumbers = normalizedInput.replacingOccurrences(of: "[1-5]", with: "", options: .regularExpression)
-        let pinyinWithoutNumbers = normalizedPinyin.replacingOccurrences(of: "[1-5]", with: "", options: .regularExpression)
         
-        return inputWithoutNumbers == pinyinWithoutNumbers
+        // Get all possible pronunciations (split by comma if multiple exist)
+        let possiblePinyins = toneNumbers.lowercased()
+            .split(separator: ",")
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+        
+        // Check if input matches any pronunciation without tones
+        for pinyin in possiblePinyins {
+            let pinyinWithoutNumbers = pinyin.replacingOccurrences(of: "[1-5]", with: "", options: .regularExpression)
+            
+            if inputWithoutNumbers == pinyinWithoutNumbers {
+                return true
+            }
+        }
+        
+        return false
     }
 }
