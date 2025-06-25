@@ -1,0 +1,18 @@
+"/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Screens/PracticeView.swift":
+  diagnostics: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/x86_64/PracticeView.dia"
+  dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/x86_64/PracticeView.d"
+  object: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/x86_64/PracticeView.o"
+  const-values: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/x86_64/PracticeView.swiftconstvalues"
+  swift-dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/x86_64/PracticeView.swiftdeps"
+"/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Screens/ProgressStatsView.swift":
+  object: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/x86_64/ProgressStatsView.o"
+  const-values: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/x86_64/ProgressStatsView.swiftconstvalues"
+  diagnostics: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/x86_64/ProgressStatsView.dia"
+  swift-dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/x86_64/ProgressStatsView.swiftdeps"
+  dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/x86_64/ProgressStatsView.d"
+"/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Screens/SettingsView.swift":
+  object: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/x86_64/SettingsView.o"
+  swift-dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/x86_64/SettingsView.swiftdeps"
+  const-values: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/x86_64/SettingsView.swiftconstvalues"
+  diagnostics: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/x86_64/SettingsView.dia"
+  dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/x86_64/SettingsView.d"

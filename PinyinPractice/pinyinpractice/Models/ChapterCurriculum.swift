@@ -6,8 +6,8 @@ struct ChapterCurriculum {
     // Map chapter numbers to HSK levels
     static func hskLevel(forChapter chapter: Int) -> Int {
         switch chapter {
-        case 1...15: return 1
-        case 16...28: return 2
+        case 1...14: return 1
+        case 15...28: return 2
         case 29...42: return 3
         case 43...56: return 4
         case 57...68: return 5
@@ -17,6 +17,9 @@ struct ChapterCurriculum {
     }
     
     // Chapter definitions with titles, descriptions, and icons
+    // Review chapters that should be excluded
+    static let reviewChapters = [28, 42, 56, 68, 80]
+    
     static let chapters: [Int: (title: String, description: String, icon: String)] = [
         // HSK 1
         1: ("你好 Hello", "Basic greetings, personal pronouns, introductions, numbers 0-10", "hand.wave"),
@@ -33,7 +36,6 @@ struct ChapterCurriculum {
         12: ("工作 Work", "What do you do, professions, busy", "briefcase"),
         13: ("爱好 Hobbies", "What do you like, activities, movies/books", "heart"),
         14: ("位置 Locations", "Where is, directions, inside/outside, here/there", "map"),
-        // Chapter 15 is reserved for HSK 1 review
         
         // HSK 2
         15: ("衣服 Clothing", "Clothing items, colors, wear, beautiful/ugly", "tshirt"),
@@ -119,15 +121,15 @@ struct ChapterCurriculum {
     }
     
     
-    // Get number of chapters for a given HSK level
+    // Get number of chapters for a given HSK level (excluding review chapters)
     static func chaptersForLevel(_ level: Int) -> Int {
         switch level {
-        case 1: return 15  // chapters 1-15
-        case 2: return 13  // chapters 16-28
-        case 3: return 14  // chapters 29-42
-        case 4: return 14  // chapters 43-56
-        case 5: return 12  // chapters 57-68
-        case 6: return 12  // chapters 69-80
+        case 1: return 14  // chapters 1-14
+        case 2: return 13  // chapters 15-27 (excluding 28)
+        case 3: return 13  // chapters 29-41 (excluding 42)
+        case 4: return 13  // chapters 43-55 (excluding 56)
+        case 5: return 11  // chapters 57-67 (excluding 68)
+        case 6: return 11  // chapters 69-79 (excluding 80)
         default: return 0
         }
     }

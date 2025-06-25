@@ -1,0 +1,268 @@
+{
+  "" : {
+    "diagnostics" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/pinyinpractice-master.dia",
+    "emit-module-dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/pinyinpractice-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/pinyinpractice-master-emit-module.dia",
+    "swift-dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/pinyinpractice-master.swiftdeps"
+  },
+  "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "const-values" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/GeneratedAssetSymbols.swiftconstvalues",
+    "dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/GeneratedAssetSymbols.d",
+    "diagnostics" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/GeneratedAssetSymbols.dia",
+    "index-unit-output-path" : "/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "swift-dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/GeneratedAssetSymbols.swiftdeps",
+    "swiftmodule" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/GeneratedAssetSymbols~partial.swiftmodule"
+  },
+  "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Models/Chapter.swift" : {
+    "const-values" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/Chapter.swiftconstvalues",
+    "dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/Chapter.d",
+    "diagnostics" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/Chapter.dia",
+    "index-unit-output-path" : "/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/Chapter.o",
+    "llvm-bc" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/Chapter.bc",
+    "object" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/Chapter.o",
+    "swift-dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/Chapter.swiftdeps",
+    "swiftmodule" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/Chapter~partial.swiftmodule"
+  },
+  "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Models/ChapterCurriculum.swift" : {
+    "const-values" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ChapterCurriculum.swiftconstvalues",
+    "dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ChapterCurriculum.d",
+    "diagnostics" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ChapterCurriculum.dia",
+    "index-unit-output-path" : "/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ChapterCurriculum.o",
+    "llvm-bc" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ChapterCurriculum.bc",
+    "object" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ChapterCurriculum.o",
+    "swift-dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ChapterCurriculum.swiftdeps",
+    "swiftmodule" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ChapterCurriculum~partial.swiftmodule"
+  },
+  "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Models/UserProgress.swift" : {
+    "const-values" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/UserProgress.swiftconstvalues",
+    "dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/UserProgress.d",
+    "diagnostics" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/UserProgress.dia",
+    "index-unit-output-path" : "/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/UserProgress.o",
+    "llvm-bc" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/UserProgress.bc",
+    "object" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/UserProgress.o",
+    "swift-dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/UserProgress.swiftdeps",
+    "swiftmodule" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/UserProgress~partial.swiftmodule"
+  },
+  "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Models/VocabularyItem.swift" : {
+    "const-values" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/VocabularyItem.swiftconstvalues",
+    "dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/VocabularyItem.d",
+    "diagnostics" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/VocabularyItem.dia",
+    "index-unit-output-path" : "/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/VocabularyItem.o",
+    "llvm-bc" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/VocabularyItem.bc",
+    "object" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/VocabularyItem.o",
+    "swift-dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/VocabularyItem.swiftdeps",
+    "swiftmodule" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/VocabularyItem~partial.swiftmodule"
+  },
+  "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Services/UserProgressService.swift" : {
+    "const-values" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/UserProgressService.swiftconstvalues",
+    "dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/UserProgressService.d",
+    "diagnostics" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/UserProgressService.dia",
+    "index-unit-output-path" : "/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/UserProgressService.o",
+    "llvm-bc" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/UserProgressService.bc",
+    "object" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/UserProgressService.o",
+    "swift-dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/UserProgressService.swiftdeps",
+    "swiftmodule" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/UserProgressService~partial.swiftmodule"
+  },
+  "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Services/VocabularyService.swift" : {
+    "const-values" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/VocabularyService.swiftconstvalues",
+    "dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/VocabularyService.d",
+    "diagnostics" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/VocabularyService.dia",
+    "index-unit-output-path" : "/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/VocabularyService.o",
+    "llvm-bc" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/VocabularyService.bc",
+    "object" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/VocabularyService.o",
+    "swift-dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/VocabularyService.swiftdeps",
+    "swiftmodule" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/VocabularyService~partial.swiftmodule"
+  },
+  "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/ViewModels/PracticeViewModel.swift" : {
+    "const-values" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PracticeViewModel.swiftconstvalues",
+    "dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PracticeViewModel.d",
+    "diagnostics" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PracticeViewModel.dia",
+    "index-unit-output-path" : "/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PracticeViewModel.o",
+    "llvm-bc" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PracticeViewModel.bc",
+    "object" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PracticeViewModel.o",
+    "swift-dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PracticeViewModel.swiftdeps",
+    "swiftmodule" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PracticeViewModel~partial.swiftmodule"
+  },
+  "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Components/Buttons/PrimaryButton.swift" : {
+    "const-values" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PrimaryButton.swiftconstvalues",
+    "dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PrimaryButton.d",
+    "diagnostics" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PrimaryButton.dia",
+    "index-unit-output-path" : "/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PrimaryButton.o",
+    "llvm-bc" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PrimaryButton.bc",
+    "object" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PrimaryButton.o",
+    "swift-dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PrimaryButton.swiftdeps",
+    "swiftmodule" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PrimaryButton~partial.swiftmodule"
+  },
+  "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Components/Cards/ActionCard.swift" : {
+    "const-values" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ActionCard.swiftconstvalues",
+    "dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ActionCard.d",
+    "diagnostics" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ActionCard.dia",
+    "index-unit-output-path" : "/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ActionCard.o",
+    "llvm-bc" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ActionCard.bc",
+    "object" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ActionCard.o",
+    "swift-dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ActionCard.swiftdeps",
+    "swiftmodule" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ActionCard~partial.swiftmodule"
+  },
+  "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Components/Cards/AdaptiveCharacterDisplay.swift" : {
+    "const-values" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/AdaptiveCharacterDisplay.swiftconstvalues",
+    "dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/AdaptiveCharacterDisplay.d",
+    "diagnostics" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/AdaptiveCharacterDisplay.dia",
+    "index-unit-output-path" : "/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/AdaptiveCharacterDisplay.o",
+    "llvm-bc" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/AdaptiveCharacterDisplay.bc",
+    "object" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/AdaptiveCharacterDisplay.o",
+    "swift-dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/AdaptiveCharacterDisplay.swiftdeps",
+    "swiftmodule" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/AdaptiveCharacterDisplay~partial.swiftmodule"
+  },
+  "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Components/Cards/SelectableCard.swift" : {
+    "const-values" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SelectableCard.swiftconstvalues",
+    "dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SelectableCard.d",
+    "diagnostics" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SelectableCard.dia",
+    "index-unit-output-path" : "/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SelectableCard.o",
+    "llvm-bc" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SelectableCard.bc",
+    "object" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SelectableCard.o",
+    "swift-dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SelectableCard.swiftdeps",
+    "swiftmodule" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SelectableCard~partial.swiftmodule"
+  },
+  "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Components/Input/MobileInputZone.swift" : {
+    "const-values" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/MobileInputZone.swiftconstvalues",
+    "dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/MobileInputZone.d",
+    "diagnostics" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/MobileInputZone.dia",
+    "index-unit-output-path" : "/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/MobileInputZone.o",
+    "llvm-bc" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/MobileInputZone.bc",
+    "object" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/MobileInputZone.o",
+    "swift-dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/MobileInputZone.swiftdeps",
+    "swiftmodule" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/MobileInputZone~partial.swiftmodule"
+  },
+  "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Components/Layout/ProgressBar.swift" : {
+    "const-values" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ProgressBar.swiftconstvalues",
+    "dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ProgressBar.d",
+    "diagnostics" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ProgressBar.dia",
+    "index-unit-output-path" : "/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ProgressBar.o",
+    "llvm-bc" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ProgressBar.bc",
+    "object" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ProgressBar.o",
+    "swift-dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ProgressBar.swiftdeps",
+    "swiftmodule" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ProgressBar~partial.swiftmodule"
+  },
+  "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Components/Layout/SectionHeader.swift" : {
+    "const-values" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SectionHeader.swiftconstvalues",
+    "dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SectionHeader.d",
+    "diagnostics" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SectionHeader.dia",
+    "index-unit-output-path" : "/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SectionHeader.o",
+    "llvm-bc" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SectionHeader.bc",
+    "object" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SectionHeader.o",
+    "swift-dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SectionHeader.swiftdeps",
+    "swiftmodule" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SectionHeader~partial.swiftmodule"
+  },
+  "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Components/Navigation/CircularIconButton.swift" : {
+    "const-values" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/CircularIconButton.swiftconstvalues",
+    "dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/CircularIconButton.d",
+    "diagnostics" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/CircularIconButton.dia",
+    "index-unit-output-path" : "/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/CircularIconButton.o",
+    "llvm-bc" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/CircularIconButton.bc",
+    "object" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/CircularIconButton.o",
+    "swift-dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/CircularIconButton.swiftdeps",
+    "swiftmodule" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/CircularIconButton~partial.swiftmodule"
+  },
+  "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Components/Navigation/NavigationHeader.swift" : {
+    "const-values" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/NavigationHeader.swiftconstvalues",
+    "dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/NavigationHeader.d",
+    "diagnostics" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/NavigationHeader.dia",
+    "index-unit-output-path" : "/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/NavigationHeader.o",
+    "llvm-bc" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/NavigationHeader.bc",
+    "object" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/NavigationHeader.o",
+    "swift-dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/NavigationHeader.swiftdeps",
+    "swiftmodule" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/NavigationHeader~partial.swiftmodule"
+  },
+  "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Screens/ChapterCompletionView.swift" : {
+    "const-values" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ChapterCompletionView.swiftconstvalues",
+    "dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ChapterCompletionView.d",
+    "diagnostics" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ChapterCompletionView.dia",
+    "index-unit-output-path" : "/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ChapterCompletionView.o",
+    "llvm-bc" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ChapterCompletionView.bc",
+    "object" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ChapterCompletionView.o",
+    "swift-dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ChapterCompletionView.swiftdeps",
+    "swiftmodule" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ChapterCompletionView~partial.swiftmodule"
+  },
+  "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Screens/ChapterSelectionView.swift" : {
+    "const-values" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ChapterSelectionView.swiftconstvalues",
+    "dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ChapterSelectionView.d",
+    "diagnostics" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ChapterSelectionView.dia",
+    "index-unit-output-path" : "/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ChapterSelectionView.o",
+    "llvm-bc" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ChapterSelectionView.bc",
+    "object" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ChapterSelectionView.o",
+    "swift-dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ChapterSelectionView.swiftdeps",
+    "swiftmodule" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ChapterSelectionView~partial.swiftmodule"
+  },
+  "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Screens/CustomPracticeSetupView.swift" : {
+    "const-values" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/CustomPracticeSetupView.swiftconstvalues",
+    "dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/CustomPracticeSetupView.d",
+    "diagnostics" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/CustomPracticeSetupView.dia",
+    "index-unit-output-path" : "/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/CustomPracticeSetupView.o",
+    "llvm-bc" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/CustomPracticeSetupView.bc",
+    "object" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/CustomPracticeSetupView.o",
+    "swift-dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/CustomPracticeSetupView.swiftdeps",
+    "swiftmodule" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/CustomPracticeSetupView~partial.swiftmodule"
+  },
+  "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Screens/PracticeCompletionView.swift" : {
+    "const-values" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PracticeCompletionView.swiftconstvalues",
+    "dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PracticeCompletionView.d",
+    "diagnostics" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PracticeCompletionView.dia",
+    "index-unit-output-path" : "/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PracticeCompletionView.o",
+    "llvm-bc" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PracticeCompletionView.bc",
+    "object" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PracticeCompletionView.o",
+    "swift-dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PracticeCompletionView.swiftdeps",
+    "swiftmodule" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PracticeCompletionView~partial.swiftmodule"
+  },
+  "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Screens/PracticeView.swift" : {
+    "const-values" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PracticeView.swiftconstvalues",
+    "dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PracticeView.d",
+    "diagnostics" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PracticeView.dia",
+    "index-unit-output-path" : "/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PracticeView.o",
+    "llvm-bc" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PracticeView.bc",
+    "object" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PracticeView.o",
+    "swift-dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PracticeView.swiftdeps",
+    "swiftmodule" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PracticeView~partial.swiftmodule"
+  },
+  "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Screens/ProgressStatsView.swift" : {
+    "const-values" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ProgressStatsView.swiftconstvalues",
+    "dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ProgressStatsView.d",
+    "diagnostics" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ProgressStatsView.dia",
+    "index-unit-output-path" : "/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ProgressStatsView.o",
+    "llvm-bc" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ProgressStatsView.bc",
+    "object" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ProgressStatsView.o",
+    "swift-dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ProgressStatsView.swiftdeps",
+    "swiftmodule" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ProgressStatsView~partial.swiftmodule"
+  },
+  "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Screens/SettingsView.swift" : {
+    "const-values" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SettingsView.swiftconstvalues",
+    "dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SettingsView.d",
+    "diagnostics" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SettingsView.dia",
+    "index-unit-output-path" : "/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SettingsView.o",
+    "llvm-bc" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SettingsView.bc",
+    "object" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SettingsView.o",
+    "swift-dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SettingsView.swiftdeps",
+    "swiftmodule" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SettingsView~partial.swiftmodule"
+  },
+  "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Screens/SetupView.swift" : {
+    "const-values" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SetupView.swiftconstvalues",
+    "dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SetupView.d",
+    "diagnostics" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SetupView.dia",
+    "index-unit-output-path" : "/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SetupView.o",
+    "llvm-bc" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SetupView.bc",
+    "object" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SetupView.o",
+    "swift-dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SetupView.swiftdeps",
+    "swiftmodule" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/SetupView~partial.swiftmodule"
+  },
+  "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/pinyinpracticeApp.swift" : {
+    "const-values" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/pinyinpracticeApp.swiftconstvalues",
+    "dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/pinyinpracticeApp.d",
+    "diagnostics" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/pinyinpracticeApp.dia",
+    "index-unit-output-path" : "/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/pinyinpracticeApp.o",
+    "llvm-bc" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/pinyinpracticeApp.bc",
+    "object" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/pinyinpracticeApp.o",
+    "swift-dependencies" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/pinyinpracticeApp.swiftdeps",
+    "swiftmodule" : "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/pinyinpracticeApp~partial.swiftmodule"
+  }
+}

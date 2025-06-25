@@ -1,0 +1,24 @@
+"/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Services/UserProgressService.swift":
+  dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/x86_64/UserProgressService.d"
+  const-values: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/x86_64/UserProgressService.swiftconstvalues"
+  object: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/x86_64/UserProgressService.o"
+  diagnostics: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/x86_64/UserProgressService.dia"
+  swift-dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/x86_64/UserProgressService.swiftdeps"
+"/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/ViewModels/PracticeViewModel.swift":
+  object: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/x86_64/PracticeViewModel.o"
+  const-values: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/x86_64/PracticeViewModel.swiftconstvalues"
+  dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/x86_64/PracticeViewModel.d"
+  swift-dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/x86_64/PracticeViewModel.swiftdeps"
+  diagnostics: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/x86_64/PracticeViewModel.dia"
+"/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Services/VocabularyService.swift":
+  diagnostics: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/x86_64/VocabularyService.dia"
+  dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/x86_64/VocabularyService.d"
+  object: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/x86_64/VocabularyService.o"
+  const-values: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/x86_64/VocabularyService.swiftconstvalues"
+  swift-dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/x86_64/VocabularyService.swiftdeps"
+"/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Components/Buttons/PrimaryButton.swift":
+  dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/x86_64/PrimaryButton.d"
+  object: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/x86_64/PrimaryButton.o"
+  const-values: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/x86_64/PrimaryButton.swiftconstvalues"
+  swift-dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/x86_64/PrimaryButton.swiftdeps"
+  diagnostics: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/x86_64/PrimaryButton.dia"

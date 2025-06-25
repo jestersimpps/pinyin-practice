@@ -122,7 +122,7 @@ struct ChapterSelectionView: View {
     }
     
     private var chaptersForSelectedLevel: [Chapter] {
-        vocabularyService.getChaptersForLevel(selectedLevel)
+        return vocabularyService.getChaptersForLevel(selectedLevel)
     }
     
     private var selectedWordCount: Int {

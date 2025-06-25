@@ -1,0 +1,18 @@
+"/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Components/Navigation/CircularIconButton.swift":
+  swift-dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/CircularIconButton.swiftdeps"
+  diagnostics: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/CircularIconButton.dia"
+  dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/CircularIconButton.d"
+  const-values: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/CircularIconButton.swiftconstvalues"
+  object: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/CircularIconButton.o"
+"/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Components/Navigation/NavigationHeader.swift":
+  object: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/NavigationHeader.o"
+  swift-dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/NavigationHeader.swiftdeps"
+  dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/NavigationHeader.d"
+  const-values: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/NavigationHeader.swiftconstvalues"
+  diagnostics: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/NavigationHeader.dia"
+"/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Screens/ChapterCompletionView.swift":
+  object: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ChapterCompletionView.o"
+  const-values: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ChapterCompletionView.swiftconstvalues"
+  dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ChapterCompletionView.d"
+  swift-dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ChapterCompletionView.swiftdeps"
+  diagnostics: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ChapterCompletionView.dia"

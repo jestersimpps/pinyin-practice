@@ -1,0 +1,18 @@
+"/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Screens/CustomPracticeSetupView.swift":
+  swift-dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/CustomPracticeSetupView.swiftdeps"
+  diagnostics: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/CustomPracticeSetupView.dia"
+  const-values: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/CustomPracticeSetupView.swiftconstvalues"
+  dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/CustomPracticeSetupView.d"
+  object: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/CustomPracticeSetupView.o"
+"/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Screens/ChapterSelectionView.swift":
+  diagnostics: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ChapterSelectionView.dia"
+  const-values: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ChapterSelectionView.swiftconstvalues"
+  swift-dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ChapterSelectionView.swiftdeps"
+  dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ChapterSelectionView.d"
+  object: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/ChapterSelectionView.o"
+"/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Screens/PracticeCompletionView.swift":
+  swift-dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PracticeCompletionView.swiftdeps"
+  object: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PracticeCompletionView.o"
+  dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PracticeCompletionView.d"
+  diagnostics: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PracticeCompletionView.dia"
+  const-values: "/Users/jovinkenroye/Sites/pinyinpractice/build/Build/Intermediates.noindex/pinyinpractice.build/Debug-iphonesimulator/pinyinpractice.build/Objects-normal/arm64/PracticeCompletionView.swiftconstvalues"

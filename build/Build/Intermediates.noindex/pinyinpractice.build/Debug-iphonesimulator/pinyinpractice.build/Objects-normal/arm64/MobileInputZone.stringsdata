@@ -1,0 +1,32 @@
+{
+  "source": "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Components/Input/MobileInputZone.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Enter pinyin...",
+        "location": {
+          "startingColumn": 23,
+          "startingLine": 51
+        }
+      },
+      {
+        "comment": "",
+        "key": "Skip",
+        "location": {
+          "startingColumn": 19,
+          "startingLine": 96
+        }
+      },
+      {
+        "comment": "",
+        "key": "Next",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 111
+        }
+      }
+    ]
+  },
+  "version": 1
+}

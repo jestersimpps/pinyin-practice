@@ -84,12 +84,11 @@ struct UserProgress: Codable {
     
     func isChapterUnlocked(level: Int, chapter: Int) -> Bool {
         // Review chapters are never unlocked (they have no content)
-        let reviewChapters = [15, 28, 42, 56, 68, 80]
-        if reviewChapters.contains(chapter) { return false }
+        if ChapterCurriculum.reviewChapters.contains(chapter) { return false }
         
         // First chapter of each level is always unlocked
         if chapter == 1 { return true }  // HSK1 start
-        if chapter == 16 { return true } // HSK2 start
+        if chapter == 15 { return true } // HSK2 start
         if chapter == 29 { return true } // HSK3 start
         if chapter == 43 { return true } // HSK4 start
         if chapter == 57 { return true } // HSK5 start
@@ -97,7 +96,7 @@ struct UserProgress: Codable {
         
         // Find the previous non-review chapter
         var previousChapter = chapter - 1
-        while reviewChapters.contains(previousChapter) && previousChapter > 0 {
+        while ChapterCurriculum.reviewChapters.contains(previousChapter) && previousChapter > 0 {
             previousChapter -= 1
         }
         

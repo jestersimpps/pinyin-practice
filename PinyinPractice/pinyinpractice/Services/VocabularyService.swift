@@ -7,6 +7,7 @@ class VocabularyService: ObservableObject {
     @Published var vocabularyByLevel: [Int: [VocabularyItem]] = [:]
     @Published var vocabularyByChapter: [String: [VocabularyItem]] = [:]
     @Published var chapters: [Chapter] = []
+    @Published var customVocabulary: [VocabularyItem] = []
     @Published var isLoading = false
     
     private init() {
@@ -31,6 +32,9 @@ class VocabularyService: ObservableObject {
                 organizeIntoChapters(items: sortedItems, level: level)
             }
         }
+        
+        // Load custom vocabulary from current.json
+        loadCustomVocabulary()
         
         allVocabulary = allItems
         isLoading = false
@@ -57,6 +61,11 @@ class VocabularyService: ObservableObject {
         
         // Create chapters based on curriculum
         for (chapterNum, chapterItems) in groupedByChapter where chapterNum > 0 {
+            // Skip review chapters
+            if ChapterCurriculum.reviewChapters.contains(chapterNum) {
+                continue
+            }
+            
             let chapterInfo = ChapterCurriculum.getChapterInfo(chapter: chapterNum)
             
             // Only process if this chapter belongs to the current HSK level
@@ -98,12 +107,12 @@ class VocabularyService: ObservableObject {
             // Calculate global chapter number for curriculum lookup
             let globalChapterNum: Int
             switch level {
-            case 1: globalChapterNum = chapterNum  // 1-15
-            case 2: globalChapterNum = 15 + chapterNum  // 16-28
-            case 3: globalChapterNum = 28 + chapterNum  // 29-42
-            case 4: globalChapterNum = 42 + chapterNum  // 43-56
-            case 5: globalChapterNum = 56 + chapterNum  // 57-68
-            case 6: globalChapterNum = 68 + chapterNum  // 69-80
+            case 1: globalChapterNum = chapterNum  // 1-14
+            case 2: globalChapterNum = 14 + chapterNum  // 15-27
+            case 3: globalChapterNum = 28 + chapterNum  // 29-41
+            case 4: globalChapterNum = 42 + chapterNum  // 43-55
+            case 5: globalChapterNum = 56 + chapterNum  // 57-67
+            case 6: globalChapterNum = 68 + chapterNum  // 69-79
             default: globalChapterNum = chapterNum
             }
             
@@ -185,10 +194,177 @@ class VocabularyService: ObservableObject {
     }
     
     func getChaptersForLevel(_ level: Int) -> [Chapter] {
-        return chapters.filter { $0.hskLevel == level }
+        return chapters.filter { chapter in
+            chapter.hskLevel == level && !ChapterCurriculum.reviewChapters.contains(chapter.chapterNumber)
+        }
     }
     
     func getChapter(byId chapterId: String) -> Chapter? {
         return chapters.first { $0.id == chapterId }
+    }
+    
+    private func loadCustomVocabulary() {
+        print("Starting to load custom vocabulary files...")
+        
+        // First attempt: Try to find the CustomData folder in the bundle
+        if let customDataPath = Bundle.main.path(forResource: "CustomData", ofType: nil) {
+            print("CustomData folder found at: \(customDataPath)")
+            loadFilesFromDirectory(at: customDataPath)
+        } else {
+            print("CustomData folder not found as folder reference, trying individual files...")
+            
+            // Second attempt: Try to load files individually with subdirectory path
+            loadIndividualFiles()
+        }
+    }
+    
+    private func loadFilesFromDirectory(at path: String) {
+        do {
+            let fileManager = FileManager.default
+            let contents = try fileManager.contentsOfDirectory(atPath: path)
+            let jsonFiles = contents.filter { $0.hasSuffix(".json") }.sorted()
+            
+            print("Found \(jsonFiles.count) JSON files in CustomData: \(jsonFiles)")
+            
+            for (index, filename) in jsonFiles.enumerated() {
+                let filePath = (path as NSString).appendingPathComponent(filename)
+                let fileURL = URL(fileURLWithPath: filePath)
+                loadCustomFile(at: fileURL, chapterNumber: index + 1)
+            }
+        } catch {
+            print("Error reading CustomData directory: \(error)")
+        }
+    }
+    
+    private func loadIndividualFiles() {
+        // List all possible files we want to check
+        let fileNames = [
+            "basic-1-1",
+            "basic-1-2", 
+            "basic-2-1",
+            "basic-2-2"
+        ]
+        
+        var loadedCount = 0
+        
+        // Try loading each file
+        for fileName in fileNames {
+            // Try with CustomData/ prefix
+            if let url = Bundle.main.url(forResource: "CustomData/\(fileName)", withExtension: "json") {
+                print("Found file: CustomData/\(fileName).json")
+                loadCustomFile(at: url, chapterNumber: loadedCount + 1)
+                loadedCount += 1
+            }
+            // Try without prefix (if files were added directly)
+            else if let url = Bundle.main.url(forResource: fileName, withExtension: "json") {
+                print("Found file: \(fileName).json")
+                loadCustomFile(at: url, chapterNumber: loadedCount + 1)
+                loadedCount += 1
+            }
+        }
+        
+        // Also try to discover any other custom files by checking bundle contents
+        if let resourcePath = Bundle.main.resourcePath {
+            do {
+                let contents = try FileManager.default.contentsOfDirectory(atPath: resourcePath)
+                let customJsonFiles = contents.filter { 
+                    $0.hasSuffix(".json") && 
+                    ($0.contains("custom") || $0.contains("basic") || $0.contains("Custom"))
+                }
+                print("Found potential custom JSON files in bundle: \(customJsonFiles)")
+            } catch {
+                print("Error listing bundle contents: \(error)")
+            }
+        }
+        
+        if loadedCount == 0 {
+            print("No custom files found. Please add JSON files to Xcode project.")
+            print("To add: Drag the JSON files into Xcode's project navigator")
+        } else {
+            print("Successfully loaded \(loadedCount) custom vocabulary files")
+        }
+    }
+    
+    private func loadCustomFile(at url: URL, chapterNumber: Int) {
+        do {
+            let data = try Data(contentsOf: url)
+            let items = try JSONDecoder().decode([VocabularyItem].self, from: data)
+            
+            if !items.isEmpty {
+                let filename = url.deletingPathExtension().lastPathComponent
+                let chapterId = "custom_\(filename)"
+                
+                // Format the filename as a readable chapter title
+                let chapterTitle = formatChapterTitle(from: filename)
+                
+                let customChapter = Chapter(
+                    id: chapterId,
+                    hskLevel: 7, // Using 7 as custom level
+                    chapterNumber: chapterNumber,
+                    title: chapterTitle,
+                    description: "Practice with \(chapterTitle.lowercased()) vocabulary",
+                    wordCount: items.count,
+                    isUnlocked: true,
+                    icon: getCustomChapterIcon(for: chapterNumber)
+                )
+                
+                chapters.append(customChapter)
+                vocabularyByChapter[chapterId] = items
+                customVocabulary.append(contentsOf: items)
+                
+                print("Loaded custom chapter: \(chapterTitle) with \(items.count) words")
+            }
+        } catch {
+            print("Error loading custom vocabulary from \(url.lastPathComponent): \(error)")
+        }
+    }
+    
+    private func formatChapterTitle(from filename: String) -> String {
+        var title = filename
+        
+        // Special handling for "basic-X-Y" pattern
+        if title.lowercased().hasPrefix("basic-") {
+            // Convert "basic-1-1" to "Basic 1-1"
+            title = title.replacingOccurrences(of: "basic-", with: "Basic ", options: .caseInsensitive)
+            return title
+        }
+        
+        // Remove "custom" prefix if present
+        if title.lowercased().hasPrefix("custom") {
+            title = String(title.dropFirst(6))
+        }
+        
+        // Replace underscores and hyphens with spaces
+        title = title.replacingOccurrences(of: "_", with: " ")
+        title = title.replacingOccurrences(of: "-", with: " ")
+        
+        // Remove leading numbers if present (but not for patterns like "1-1")
+        if let firstChar = title.first, firstChar.isNumber {
+            // Check if it's a pattern like "1-1" or "2-3"
+            let components = title.split(separator: " ")
+            if components.count == 1 && components[0].contains(where: { !$0.isNumber && $0 != "-" }) {
+                // It's something like "1shopping", remove the number
+                if let nonNumberIndex = title.firstIndex(where: { !$0.isNumber }) {
+                    title = String(title[nonNumberIndex...])
+                }
+            }
+        }
+        
+        // Trim whitespace and capitalize
+        title = title.trimmingCharacters(in: .whitespaces)
+        
+        // Capitalize first letter of each word
+        return title.split(separator: " ")
+            .map { $0.prefix(1).uppercased() + $0.dropFirst().lowercased() }
+            .joined(separator: " ")
+    }
+    
+    private func getCustomChapterIcon(for chapterNumber: Int) -> String {
+        let icons = ["star.fill", "heart.fill", "bolt.fill", "flame.fill", "sparkles", "moon.fill", "sun.max.fill", "cloud.fill"]
+        return icons[(chapterNumber - 1) % icons.count]
+    }
+    
+    func getCustomVocabulary() -> [VocabularyItem] {
+        return customVocabulary
     }
 }

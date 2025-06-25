@@ -1,0 +1,232 @@
+{
+  "source": "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Screens/ProgressStatsView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Progress",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 37
+        }
+      },
+      {
+        "comment": "",
+        "key": "Done",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 41
+        }
+      },
+      {
+        "comment": "",
+        "key": "1 Day Streak",
+        "location": {
+          "startingColumn": 72,
+          "startingLine": 107
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld Days Streak",
+        "location": {
+          "startingColumn": 89,
+          "startingLine": 107
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 98
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 115
+        }
+      },
+      {
+        "comment": "",
+        "key": "Best: 1 Day",
+        "location": {
+          "startingColumn": 69,
+          "startingLine": 119
+        }
+      },
+      {
+        "comment": "",
+        "key": "Best: %lld Days",
+        "location": {
+          "startingColumn": 85,
+          "startingLine": 119
+        }
+      },
+      {
+        "comment": "",
+        "key": "Chart requires iOS 16.0 or later",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 202
+        }
+      },
+      {
+        "comment": "",
+        "key": "Time Range",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 139
+        }
+      },
+      {
+        "comment": "",
+        "key": "No practice data yet",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 157
+        }
+      },
+      {
+        "comment": "",
+        "key": "Complete some practice sessions to see your progress",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 161
+        }
+      },
+      {
+        "comment": "",
+        "key": "Date",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 176
+        }
+      },
+      {
+        "comment": "",
+        "key": "Accuracy",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 177
+        }
+      },
+      {
+        "comment": "",
+        "key": "Date",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 182
+        }
+      },
+      {
+        "comment": "",
+        "key": "Accuracy",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 183
+        }
+      },
+      {
+        "comment": "",
+        "key": "Chart requires iOS 16.0 or later",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 263
+        }
+      },
+      {
+        "comment": "",
+        "key": "No practice data yet",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 229
+        }
+      },
+      {
+        "comment": "",
+        "key": "Complete some practice sessions to see your daily progress",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 233
+        }
+      },
+      {
+        "comment": "",
+        "key": "Date",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 248
+        }
+      },
+      {
+        "comment": "",
+        "key": "Words",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 249
+        }
+      },
+      {
+        "comment": "",
+        "key": "Chart requires iOS 16.0 or later",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 324
+        }
+      },
+      {
+        "comment": "",
+        "key": "No practice data yet",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 290
+        }
+      },
+      {
+        "comment": "",
+        "key": "Complete some practice sessions to see your daily time",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 294
+        }
+      },
+      {
+        "comment": "",
+        "key": "Date",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 309
+        }
+      },
+      {
+        "comment": "",
+        "key": "Minutes",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 310
+        }
+      },
+      {
+        "comment": "",
+        "key": "HSK %lld",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 521
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld/%lld",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 527
+        }
+      }
+    ]
+  },
+  "version": 1
+}

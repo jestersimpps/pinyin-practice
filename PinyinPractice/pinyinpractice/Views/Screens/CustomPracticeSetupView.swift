@@ -4,7 +4,7 @@ struct CustomPracticeSetupView: View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject private var progressService = UserProgressService.shared
     @ObservedObject private var vocabularyService = VocabularyService.shared
-    @State private var selectedLevel: Int = 1
+    @State private var selectedLevel: Int = 7  // Start with Custom tab
     @State private var showingPractice = false
     @State private var selectedChapters: Set<String> = []
     
@@ -81,8 +81,28 @@ struct CustomPracticeSetupView: View {
     private var levelTabBar: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 16) {
+                // Custom tab first
+                Button(action: { 
+                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                    selectedLevel = 7 
+                }) {
+                    Text("Custom")
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(selectedLevel == 7 ? .white : Color("PrimaryText"))
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 10)
+                        .background(
+                            RoundedRectangle(cornerRadius: 20)
+                                .fill(selectedLevel == 7 ? Color(red: 0.1, green: 0.3, blue: 0.4) : Color("SecondaryBackground"))
+                        )
+                }
+                
+                // HSK levels
                 ForEach(1...6, id: \.self) { level in
-                    Button(action: { selectedLevel = level }) {
+                    Button(action: { 
+                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                        selectedLevel = level 
+                    }) {
                         Text("HSK \(level)")
                             .font(.system(size: 16, weight: .medium))
                             .foregroundColor(selectedLevel == level ? .white : Color("PrimaryText"))
@@ -102,7 +122,10 @@ struct CustomPracticeSetupView: View {
     }
     
     private var chaptersForSelectedLevel: [Chapter] {
-        vocabularyService.getChaptersForLevel(selectedLevel)
+        if selectedLevel == 7 {
+            return vocabularyService.chapters.filter { $0.hskLevel == 7 }
+        }
+        return vocabularyService.getChaptersForLevel(selectedLevel)
     }
     
     
@@ -161,8 +184,10 @@ struct CustomPracticeSetupView: View {
         // Calculate selected HSK levels from all selected chapters
         var selectedLevels: Set<Int> = []
         for chapterId in selectedChapters {
-            // Extract level from chapter ID (format: "chapter_X")
-            if let chapterNum = Int(chapterId.replacingOccurrences(of: "chapter_", with: "")) {
+            if chapterId.hasPrefix("custom_") {
+                // Custom chapters use level 7
+                selectedLevels.insert(7)
+            } else if let chapterNum = Int(chapterId.replacingOccurrences(of: "chapter", with: "")) {
                 let chapterInfo = ChapterCurriculum.getChapterInfo(chapter: chapterNum)
                 selectedLevels.insert(chapterInfo.hskLevel)
             }

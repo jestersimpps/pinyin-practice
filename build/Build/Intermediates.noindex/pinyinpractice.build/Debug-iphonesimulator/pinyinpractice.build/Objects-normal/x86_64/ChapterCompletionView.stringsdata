@@ -1,0 +1,64 @@
+{
+  "source": "/Users/jovinkenroye/Sites/pinyinpractice/pinyinpractice/pinyinpractice/Views/Screens/ChapterCompletionView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "恭喜！",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 53
+        }
+      },
+      {
+        "comment": "",
+        "key": "Chapter Complete!",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 57
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld words mastered",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 68
+        }
+      },
+      {
+        "comment": "",
+        "key": "Next Chapter",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 102
+        }
+      },
+      {
+        "comment": "",
+        "key": "Continue to Next Chapter",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 115
+        }
+      },
+      {
+        "comment": "",
+        "key": "Review This Chapter",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 131
+        }
+      },
+      {
+        "comment": "",
+        "key": "Back to Chapters",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 143
+        }
+      }
+    ]
+  },
+  "version": 1
+}

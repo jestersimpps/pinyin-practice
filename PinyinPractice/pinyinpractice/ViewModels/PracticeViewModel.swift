@@ -230,18 +230,12 @@ class PracticeViewModel: ObservableObject {
             feedbackState = .partial
             progressService.recordAnswer(for: word, isCorrect: false)
             
-            // Auto-advance after delay to allow user to see correct answer
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                self.nextWord()
-            }
+            // Don't auto-advance - let user study the correct answer
         } else {
             feedbackState = .incorrect
             progressService.recordAnswer(for: word, isCorrect: false)
             
-            // Auto-advance after delay to allow user to see correct answer
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
-                self.nextWord()
-            }
+            // Don't auto-advance - let user study the correct answer
         }
     }
     
@@ -287,7 +281,7 @@ class PracticeViewModel: ObservableObject {
                             // Convert local chapter number to global chapter number
                             switch level {
                             case 1: chapterNumber = localChapterNum
-                            case 2: chapterNumber = 15 + localChapterNum
+                            case 2: chapterNumber = 14 + localChapterNum
                             case 3: chapterNumber = 28 + localChapterNum
                             case 4: chapterNumber = 42 + localChapterNum
                             case 5: chapterNumber = 56 + localChapterNum
@@ -399,10 +393,7 @@ class PracticeViewModel: ObservableObject {
         wasSkipped = true
         feedbackState = .incorrect
         
-        // Auto-advance after brief delay
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            self.nextWord()
-        }
+        // Don't auto-advance - let user see the correct answer
     }
     
     
