@@ -1,0 +1,80 @@
+{
+  "source": "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/cleanpinyin/Views/Screens/CustomPracticeSetupView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Custom Practice",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 61
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 25
+        }
+      },
+      {
+        "comment": "",
+        "key": "words selected",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 29
+        }
+      },
+      {
+        "comment": "",
+        "key": "Cancel",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 65
+        }
+      },
+      {
+        "comment": "",
+        "key": "Custom",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 89
+        }
+      },
+      {
+        "comment": "",
+        "key": "HSK %lld",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 106
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld words selected",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 139
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld chapters",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 143
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld words",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 232
+        }
+      }
+    ]
+  },
+  "version": 1
+}

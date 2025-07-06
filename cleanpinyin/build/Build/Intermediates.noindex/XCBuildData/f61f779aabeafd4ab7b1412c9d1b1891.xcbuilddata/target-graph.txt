@@ -1,0 +1,2 @@
+Target dependency graph (1 target)
+Target 'cleanpinyin' in project 'cleanpinyin' (no dependencies)

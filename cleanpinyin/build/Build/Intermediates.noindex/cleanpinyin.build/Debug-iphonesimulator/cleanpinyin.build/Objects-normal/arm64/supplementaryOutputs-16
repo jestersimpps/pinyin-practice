@@ -1,0 +1,30 @@
+"/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/DerivedSources/GeneratedAssetSymbols.swift":
+  object: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/arm64/GeneratedAssetSymbols.o"
+  swift-dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/arm64/GeneratedAssetSymbols.swiftdeps"
+  diagnostics: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/arm64/GeneratedAssetSymbols.dia"
+  const-values: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/arm64/GeneratedAssetSymbols.swiftconstvalues"
+  dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/arm64/GeneratedAssetSymbols.d"
+"/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/cleanpinyin/Views/Screens/ProgressStatsView.swift":
+  const-values: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/arm64/ProgressStatsView.swiftconstvalues"
+  object: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/arm64/ProgressStatsView.o"
+  diagnostics: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/arm64/ProgressStatsView.dia"
+  dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/arm64/ProgressStatsView.d"
+  swift-dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/arm64/ProgressStatsView.swiftdeps"
+"/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/cleanpinyin/Views/Screens/SetupView.swift":
+  const-values: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/arm64/SetupView.swiftconstvalues"
+  dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/arm64/SetupView.d"
+  object: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/arm64/SetupView.o"
+  diagnostics: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/arm64/SetupView.dia"
+  swift-dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/arm64/SetupView.swiftdeps"
+"/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/cleanpinyin/Views/Screens/SettingsView.swift":
+  const-values: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/arm64/SettingsView.swiftconstvalues"
+  object: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/arm64/SettingsView.o"
+  dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/arm64/SettingsView.d"
+  swift-dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/arm64/SettingsView.swiftdeps"
+  diagnostics: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/arm64/SettingsView.dia"
+"/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/cleanpinyin/cleanpinyinApp.swift":
+  const-values: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/arm64/cleanpinyinApp.swiftconstvalues"
+  swift-dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/arm64/cleanpinyinApp.swiftdeps"
+  diagnostics: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/arm64/cleanpinyinApp.dia"
+  dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/arm64/cleanpinyinApp.d"
+  object: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/arm64/cleanpinyinApp.o"

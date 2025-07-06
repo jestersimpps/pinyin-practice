@@ -1,0 +1,32 @@
+{
+  "source": "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/cleanpinyin/Views/Screens/PracticeCompletionView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Practice Complete!",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 47
+        }
+      },
+      {
+        "comment": "",
+        "key": "Continue Practice",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 126
+        }
+      },
+      {
+        "comment": "",
+        "key": "Back to Home",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 138
+        }
+      }
+    ]
+  },
+  "version": 1
+}

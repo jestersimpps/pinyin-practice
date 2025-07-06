@@ -1,0 +1,30 @@
+"/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/cleanpinyin/Services/VocabularyService.swift":
+  object: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/x86_64/VocabularyService.o"
+  swift-dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/x86_64/VocabularyService.swiftdeps"
+  dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/x86_64/VocabularyService.d"
+  const-values: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/x86_64/VocabularyService.swiftconstvalues"
+  diagnostics: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/x86_64/VocabularyService.dia"
+"/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/cleanpinyin/Services/Organizers/ChapterOrganizer.swift":
+  const-values: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/x86_64/ChapterOrganizer.swiftconstvalues"
+  swift-dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/x86_64/ChapterOrganizer.swiftdeps"
+  dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/x86_64/ChapterOrganizer.d"
+  diagnostics: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/x86_64/ChapterOrganizer.dia"
+  object: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/x86_64/ChapterOrganizer.o"
+"/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/cleanpinyin/Services/UserProgressService.swift":
+  const-values: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/x86_64/UserProgressService.swiftconstvalues"
+  dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/x86_64/UserProgressService.d"
+  diagnostics: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/x86_64/UserProgressService.dia"
+  swift-dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/x86_64/UserProgressService.swiftdeps"
+  object: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/x86_64/UserProgressService.o"
+"/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/cleanpinyin/Services/Loaders/CustomVocabularyLoader.swift":
+  object: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/x86_64/CustomVocabularyLoader.o"
+  dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/x86_64/CustomVocabularyLoader.d"
+  const-values: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/x86_64/CustomVocabularyLoader.swiftconstvalues"
+  diagnostics: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/x86_64/CustomVocabularyLoader.dia"
+  swift-dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/x86_64/CustomVocabularyLoader.swiftdeps"
+"/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/cleanpinyin/Services/Loaders/VocabularyFileLoader.swift":
+  object: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/x86_64/VocabularyFileLoader.o"
+  diagnostics: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/x86_64/VocabularyFileLoader.dia"
+  dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/x86_64/VocabularyFileLoader.d"
+  const-values: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/x86_64/VocabularyFileLoader.swiftconstvalues"
+  swift-dependencies: "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/build/Build/Intermediates.noindex/cleanpinyin.build/Debug-iphonesimulator/cleanpinyin.build/Objects-normal/x86_64/VocabularyFileLoader.swiftdeps"

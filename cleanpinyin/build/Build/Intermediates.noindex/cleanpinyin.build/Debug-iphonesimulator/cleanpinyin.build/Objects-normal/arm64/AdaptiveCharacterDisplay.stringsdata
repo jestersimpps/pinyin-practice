@@ -1,0 +1,24 @@
+{
+  "source": "/Users/jovinkenroye/Sites/pinyinpractice/cleanpinyin/cleanpinyin/Views/Components/Cards/AdaptiveCharacterDisplay.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Correct answer: %@",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 69
+        }
+      },
+      {
+        "comment": "",
+        "key": "Correct answer: %@",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 154
+        }
+      }
+    ]
+  },
+  "version": 1
+}
