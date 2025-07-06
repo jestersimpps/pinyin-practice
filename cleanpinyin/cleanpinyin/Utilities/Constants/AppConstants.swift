@@ -13,20 +13,38 @@ enum AppConstants {
     
     // MARK: - UI Constants
     enum UI {
+        // Corner Radius
         static let cornerRadius: CGFloat = 12
         static let largeCornerRadius: CGFloat = 16
         static let smallCornerRadius: CGFloat = 8
+        static let tinyCornerRadius: CGFloat = 4
         
+        // Padding
         static let standardPadding: CGFloat = 16
         static let compactPadding: CGFloat = 8
         static let largePadding: CGFloat = 20
+        static let extraLargePadding: CGFloat = 24
+        static let tinyPadding: CGFloat = 4
+        static let smallPadding: CGFloat = 6
         
+        // Spacing
+        static let tinySpacing: CGFloat = 2
+        static let smallSpacing: CGFloat = 4
+        static let compactSpacing: CGFloat = 8
+        static let standardSpacing: CGFloat = 12
+        static let mediumSpacing: CGFloat = 16
+        static let largeSpacing: CGFloat = 20
+        static let extraLargeSpacing: CGFloat = 24
+        static let hugeSpacing: CGFloat = 30
+        static let massiveSpacing: CGFloat = 40
+        
+        // Sizes
         static let buttonHeight: CGFloat = 44
         static let smallButtonSize: CGFloat = 36
         
+        // Shadows & Borders
         static let shadowRadius: CGFloat = 2
         static let shadowOpacity: Double = 0.05
-        
         static let borderWidth: CGFloat = 2
         static let thinBorderWidth: CGFloat = 1
     }
@@ -119,5 +137,31 @@ enum AppConstants {
         static let springResponse = 0.5
         static let springDampingFraction = 0.8
         static let feedbackDelay = 0.1
+    }
+    
+    // MARK: - Strings
+    enum Strings {
+        static let practice = "Practice"
+        static let review = "Review"
+        static let chapter = "Chapter"
+        static let level = "Level"
+        static let hsk = "HSK"
+        static let progress = "Progress"
+        static let settings = "Settings"
+        static let accuracy = "Accuracy"
+        static let streak = "Streak"
+        static let completed = "Completed"
+        static let notStarted = "Not Started"
+        static let inProgress = "In Progress"
+        static let sequential = "Sequential"
+        static let random = "Random"
+        static let start = "Start"
+        static let `continue` = "Continue"
+        static let next = "Next"
+        static let skip = "Skip"
+        static let done = "Done"
+        static let correct = "Correct"
+        static let incorrect = "Incorrect"
+        static let partial = "Partial"
     }
 }

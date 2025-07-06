@@ -348,7 +348,7 @@ class PracticeViewModel: ObservableObject {
                 }
             }
         } else if !showingChapterCompletion && !showingPracticeCompletion && wordsCompleted > 0 {
-            let practiceModeName = getPracticeModeName()
+            let practiceModeName = practiceModeName()
             sessionStats = sessionManager.getSessionStats(
                 practiceModeName: practiceModeName,
                 currentStreak: progressService.progress.currentStreak,
@@ -361,19 +361,19 @@ class PracticeViewModel: ObservableObject {
         }
     }
     
-    private func getPracticeModeName() -> String {
+    private func practiceModeName() -> String {
         if let mode = _currentLearningMode {
             switch mode {
             case .levels(let levels):
-                let levelsStr = levels.sorted().map { "HSK \($0)" }.joined(separator: ", ")
-                let practiceType = progressService.settings.practiceMode == .random ? "Random Practice" : "Sequential Practice"
+                let levelsStr = FormattingUtility.formatLevelRange(levels)
+                let practiceType = progressService.settings.practiceMode == .random ? "\(AppConstants.Strings.random) \(AppConstants.Strings.practice)" : "\(AppConstants.Strings.sequential) \(AppConstants.Strings.practice)"
                 return "\(practiceType) - \(levelsStr)"
             case .chapters:
-                return "Chapter Practice"
+                return "\(AppConstants.Strings.chapter) \(AppConstants.Strings.practice)"
             case .review:
-                return "Review Mistakes"
+                return "\(AppConstants.Strings.review) Mistakes"
             }
         }
-        return "Practice"
+        return AppConstants.Strings.practice
     }
 }

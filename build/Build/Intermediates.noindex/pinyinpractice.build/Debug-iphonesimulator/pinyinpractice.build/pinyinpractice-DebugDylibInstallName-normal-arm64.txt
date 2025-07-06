@@ -1,1 +1,0 @@
-@rpath/pinyinpractice.debug.dylib
