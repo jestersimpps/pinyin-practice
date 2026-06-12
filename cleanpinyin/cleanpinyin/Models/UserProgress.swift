@@ -57,57 +57,57 @@ struct UserProgress: Codable {
         return chapterProgress[chapterId]
     }
     
+    mutating func recordChapterAttempt(chapterId: String, totalWords: Int, isCorrect: Bool, practiceTime: TimeInterval) {
+        ensureChapterProgress(chapterId: chapterId, totalWords: totalWords)
+        chapterProgress[chapterId]?.recordAttempt(isCorrect: isCorrect, practiceTime: practiceTime)
+    }
+
     mutating func updateChapterProgress(chapterId: String, wordId: String, totalWords: Int) -> Bool {
-        var wasJustCompleted = false
-        
-        
-        if chapterProgress[chapterId] == nil {
-            chapterProgress[chapterId] = ChapterProgress(
-                chapterId: chapterId,
-                wordsCompleted: [],
-                totalWords: totalWords,
-                isCompleted: false,
-                completionDate: nil
-            )
-        }
-        
+        ensureChapterProgress(chapterId: chapterId, totalWords: totalWords)
+
         let wasCompleted = chapterProgress[chapterId]?.isCompleted ?? false
         chapterProgress[chapterId]?.markWordCompleted(wordId)
         let isNowCompleted = chapterProgress[chapterId]?.isCompleted ?? false
-        
-        
-        wasJustCompleted = !wasCompleted && isNowCompleted
-        
-        return wasJustCompleted
+
+        return !wasCompleted && isNowCompleted
     }
-    
-    func isChapterUnlocked(level: Int, chapter: Int) -> Bool {
-        if ChapterCurriculum.reviewChapters.contains(chapter) { return false }
-        
-        if chapter == 1 { return true }
-        if chapter == 15 { return true }
-        if chapter == 29 { return true }
-        if chapter == 43 { return true }
-        if chapter == 57 { return true }
-        if chapter == 69 { return true }
-        
-        var previousChapter = chapter - 1
-        while ChapterCurriculum.reviewChapters.contains(previousChapter) && previousChapter > 0 {
-            previousChapter -= 1
+
+    private mutating func ensureChapterProgress(chapterId: String, totalWords: Int) {
+        guard chapterProgress[chapterId] == nil else { return }
+        chapterProgress[chapterId] = ChapterProgress(
+            chapterId: chapterId,
+            wordsCompleted: [],
+            totalWords: totalWords,
+            isCompleted: false,
+            completionDate: nil
+        )
+    }
+
+    func isChapterUnlocked(chapterId: String) -> Bool {
+        let identifier = ChapterIdentifier(chapterId)
+        if identifier.isCustom { return true }
+        guard let chapterNumber = identifier.chapterNumber else { return true }
+
+        if identifier.isCurriculumChapter {
+            if ChapterCurriculum.isReviewChapter(chapterNumber) { return false }
+
+            let level = ChapterCurriculum.hskLevel(forChapter: chapterNumber)
+            if chapterNumber == ChapterCurriculum.firstChapter(forLevel: level) { return true }
+
+            var previousChapter = chapterNumber - 1
+            while ChapterCurriculum.isReviewChapter(previousChapter) && previousChapter > 1 {
+                previousChapter -= 1
+            }
+            return meetsUnlockRequirement(ChapterIdentifier(chapterNumber: previousChapter).value)
         }
-        
-        let previousChapterId = "chapter\(previousChapter)"
-        
-        
-        if let previousProgress = chapterProgress[previousChapterId] {
-            let percentage = previousProgress.completionPercentage
-            let isUnlocked = percentage >= 80.0
-            
-            
-            return isUnlocked
-        }
-        
-        
-        return false
+
+        if chapterNumber == 1 { return true }
+        guard let level = identifier.hskLevel else { return true }
+        return meetsUnlockRequirement(ChapterIdentifier(hskLevel: level, chapterNumber: chapterNumber - 1).value)
+    }
+
+    private func meetsUnlockRequirement(_ previousChapterId: String) -> Bool {
+        guard let previous = chapterProgress[previousChapterId] else { return false }
+        return previous.completionPercentage >= AppConstants.Chapters.unlockRequirement * 100
     }
 }

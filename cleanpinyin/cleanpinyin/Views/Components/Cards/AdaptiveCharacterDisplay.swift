@@ -6,271 +6,155 @@ struct AdaptiveCharacterDisplay: View {
     let showHint: Bool
     let isKeyboardVisible: Bool
     let onHintToggle: () -> Void
-    
-    @Environment(\.colorScheme) var colorScheme
+
     @State private var expandedTranslation = false
     @State private var expandedCharacterHint = false
     @State private var expandedPronunciationHint = false
-    
-    enum FeedbackState {
-        case none, correct, incorrect, partial
-    }
-    
+    @StateObject private var textToSpeech = TextToSpeechService.shared
+
     var body: some View {
-        Group {
-            if isKeyboardVisible {
-                compactLayout
-            } else {
-                fullLayout
-            }
-        }
-        .onChange(of: word.id) { _, _ in
-            // Reset expanded states when word changes
-            expandedTranslation = false
-            expandedCharacterHint = false
-            expandedPronunciationHint = false
-        }
-    }
-    
-    // MARK: - Compact Layout (Keyboard Visible)
-    private var compactLayout: some View {
-        VStack(spacing: 8) {
-            // Character with inline feedback
-            ZStack {
-                Text(displayCharacter)
-                    .font(.system(size: 60, weight: .bold, design: .rounded))
-                    .foregroundColor(Color("PrimaryText"))
-                    .frame(maxWidth: .infinity)
-                
-                if feedbackState != .none {
-                    HStack {
-                        Spacer()
-                        feedbackIcon
-                            .font(.system(size: 24))
-                            .foregroundColor(feedbackColor)
-                            .transition(.scale.combined(with: .opacity))
-                            .padding(.trailing, 16)
-                    }
-                }
-            }
-            .padding(.vertical, 8)
-            .padding(.horizontal, 16)
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(borderColor, lineWidth: feedbackState != .none ? 2 : 0)
-            )
-            
-            // Feedback message with correct answer for incorrect state
+        VStack(spacing: isKeyboardVisible ? 8 : 16) {
+            characterSection
+
             if feedbackState == .incorrect {
-                HStack(spacing: 6) {
-                    Image(systemName: "checkmark.circle")
-                        .font(.caption)
-                    
-                    Text("Correct answer: \(word.pinyin)")
-                        .font(.system(size: 13, weight: .medium))
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
-                .foregroundColor(Color(red: 0.2, green: 0.8, blue: 0.4))
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                .frame(maxWidth: .infinity)
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color(red: 0.2, green: 0.8, blue: 0.4).opacity(0.15))
+                InfoBanner(
+                    icon: "checkmark.circle",
+                    text: "Correct answer: \(word.pinyin)",
+                    color: Color("SuccessGreen"),
+                    compact: isKeyboardVisible
                 )
                 .transition(.opacity)
             }
-            
-            // Show translation based on settings or on error
+
             if settings.showEnglishTranslation || feedbackState == .incorrect {
-                Button(action: { expandedTranslation.toggle() }) {
-                    HStack(spacing: 6) {
-                        Image(systemName: "text.book.closed")
-                            .font(.caption)
-                        
-                        Text(word.english)
-                            .font(.system(size: 13, weight: .medium))
-                            .lineLimit(expandedTranslation ? nil : 2)
-                            .multilineTextAlignment(.leading)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                    .foregroundColor(Color(red: 0.2, green: 0.8, blue: 0.4))
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .frame(maxWidth: .infinity)
-                    .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Color(red: 0.2, green: 0.8, blue: 0.4).opacity(0.15))
-                    )
-                }
-                .buttonStyle(PlainButtonStyle())
+                InfoBanner(
+                    icon: "text.book.closed",
+                    text: word.english,
+                    color: Color("SuccessGreen"),
+                    compact: isKeyboardVisible,
+                    isExpanded: $expandedTranslation
+                )
                 .transition(.opacity)
             }
-            
-            // Compact hints (horizontal pills)
+
             if showHint || feedbackState == .incorrect {
-                compactHints
+                hints
                     .transition(.opacity)
             }
         }
         .animation(.easeInOut(duration: 0.2), value: feedbackState)
         .animation(.easeInOut(duration: 0.2), value: showHint)
+        .onChange(of: word.id) { _, _ in
+            expandedTranslation = false
+            expandedCharacterHint = false
+            expandedPronunciationHint = false
+        }
     }
-    
-    // MARK: - Full Layout (Keyboard Hidden)
-    private var fullLayout: some View {
-        VStack(spacing: 16) {
-            // Large character
-            ZStack {
-                Text(displayCharacter)
-                    .font(.system(size: 120, weight: .bold, design: .rounded))
-                    .foregroundColor(Color("PrimaryText"))
-                    .scaleEffect(feedbackState == .correct ? 1.1 : 1.0)
-                
-                if feedbackState == .correct {
+
+    // MARK: - Character
+    private var characterSection: some View {
+        ZStack {
+            Text(displayCharacter)
+                .font(.system(size: isKeyboardVisible ? 60 : 120, weight: .bold, design: .rounded))
+                .foregroundColor(Color("PrimaryText"))
+                .frame(maxWidth: .infinity)
+                .scaleEffect(!isKeyboardVisible && feedbackState == .correct ? 1.1 : 1.0)
+
+            if feedbackState != .none {
+                if isKeyboardVisible {
+                    HStack {
+                        Spacer()
+                        Image(systemName: feedbackIconName)
+                            .font(.system(size: 24))
+                            .foregroundColor(feedbackColor)
+                            .transition(.scale.combined(with: .opacity))
+                            .padding(.trailing, 16)
+                    }
+                } else if feedbackState == .correct {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.system(size: 60))
-                        .foregroundColor(Color(red: 0.2, green: 0.8, blue: 0.4))
+                        .foregroundColor(Color("SuccessGreen"))
                         .transition(.scale.combined(with: .opacity))
                 }
             }
-            .frame(height: 140)
-            .frame(maxWidth: .infinity)
-            .background(
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(Color("SecondaryBackground").opacity(0.3))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(borderColor, lineWidth: 2)
-                    )
-            )
-            
-            // Show correct answer when incorrect
-            if feedbackState == .incorrect {
-                HStack(spacing: 8) {
-                    Image(systemName: "checkmark.circle")
-                        .font(.body)
-                    
-                    Text("Correct answer: \(word.pinyin)")
-                        .font(.system(size: 16, weight: .medium))
-                        .frame(maxWidth: .infinity, alignment: .leading)
+
+            VStack {
+                HStack {
+                    speakerButton
+                        .padding(isKeyboardVisible ? 8 : 12)
+                    Spacer()
                 }
-                .foregroundColor(Color(red: 0.2, green: 0.8, blue: 0.4))
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color(red: 0.2, green: 0.8, blue: 0.4).opacity(0.15))
-                )
-                .transition(.opacity)
+                Spacer()
             }
-            
-            // Translation
-            if settings.showEnglishTranslation || feedbackState == .incorrect {
-                Button(action: { 
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        expandedTranslation.toggle()
-                    }
-                }) {
-                    HStack(spacing: 8) {
-                        Image(systemName: "text.book.closed")
-                            .font(.body)
-                        
-                        Text(word.english)
-                            .font(.system(size: 16, weight: .medium))
-                            .lineLimit(expandedTranslation ? nil : 3)
-                            .multilineTextAlignment(.leading)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .fixedSize(horizontal: false, vertical: expandedTranslation)
-                    }
-                    .foregroundColor(Color(red: 0.2, green: 0.8, blue: 0.4))
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 12)
-                    .frame(maxWidth: .infinity)
-                    .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Color(red: 0.2, green: 0.8, blue: 0.4).opacity(0.15))
-                    )
-                }
-                .buttonStyle(PlainButtonStyle())
-                .transition(.opacity)
-            }
-            
-            // Full hints
-            if showHint || feedbackState == .incorrect {
-                fullHints
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
-            }
-            
         }
-        .animation(.spring(response: 0.3, dampingFraction: 0.8), value: feedbackState)
-        .animation(.easeInOut(duration: 0.2), value: showHint)
+        .frame(height: isKeyboardVisible ? nil : 140)
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, isKeyboardVisible ? 8 : 0)
+        .padding(.horizontal, isKeyboardVisible ? 16 : 0)
+        .background(
+            RoundedRectangle(cornerRadius: isKeyboardVisible ? 12 : 20)
+                .fill(isKeyboardVisible ? Color.clear : Color("SecondaryBackground").opacity(0.3))
+                .overlay(
+                    RoundedRectangle(cornerRadius: isKeyboardVisible ? 12 : 20)
+                        .stroke(borderColor, lineWidth: feedbackState != .none || !isKeyboardVisible ? 2 : 0)
+                )
+        )
     }
-    
-    // MARK: - Compact Hints
-    private var compactHints: some View {
-        VStack(spacing: 6) {
+
+    // MARK: - Hints
+    private var hints: some View {
+        VStack(spacing: isKeyboardVisible ? 6 : 12) {
             if settings.showCharacterHints,
                let hint = getCleanHint(word.characterHint) {
-                HintPill(
+                InfoBanner(
                     icon: "character.book.closed.fill",
                     text: hint,
                     color: .purple,
+                    compact: isKeyboardVisible,
                     isExpanded: $expandedCharacterHint
                 )
             }
-            
+
             if settings.showPronunciationHints,
                let hint = getCleanHint(word.pronunciationHint) {
-                HintPill(
+                InfoBanner(
                     icon: "lightbulb.fill",
                     text: hint,
                     color: .orange,
+                    compact: isKeyboardVisible,
                     isExpanded: $expandedPronunciationHint
                 )
             }
         }
     }
-    
-    // MARK: - Full Hints
-    private var fullHints: some View {
-        VStack(spacing: 12) {
-            if settings.showCharacterHints,
-               let hint = getCleanHint(word.characterHint) {
-                HintCard(
-                    icon: "character.book.closed.fill",
-                    text: hint,
-                    color: .purple
+
+    private var speakerButton: some View {
+        Button(action: {
+            textToSpeech.speak(chinese: displayCharacter)
+        }) {
+            Image(systemName: textToSpeech.isSpeaking ? "speaker.wave.3.fill" : "speaker.wave.2.fill")
+                .font(.system(size: 20))
+                .foregroundColor(Color("PrimaryText").opacity(0.7))
+                .padding(8)
+                .background(
+                    Circle()
+                        .fill(Color("SecondaryBackground"))
+                        .shadow(radius: 2, x: 0, y: 1)
                 )
-            }
-            
-            if settings.showPronunciationHints,
-               let hint = getCleanHint(word.pronunciationHint) {
-                HintCard(
-                    icon: "lightbulb.fill",
-                    text: hint,
-                    color: .orange
-                )
-            }
         }
+        .scaleEffect(textToSpeech.isSpeaking ? 1.1 : 1.0)
+        .animation(.easeInOut(duration: 0.2), value: textToSpeech.isSpeaking)
     }
-    
-    
-    // MARK: - Helper Views
-    private var feedbackIcon: some View {
-        Image(systemName: feedbackIconName)
-    }
-    
+
     // MARK: - Computed Properties
     private var displayCharacter: String {
         settings.useTraditional ? word.traditional : word.simplified
     }
-    
+
     private var settings: PracticeSettings {
         UserProgressService.shared.settings
     }
-    
+
     private var feedbackIconName: String {
         switch feedbackState {
         case .correct: return "checkmark.circle.fill"
@@ -279,30 +163,20 @@ struct AdaptiveCharacterDisplay: View {
         case .none: return ""
         }
     }
-    
+
     private var feedbackColor: Color {
         switch feedbackState {
-        case .correct: return Color(red: 0.2, green: 0.8, blue: 0.4)
+        case .correct: return Color("SuccessGreen")
         case .incorrect: return .red
         case .partial: return .orange
         case .none: return .clear
         }
     }
-    
+
     private var borderColor: Color {
         feedbackState == .none ? .clear : feedbackColor.opacity(0.5)
     }
-    
-    private var feedbackText: String {
-        switch feedbackState {
-        case .correct: return "Correct!"
-        case .incorrect: return "Try again"
-        case .partial: return "Check tones"
-        case .none: return ""
-        }
-    }
-    
-    // MARK: - Helper Methods
+
     private func getCleanHint(_ hint: String) -> String? {
         guard !hint.isEmpty,
               !hint.starts(with: "Character hint for"),
@@ -311,83 +185,59 @@ struct AdaptiveCharacterDisplay: View {
         }
         return hint
     }
-    
-    private func mapPartOfSpeech(_ pos: String) -> String {
-        // Using simplified mapping for space
-        let mapping: [String: String] = [
-            "n": "noun",
-            "v": "verb",
-            "a": "adj",
-            "d": "adv",
-            "p": "prep"
-        ]
-        return mapping[pos] ?? pos
-    }
 }
 
 // MARK: - Supporting Views
 
-struct HintPill: View {
+struct InfoBanner: View {
     let icon: String
     let text: String
     let color: Color
-    @Binding var isExpanded: Bool
-    
-    var body: some View {
-        Button(action: { 
-            withAnimation(.easeInOut(duration: 0.2)) {
-                isExpanded.toggle()
-            }
-        }) {
-            HStack(spacing: 6) {
-                Image(systemName: icon)
-                    .font(.caption)
-                
-                Text(text)
-                    .font(.system(size: 13, weight: .medium))
-                    .lineLimit(isExpanded ? nil : 1)
-                    .truncationMode(.tail)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .fixedSize(horizontal: false, vertical: isExpanded)
-            }
-            .foregroundColor(color)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
-            .frame(maxWidth: .infinity)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(color.opacity(0.15))
-            )
-        }
-        .buttonStyle(PlainButtonStyle())
-    }
-}
+    var compact: Bool = false
+    var isExpanded: Binding<Bool>? = nil
 
-struct HintCard: View {
-    let icon: String
-    let text: String
-    let color: Color
-    
     var body: some View {
-        HStack(alignment: .top, spacing: 8) {
+        if let isExpanded {
+            Button(action: {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    isExpanded.wrappedValue.toggle()
+                }
+            }) {
+                content(expanded: isExpanded.wrappedValue)
+            }
+            .buttonStyle(PlainButtonStyle())
+        } else {
+            content(expanded: false)
+        }
+    }
+
+    private func content(expanded: Bool) -> some View {
+        HStack(alignment: .top, spacing: compact ? 6 : 8) {
             Image(systemName: icon)
-                .font(.body)
-                .foregroundColor(color)
-                .padding(.top, 2)
-            
+                .font(compact ? .caption : .body)
+
             Text(text)
-                .font(.system(size: 16, weight: .medium))
-                .foregroundColor(color)
+                .font(.system(size: compact ? 13 : 16, weight: .medium))
+                .lineLimit(isExpandable ? (expanded ? nil : lineLimit) : nil)
                 .multilineTextAlignment(.leading)
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .fixedSize(horizontal: false, vertical: expanded)
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .foregroundColor(color)
+        .padding(.horizontal, compact ? 12 : 16)
+        .padding(.vertical, compact ? 6 : 12)
+        .frame(maxWidth: .infinity)
         .background(
             RoundedRectangle(cornerRadius: 12)
                 .fill(color.opacity(0.15))
         )
     }
-}
 
+    private var isExpandable: Bool {
+        isExpanded != nil
+    }
+
+    private var lineLimit: Int {
+        compact ? 2 : 3
+    }
+}

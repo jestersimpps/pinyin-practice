@@ -2,23 +2,33 @@ import Foundation
 
 struct ChapterCurriculum {
     static let totalChapters = 80
-    
-    // Map chapter numbers to HSK levels
-    static func hskLevel(forChapter chapter: Int) -> Int {
-        switch chapter {
-        case 1...14: return 1
-        case 15...28: return 2
-        case 29...42: return 3
-        case 43...56: return 4
-        case 57...68: return 5
-        case 69...80: return 6
-        default: return 1
-        }
-    }
-    
-    // Chapter definitions with titles, descriptions, and icons
-    // Review chapters that should be excluded
+
+    static let levelRanges: [Int: ClosedRange<Int>] = [
+        1: 1...14,
+        2: 15...28,
+        3: 29...42,
+        4: 43...56,
+        5: 57...68,
+        6: 69...80
+    ]
+
     static let reviewChapters = [28, 42, 56, 68, 80]
+
+    static func hskLevel(forChapter chapter: Int) -> Int {
+        levelRanges.first { $0.value.contains(chapter) }?.key ?? 1
+    }
+
+    static func firstChapter(forLevel level: Int) -> Int {
+        levelRanges[level]?.lowerBound ?? 1
+    }
+
+    static func globalChapterNumber(level: Int, localChapter: Int) -> Int {
+        firstChapter(forLevel: level) + localChapter - 1
+    }
+
+    static func isReviewChapter(_ chapter: Int) -> Bool {
+        reviewChapters.contains(chapter)
+    }
     
     static let chapters: [Int: (title: String, description: String, icon: String)] = [
         // HSK 1
@@ -119,18 +129,10 @@ struct ChapterCurriculum {
         let level = hskLevel(forChapter: chapter)
         return (info.title, info.description, level, info.icon)
     }
-    
-    
-    // Get number of chapters for a given HSK level (excluding review chapters)
+
+    // Number of practice chapters for a given HSK level (excluding review chapters)
     static func chaptersForLevel(_ level: Int) -> Int {
-        switch level {
-        case 1: return 14  // chapters 1-14
-        case 2: return 13  // chapters 15-27 (excluding 28)
-        case 3: return 13  // chapters 29-41 (excluding 42)
-        case 4: return 13  // chapters 43-55 (excluding 56)
-        case 5: return 11  // chapters 57-67 (excluding 68)
-        case 6: return 11  // chapters 69-79 (excluding 80)
-        default: return 0
-        }
+        guard let range = levelRanges[level] else { return 0 }
+        return range.count - reviewChapters.filter { range.contains($0) }.count
     }
 }

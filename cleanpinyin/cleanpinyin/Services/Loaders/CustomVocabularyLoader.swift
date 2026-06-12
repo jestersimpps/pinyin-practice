@@ -1,174 +1,80 @@
 import Foundation
 
 class CustomVocabularyLoader {
-    private let fileLoader = VocabularyFileLoader()
-    
-    func loadCustomVocabulary() -> (chapters: [Chapter], vocabularyByChapter: [String: [VocabularyItem]], allItems: [VocabularyItem]) {
+    typealias CustomVocabulary = (chapters: [Chapter], vocabularyByChapter: [String: [VocabularyItem]], allItems: [VocabularyItem])
 
-        print("Starting to load custom vocabulary files...")
-        
-        if let customDataPath = Bundle.main.path(forResource: "CustomData", ofType: nil) {
-            print("CustomData folder found at: \(customDataPath)")
-            let result = loadFilesFromDirectory(at: customDataPath)
-            return (result.chapters, result.vocabularyByChapter, result.allItems)
-        } else {
-            print("CustomData folder not found as folder reference, trying individual files...")
-            let result = loadIndividualFiles()
-            return (result.chapters, result.vocabularyByChapter, result.allItems)
-        }
-    }
-    
-    private func loadFilesFromDirectory(at path: String) -> (chapters: [Chapter], vocabularyByChapter: [String: [VocabularyItem]], allItems: [VocabularyItem]) {
+    private static let customChapterIcons = ["star.fill", "heart.fill", "bolt.fill", "flame.fill", "sparkles", "moon.fill", "sun.max.fill", "cloud.fill"]
+
+    private let fileLoader = VocabularyFileLoader()
+
+    func loadCustomVocabulary() -> CustomVocabulary {
+        let fileURLs = customFileURLs()
         var chapters: [Chapter] = []
         var vocabularyByChapter: [String: [VocabularyItem]] = [:]
         var allItems: [VocabularyItem] = []
-        
-        do {
-            let fileManager = FileManager.default
-            let contents = try fileManager.contentsOfDirectory(atPath: path)
-            let jsonFiles = contents.filter { $0.hasSuffix(".json") }.sorted()
-            
-            print("Found \(jsonFiles.count) JSON files in CustomData: \(jsonFiles)")
-            
-            for (index, filename) in jsonFiles.enumerated() {
-                let filePath = (path as NSString).appendingPathComponent(filename)
-                let fileURL = URL(fileURLWithPath: filePath)
-                
-                if let chapter = processCustomFile(at: fileURL, chapterNumber: index + 1) {
-                    chapters.append(chapter.chapter)
-                    vocabularyByChapter[chapter.chapter.id] = chapter.items
-                    allItems.append(contentsOf: chapter.items)
-                }
-            }
-        } catch {
-            print("Error reading CustomData directory: \(error)")
+
+        for url in fileURLs {
+            guard let result = processCustomFile(at: url, chapterNumber: chapters.count + 1) else { continue }
+            chapters.append(result.chapter)
+            vocabularyByChapter[result.chapter.id] = result.items
+            allItems.append(contentsOf: result.items)
         }
-        
+
         return (chapters, vocabularyByChapter, allItems)
     }
-    
-    private func loadIndividualFiles() -> (chapters: [Chapter], vocabularyByChapter: [String: [VocabularyItem]], allItems: [VocabularyItem]) {
-        var chapters: [Chapter] = []
-        var vocabularyByChapter: [String: [VocabularyItem]] = [:]
-        var allItems: [VocabularyItem] = []
-        
-        let fileNames = [
-            "basic-1-1",
-            "basic-1-2",
-            "basic-2-1",
-            "basic-2-2"
-        ]
-        
-        var loadedCount = 0
-        
-        for fileName in fileNames {
-            if let url = Bundle.main.url(forResource: "CustomData/\(fileName)", withExtension: "json") {
-                print("Found file: CustomData/\(fileName).json")
-                if let chapter = processCustomFile(at: url, chapterNumber: loadedCount + 1) {
-                    chapters.append(chapter.chapter)
-                    vocabularyByChapter[chapter.chapter.id] = chapter.items
-                    allItems.append(contentsOf: chapter.items)
-                    loadedCount += 1
-                }
-            } else if let url = Bundle.main.url(forResource: fileName, withExtension: "json") {
-                print("Found file: \(fileName).json")
-                if let chapter = processCustomFile(at: url, chapterNumber: loadedCount + 1) {
-                    chapters.append(chapter.chapter)
-                    vocabularyByChapter[chapter.chapter.id] = chapter.items
-                    allItems.append(contentsOf: chapter.items)
-                    loadedCount += 1
-                }
-            }
+
+    private func customFileURLs() -> [URL] {
+        if let customDataPath = Bundle.main.path(forResource: "CustomData", ofType: nil),
+           let contents = try? FileManager.default.contentsOfDirectory(atPath: customDataPath) {
+            return contents
+                .filter { $0.hasSuffix(".json") }
+                .sorted()
+                .map { URL(fileURLWithPath: (customDataPath as NSString).appendingPathComponent($0)) }
         }
-        
-        discoverAdditionalCustomFiles()
-        
-        if loadedCount == 0 {
-            print("No custom files found. Please add JSON files to Xcode project.")
-            print("To add: Drag the JSON files into Xcode's project navigator")
-        } else {
-            print("Successfully loaded \(loadedCount) custom vocabulary files")
-        }
-        
-        return (chapters, vocabularyByChapter, allItems)
+
+        // Fallback when CustomData is bundled as individual files instead of a folder reference
+        return Bundle.main.urls(forResourcesWithExtension: "json", subdirectory: nil)?
+            .filter { $0.lastPathComponent.lowercased().hasPrefix("basic-") || $0.lastPathComponent.lowercased().hasPrefix("custom") }
+            .sorted { $0.lastPathComponent < $1.lastPathComponent } ?? []
     }
-    
+
     private func processCustomFile(at url: URL, chapterNumber: Int) -> (chapter: Chapter, items: [VocabularyItem])? {
         switch fileLoader.loadCustomFile(at: url) {
         case .success(let items):
             let filename = url.deletingPathExtension().lastPathComponent
-            let chapterId = ChapterIdentifier(customFileName: filename).value
-            
             let chapterTitle = formatChapterTitle(from: filename)
-            
-            let customChapter = Chapter(
-                id: chapterId,
-                hskLevel: 7,
+
+            let chapter = Chapter(
+                id: ChapterIdentifier(customFileName: filename).value,
+                hskLevel: Chapter.customLevel,
                 chapterNumber: chapterNumber,
                 title: chapterTitle,
                 description: "Practice with \(chapterTitle.lowercased()) vocabulary",
                 wordCount: items.count,
-                isUnlocked: true,
-                icon: getCustomChapterIcon(for: chapterNumber)
+                icon: Self.customChapterIcons[(chapterNumber - 1) % Self.customChapterIcons.count]
             )
-            
-            print("Loaded custom chapter: \(chapterTitle) with \(items.count) words")
-            return (customChapter, items)
-            
+            return (chapter, items)
+
         case .failure(let error):
             print("Error loading custom vocabulary from \(url.lastPathComponent): \(error)")
             return nil
         }
     }
-    
-    private func discoverAdditionalCustomFiles() {
-        if let resourcePath = Bundle.main.resourcePath {
-            do {
-                let contents = try FileManager.default.contentsOfDirectory(atPath: resourcePath)
-                let customJsonFiles = contents.filter {
-                    $0.hasSuffix(".json") &&
-                    ($0.contains("custom") || $0.contains("basic") || $0.contains("Custom"))
-                }
-                print("Found potential custom JSON files in bundle: \(customJsonFiles)")
-            } catch {
-                print("Error listing bundle contents: \(error)")
-            }
-        }
-    }
-    
+
     private func formatChapterTitle(from filename: String) -> String {
         var title = filename
-        
-        if title.lowercased().hasPrefix("basic-") {
-            title = title.replacingOccurrences(of: "basic-", with: "Basic ", options: .caseInsensitive)
-            return title
-        }
-        
+
         if title.lowercased().hasPrefix("custom") {
-            title = String(title.dropFirst(6))
+            title = String(title.dropFirst("custom".count))
         }
-        
-        title = title.replacingOccurrences(of: "_", with: " ")
-        title = title.replacingOccurrences(of: "-", with: " ")
-        
-        if let firstChar = title.first, firstChar.isNumber {
-            let components = title.split(separator: " ")
-            if components.count == 1 && components[0].contains(where: { !$0.isNumber && $0 != "-" }) {
-                if let nonNumberIndex = title.firstIndex(where: { !$0.isNumber }) {
-                    title = String(title[nonNumberIndex...])
-                }
-            }
-        }
-        
-        title = title.trimmingCharacters(in: .whitespaces)
-        
+
+        title = title
+            .replacingOccurrences(of: "_", with: " ")
+            .replacingOccurrences(of: "-", with: " ")
+            .trimmingCharacters(in: .whitespaces)
+
         return title.split(separator: " ")
             .map { $0.prefix(1).uppercased() + $0.dropFirst().lowercased() }
             .joined(separator: " ")
-    }
-    
-    private func getCustomChapterIcon(for chapterNumber: Int) -> String {
-        let icons = ["star.fill", "heart.fill", "bolt.fill", "flame.fill", "sparkles", "moon.fill", "sun.max.fill", "cloud.fill"]
-        return icons[(chapterNumber - 1) % icons.count]
     }
 }

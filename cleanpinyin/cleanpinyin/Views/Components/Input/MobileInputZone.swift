@@ -9,22 +9,12 @@ struct MobileInputZone: View {
     let onHintToggle: () -> Void
     let showHintButton: Bool
     let showSkipButton: Bool
-    
-    enum FeedbackState {
-        case none, correct, incorrect, partial
-        
-        var showNextButton: Bool {
-            self == .correct
-        }
-    }
-    
+
     var body: some View {
         HStack(spacing: 8) {
-            // Input field
             inputField
-            
-            // Action buttons
-            if feedbackState.showNextButton {
+
+            if feedbackState == .correct {
                 nextButton
             } else {
                 HStack(spacing: 8) {
@@ -45,7 +35,7 @@ struct MobileInputZone: View {
                 .shadow(color: .black.opacity(0.05), radius: 2, y: -1)
         )
     }
-    
+
     private var inputField: some View {
         HStack {
             TextField("Enter pinyin...", text: $text)
@@ -57,7 +47,7 @@ struct MobileInputZone: View {
                 .focused(isFocused)
                 .submitLabel(.go)
                 .onSubmit(onSubmit)
-            
+
             if !text.isEmpty {
                 Button(action: { text = "" }) {
                     Image(systemName: "xmark.circle.fill")
@@ -70,14 +60,14 @@ struct MobileInputZone: View {
         .padding(.vertical, 12)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(backgroundColor)
+                .fill(Color("PrimaryBackground"))
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
                         .stroke(borderColor, lineWidth: 2)
                 )
         )
     }
-    
+
     private var hintButton: some View {
         Button(action: onHintToggle) {
             Image(systemName: "lightbulb")
@@ -90,7 +80,7 @@ struct MobileInputZone: View {
                 )
         }
     }
-    
+
     private var skipButton: some View {
         Button(action: onSkip) {
             Label("Skip", systemImage: "forward.fill")
@@ -104,7 +94,7 @@ struct MobileInputZone: View {
                 )
         }
     }
-    
+
     private var nextButton: some View {
         Button(action: onSubmit) {
             HStack(spacing: 4) {
@@ -118,29 +108,17 @@ struct MobileInputZone: View {
             .frame(height: 44)
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(nextButtonColor)
+                    .fill(Color("SuccessGreen"))
             )
         }
     }
-    
-    private var backgroundColor: Color {
-        Color("PrimaryBackground")
-    }
-    
+
     private var borderColor: Color {
         switch feedbackState {
-        case .correct: return Color(red: 0.2, green: 0.8, blue: 0.4)
+        case .correct: return Color("SuccessGreen")
         case .incorrect: return .red
         case .partial: return .orange
         case .none: return Color("SecondaryBackground")
-        }
-    }
-    
-    private var nextButtonColor: Color {
-        switch feedbackState {
-        case .correct: return Color(red: 0.2, green: 0.8, blue: 0.4)
-        case .incorrect, .partial: return Color(red: 0.1, green: 0.3, blue: 0.4)
-        case .none: return Color(red: 0.1, green: 0.3, blue: 0.4)
         }
     }
 }

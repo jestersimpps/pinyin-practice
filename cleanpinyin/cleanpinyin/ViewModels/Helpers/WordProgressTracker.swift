@@ -52,9 +52,4 @@ class WordProgressTracker {
         
         currentWord = availableWords[currentIndex]
     }
-    
-    func reset() {
-        currentIndex = 0
-        loadCurrentWord()
-    }
 }

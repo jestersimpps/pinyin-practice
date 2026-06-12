@@ -8,6 +8,7 @@ struct SetupView: View {
     @State private var showingCustomPractice = false
     @State private var showingProgress = false
     @State private var showingChapterSelection = false
+    @State private var showingImprint = false
     @State private var animateStats = false
     
     var body: some View {
@@ -42,6 +43,9 @@ struct SetupView: View {
             }
             .sheet(isPresented: $showingChapterSelection) {
                 ChapterSelectionView()
+            }
+            .fullScreenCover(isPresented: $showingImprint) {
+                ImprintView()
             }
         }
         .onAppear {
@@ -125,6 +129,14 @@ struct SetupView: View {
                 action: startReviewMode,
                 badge: incorrectWordCount > 0 ? "\(incorrectWordCount) words" : nil,
                 isDisabled: incorrectWordCount == 0
+            )
+            
+            ActionCard(
+                title: "Imprint Mode",
+                subtitle: "Audio-focused learning with visuals",
+                icon: "speaker.wave.3",
+                color: Color.blue,
+                action: { showingImprint = true }
             )
         }
     }

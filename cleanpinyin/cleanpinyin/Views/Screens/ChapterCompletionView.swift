@@ -20,7 +20,7 @@ struct ChapterCompletionView: View {
             // Background gradient
             LinearGradient(
                 colors: [
-                    Color(red: 0.1, green: 0.3, blue: 0.4),
+                    Color("MidnightGreen"),
                     Color(red: 0.05, green: 0.15, blue: 0.2)
                 ],
                 startPoint: .top,
@@ -37,9 +37,9 @@ struct ChapterCompletionView: View {
                 // Success icon
                 ZStack {
                     Circle()
-                        .fill(Color(red: 0.2, green: 0.8, blue: 0.4))
+                        .fill(Color("SuccessGreen"))
                         .frame(width: 120, height: 120)
-                        .shadow(color: Color(red: 0.2, green: 0.8, blue: 0.4).opacity(0.5), radius: 20)
+                        .shadow(color: Color("SuccessGreen").opacity(0.5), radius: 20)
                     
                     Image(systemName: "checkmark")
                         .font(.system(size: 60, weight: .bold))
@@ -122,7 +122,7 @@ struct ChapterCompletionView: View {
                             .padding(.vertical, 16)
                             .background(
                                 RoundedRectangle(cornerRadius: 12)
-                                    .fill(Color(red: 0.2, green: 0.8, blue: 0.4))
+                                    .fill(Color("SuccessGreen"))
                             )
                         }
                     }

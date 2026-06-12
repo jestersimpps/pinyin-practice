@@ -14,6 +14,7 @@ struct PracticeSettings: Codable {
     var selectedChapters: Set<String> = []
     var isReviewMode: Bool = false
     var lastPracticeMode: LastPracticeMode = .quick
+    var speakOnCorrectAnswer: Bool = true
     
     init() {
     }
@@ -36,6 +37,7 @@ struct PracticeSettings: Codable {
         selectedChapters = try container.decodeIfPresent(Set<String>.self, forKey: .selectedChapters) ?? []
         isReviewMode = try container.decodeIfPresent(Bool.self, forKey: .isReviewMode) ?? false
         lastPracticeMode = try container.decodeIfPresent(LastPracticeMode.self, forKey: .lastPracticeMode) ?? .quick
+        speakOnCorrectAnswer = try container.decodeIfPresent(Bool.self, forKey: .speakOnCorrectAnswer) ?? true
     }
     
 }

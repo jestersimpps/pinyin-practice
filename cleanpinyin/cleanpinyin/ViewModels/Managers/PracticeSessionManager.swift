@@ -26,13 +26,13 @@ class PracticeSessionManager {
         wordsCompleted += 1
     }
     
-    func getSessionStats(practiceModeName: String, currentStreak: Int, bestStreak: Int) -> PracticeCompletionView.SessionStats? {
+    func getSessionStats(practiceModeName: String, currentStreak: Int, bestStreak: Int) -> SessionStats? {
         guard wordsCompleted > 0,
               let startTime = sessionStartTime else { return nil }
-        
+
         let duration = Date().timeIntervalSince(startTime)
-        
-        return PracticeCompletionView.SessionStats(
+
+        return SessionStats(
             wordsStudied: wordsCompleted,
             correctAnswers: sessionCorrectAnswers,
             totalAttempts: sessionTotalAttempts,

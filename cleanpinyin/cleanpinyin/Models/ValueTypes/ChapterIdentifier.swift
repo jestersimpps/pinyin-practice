@@ -2,56 +2,67 @@ import Foundation
 
 struct ChapterIdentifier: Hashable, Codable {
     let value: String
-    
+
     init(_ value: String) {
         self.value = value
     }
-    
+
     init(chapterNumber: Int) {
         self.value = "chapter\(chapterNumber)"
     }
-    
+
     init(hskLevel: Int, chapterNumber: Int) {
         self.value = "hsk\(hskLevel)_chapter\(chapterNumber)"
     }
-    
+
     init(customFileName: String) {
         self.value = "custom_\(customFileName)"
     }
-    
+
     var chapterNumber: Int? {
+        if value.hasPrefix("chapter_") {
+            return Int(value.dropFirst("chapter_".count))
+        }
         if value.hasPrefix("chapter") {
-            let numberPart = value.dropFirst(7)
-            return Int(numberPart)
-        } else if value.contains("_chapter") {
-            let parts = value.split(separator: "_")
-            if parts.count >= 2, let chapterPart = parts.last {
-                let numberPart = chapterPart.dropFirst(7)
-                return Int(numberPart)
-            }
+            return Int(value.dropFirst("chapter".count))
+        }
+        if value.contains("_chapter"), let chapterPart = value.split(separator: "_").last {
+            return Int(chapterPart.dropFirst("chapter".count))
         }
         return nil
     }
-    
+
     var hskLevel: Int? {
-        if value.hasPrefix("hsk") && value.contains("_chapter") {
-            let parts = value.split(separator: "_")
-            if let hskPart = parts.first {
-                let levelPart = hskPart.dropFirst(3)
-                return Int(levelPart)
-            }
+        if value.hasPrefix("hsk"), value.contains("_chapter"), let hskPart = value.split(separator: "_").first {
+            return Int(hskPart.dropFirst("hsk".count))
+        }
+        if isCurriculumChapter, let chapterNumber {
+            return ChapterCurriculum.hskLevel(forChapter: chapterNumber)
         }
         return nil
     }
-    
+
+    var globalChapterNumber: Int? {
+        guard let chapterNumber else { return nil }
+        if isCurriculumChapter {
+            return chapterNumber
+        }
+        if value.hasPrefix("hsk"), let hskLevel {
+            return ChapterCurriculum.globalChapterNumber(level: hskLevel, localChapter: chapterNumber)
+        }
+        return nil
+    }
+
+    var isCurriculumChapter: Bool {
+        value.hasPrefix("chapter")
+    }
+
     var isCustom: Bool {
-        return value.hasPrefix("custom_")
+        value.hasPrefix("custom_")
     }
-    
+
     var customFileName: String? {
-        if isCustom {
-            return String(value.dropFirst(7))
-        }
-        return nil
+        guard isCustom else { return nil }
+        return String(value.dropFirst("custom_".count))
     }
 }

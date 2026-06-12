@@ -2,9 +2,8 @@ import SwiftUI
 
 struct SettingsView: View {
     @Environment(\.dismiss) var dismiss
-    @Environment(\.colorScheme) var colorScheme
     @AppStorage("preferredColorScheme") private var preferredColorScheme: String = "system"
-    @StateObject private var progressService = UserProgressService.shared
+    @ObservedObject private var progressService = UserProgressService.shared
     @State private var showingResetAlert = false
     
     var body: some View {
@@ -171,6 +170,16 @@ struct SettingsView: View {
                     title: "Show Full Meanings",
                     description: "Include linguistic notes in translations",
                     isOn: $progressService.settings.showFullMeaning
+                )
+                
+                Divider()
+                    .background(Color.gray.opacity(0.3))
+                    .padding(.horizontal, 16)
+                
+                ToggleRow(
+                    title: "Speak on Correct Answer",
+                    description: "Use text-to-speech for Chinese pronunciation",
+                    isOn: $progressService.settings.speakOnCorrectAnswer
                 )
             }
             .background(

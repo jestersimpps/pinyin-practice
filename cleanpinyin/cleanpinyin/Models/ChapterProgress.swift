@@ -21,10 +21,6 @@ struct ChapterProgress: Codable {
         return Double(correctAttempts) / Double(totalAttempts) * 100
     }
     
-    var isUnlocked: Bool {
-        return true
-    }
-    
     mutating func markWordCompleted(_ wordId: String) {
         wordsCompleted.insert(wordId)
         if wordsCompleted.count == totalWords && !isCompleted {
