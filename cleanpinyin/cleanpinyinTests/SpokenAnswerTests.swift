@@ -43,4 +43,15 @@ struct SpokenAnswerTests {
     func digits() {
         #expect(grade("3", "三", "san1").result == .correct)
     }
+
+    @Test("SAY-8 partial transcripts build on finished ones and only the first early match is kept")
+    func transcriptBuffer() {
+        let buffer = TranscriptBuffer()
+        buffer.appendFinal("你")
+        #expect(buffer.current(withVolatile: "好") == "你好")
+        #expect(buffer.accept("你好"))
+        #expect(!buffer.accept("你好吗"))
+        #expect(buffer.acceptedText == "你好")
+        #expect(buffer.finalizedText == "你")
+    }
 }

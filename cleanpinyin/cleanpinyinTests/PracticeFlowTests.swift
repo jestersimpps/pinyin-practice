@@ -291,6 +291,7 @@ struct PracticeFlowTests {
 
         try await waitUntil { session.wordsCompleted == 2 }
         #expect(progress.progress.learnedWords.isSuperset(of: [first.id, second.id]))
+        #expect(recognizer.acceptedEarly == ["\(first.simplified)。", second.simplified], "the recognizer is told each word's correct answer so it can stop early")
         #expect(session.listeningState != .preparing("Getting ready…"))
     }
 
@@ -309,6 +310,7 @@ struct PracticeFlowTests {
 
         try await waitUntil { session.wordsCompleted == 2 }
         #expect(progress.progress.learnedWords.contains(second.id))
+        #expect(recognizer.acceptedEarly == [second.simplified], "a wrong word is never accepted early")
     }
 
     @Test("SAY-6 the app does not listen while a missed word is waiting to move on")
@@ -399,13 +401,19 @@ final class FakeRecognizer: SpeechRecognizing {
     func prepare(status: @escaping (String) -> Void) async throws {}
     func stopListening() {}
 
-    func listen() async throws -> String {
+    private(set) var acceptedEarly: [String] = []
+
+    func listen(isAcceptable: @escaping (String) -> Bool) async throws -> String {
         guard !transcripts.isEmpty else {
             try await Task.sleep(for: silenceDelay)
             throw SpeechRecognitionError.noSpeech
         }
         try await Task.sleep(for: .milliseconds(20))
-        return transcripts.removeFirst()
+        let transcript = transcripts.removeFirst()
+        if isAcceptable(transcript) {
+            acceptedEarly.append(transcript)
+        }
+        return transcript
     }
 }
 

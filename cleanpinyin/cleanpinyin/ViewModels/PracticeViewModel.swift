@@ -73,7 +73,7 @@ final class PracticeViewModel: ObservableObject {
         recognizer: SpeechRecognizing? = SpeechRecognizerFactory.makeDefault(),
         autoSubmitDelay: TimeInterval = AppConstants.Timing.autoSubmitDelay,
         advanceDelay: TimeInterval = AppConstants.Timing.correctAnswerAdvanceDelay,
-        listenPollInterval: Duration = .milliseconds(250)
+        listenPollInterval: Duration = .milliseconds(100)
     ) {
         self.mode = mode
         self.vocabularyService = vocabularyService
@@ -235,9 +235,14 @@ final class PracticeViewModel: ObservableObject {
             isRecognizerPrepared = true
         }
 
+        guard let word = currentWord else { throw SpeechRecognitionError.noSpeech }
+        let checker = spokenChecker
         listeningState = .listening
         defer { listeningState = .idle }
-        return try await recognizer.listen()
+        // Stop the moment the correct word is heard instead of waiting for the speaker to fall silent
+        return try await recognizer.listen { partial in
+            checker.evaluate(transcript: partial, word: word).result == .correct
+        }
     }
 
     private func handleHeard(_ transcript: String, for word: VocabularyItem) {

@@ -36,25 +36,37 @@ final class AnalyzerSpeechRecognizer: SpeechRecognizing {
         resolvedLocale = locale
     }
 
-    func listen() async throws -> String {
+    func listen(isAcceptable: @escaping (String) -> Bool) async throws -> String {
         if usesFallback {
-            return try await fallback.listen()
+            return try await fallback.listen(isAcceptable: isAcceptable)
         }
         guard let resolvedLocale else { throw SpeechRecognitionError.unavailable }
 
-        let transcriber = SpeechTranscriber(locale: resolvedLocale, preset: .transcription)
+        let transcriber = SpeechTranscriber(
+            locale: resolvedLocale,
+            transcriptionOptions: [],
+            reportingOptions: [.volatileResults, .fastResults],
+            attributeOptions: []
+        )
         let analyzer = SpeechAnalyzer(modules: [transcriber])
         guard let format = await SpeechAnalyzer.bestAvailableAudioFormat(compatibleWith: [transcriber]) else {
             throw SpeechRecognitionError.unavailable
         }
 
+        let buffer = TranscriptBuffer()
+        let capture = self.capture
         let (inputSequence, inputContinuation) = AsyncStream<AnalyzerInput>.makeStream()
         let collector = Task {
-            var text = ""
             for try await result in transcriber.results {
-                text += String(result.text.characters)
+                let text = String(result.text.characters)
+                if result.isFinal {
+                    buffer.appendFinal(text)
+                }
+                let heardSoFar = result.isFinal ? buffer.finalizedText : buffer.current(withVolatile: text)
+                if !heardSoFar.isEmpty, isAcceptable(heardSoFar), buffer.accept(heardSoFar) {
+                    DispatchQueue.main.async { capture.finish() }
+                }
             }
-            return text
         }
 
         try await analyzer.start(inputSequence: inputSequence)
@@ -68,10 +80,17 @@ final class AnalyzerSpeechRecognizer: SpeechRecognizing {
                 once.resume(with: .failure(error))
             }
         }
-
         inputContinuation.finish()
+
+        if let accepted = buffer.acceptedText {
+            collector.cancel()
+            await analyzer.cancelAndFinishNow()
+            return accepted
+        }
+
         try await analyzer.finalizeAndFinishThroughEndOfInput()
-        let text = try await collector.value.trimmingCharacters(in: .whitespacesAndNewlines)
+        _ = try? await collector.value
+        let text = (buffer.acceptedText ?? buffer.finalizedText).trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty else { throw SpeechRecognitionError.noSpeech }
         return text
     }

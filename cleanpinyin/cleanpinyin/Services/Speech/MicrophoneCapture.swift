@@ -12,9 +12,10 @@ final class MicrophoneCapture {
     private var startTime = Date()
     private var lastVoiceTime: Date?
     private var noiseFloor: Float = 1
+    private var peakLevel: Float = 0
 
     private let maxDuration: TimeInterval = 10
-    private let trailingSilence: TimeInterval = 0.9
+    private let trailingSilence: TimeInterval = 0.5
     private let noSpeechTimeout: TimeInterval = 8
 
     func start(convertingTo format: AVAudioFormat? = nil, onEnd: @escaping () -> Void) throws {
@@ -29,6 +30,7 @@ final class MicrophoneCapture {
             startTime = Date()
             lastVoiceTime = nil
             noiseFloor = 1
+            peakLevel = 0
         }
 
         let input = engine.inputNode
@@ -69,7 +71,12 @@ final class MicrophoneCapture {
 
         return lock.withLock {
             noiseFloor = min(noiseFloor, max(level, 0.001))
-            if level > max(0.02, noiseFloor * 4) {
+            let speechThreshold = max(0.02, noiseFloor * 4)
+            if level > speechThreshold {
+                peakLevel = max(peakLevel, level)
+            }
+            // Relative to the speaker's own volume, so steady background noise doesn't count as talking
+            if level > max(speechThreshold, peakLevel * 0.2) {
                 lastVoiceTime = now
             }
 
