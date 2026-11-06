@@ -116,7 +116,7 @@ struct SetupView: View {
 
             ActionCard(
                 title: "Custom Practice",
-                subtitle: "Choose any chapters or lists",
+                subtitle: "Mix any chapters and sets",
                 icon: "slider.horizontal.3",
                 color: Color("VibrantOrange"),
                 action: { showingCustomPractice = true }
