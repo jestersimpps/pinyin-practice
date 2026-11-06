@@ -19,9 +19,7 @@ final class MicrophoneCapture {
     private let noSpeechTimeout: TimeInterval = 8
 
     func start(convertingTo format: AVAudioFormat? = nil, onEnd: @escaping () -> Void) throws {
-        let session = AVAudioSession.sharedInstance()
-        try session.setCategory(.playAndRecord, mode: .measurement, options: [.duckOthers, .defaultToSpeaker])
-        try session.setActive(true)
+        try AudioSessionCoordinator.shared.activateForRecording()
 
         lock.withLock {
             self.onEnd = onEnd
@@ -52,7 +50,7 @@ final class MicrophoneCapture {
 
         engine.inputNode.removeTap(onBus: 0)
         engine.stop()
-        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+        AudioSessionCoordinator.shared.deactivateIfIdle()
         callback()
     }
 

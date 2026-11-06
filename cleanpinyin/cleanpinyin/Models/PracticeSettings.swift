@@ -19,10 +19,11 @@ struct PracticeSettings: Codable, Equatable {
     var speakOnCorrectAnswer: Bool = true
     var speakMeaningOnNewWord: Bool = true
     var handsFreeVoice: Bool = false
+    var imprintAnswerAloud: Bool = false
 
     private enum CodingKeys: String, CodingKey {
         case syllabus, selectedHSKLevels, practiceMode, showEnglishTranslation, showPronunciationHints, showCharacterHints
-        case requireTones, useTraditional, showFullMeaning, selectedChapters, lastPracticeMode, speakOnCorrectAnswer, speakMeaningOnNewWord, handsFreeVoice
+        case requireTones, useTraditional, showFullMeaning, selectedChapters, lastPracticeMode, speakOnCorrectAnswer, speakMeaningOnNewWord, handsFreeVoice, imprintAnswerAloud
         case showHints
     }
 
@@ -47,6 +48,7 @@ struct PracticeSettings: Codable, Equatable {
         speakOnCorrectAnswer = try container.decodeIfPresent(Bool.self, forKey: .speakOnCorrectAnswer) ?? true
         speakMeaningOnNewWord = try container.decodeIfPresent(Bool.self, forKey: .speakMeaningOnNewWord) ?? true
         handsFreeVoice = try container.decodeIfPresent(Bool.self, forKey: .handsFreeVoice) ?? false
+        imprintAnswerAloud = try container.decodeIfPresent(Bool.self, forKey: .imprintAnswerAloud) ?? false
     }
 
     func encode(to encoder: Encoder) throws {
@@ -65,6 +67,7 @@ struct PracticeSettings: Codable, Equatable {
         try container.encode(speakOnCorrectAnswer, forKey: .speakOnCorrectAnswer)
         try container.encode(speakMeaningOnNewWord, forKey: .speakMeaningOnNewWord)
         try container.encode(handsFreeVoice, forKey: .handsFreeVoice)
+        try container.encode(imprintAnswerAloud, forKey: .imprintAnswerAloud)
     }
 
     private static func sanitized(_ levels: Set<Int>) -> Set<Int> {

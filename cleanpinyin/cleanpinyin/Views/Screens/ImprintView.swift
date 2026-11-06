@@ -66,7 +66,7 @@ struct ImprintView: View {
                     .accessibilityHidden(true)
             }
 
-            Text("Audio-focused learning with visual support")
+            Text("Keeps playing with your screen locked")
                 .font(.system(size: 16, weight: .regular))
                 .foregroundColor(Color("SecondaryText"))
                 .multilineTextAlignment(.center)
@@ -101,6 +101,14 @@ struct ImprintView: View {
             }
             .accessibilityIdentifier("imprint.selectChapters")
 
+            if viewModel.canAnswerAloud {
+                answerAloudCard
+            }
+
+            if let score = viewModel.lastScore {
+                lastScoreCard(score)
+            }
+
             VStack(alignment: .leading, spacing: 12) {
                 Text("How Imprint Mode Works:")
                     .font(.system(size: 16, weight: .semibold))
@@ -108,7 +116,7 @@ struct ImprintView: View {
 
                 VStack(alignment: .leading, spacing: 8) {
                     instructionRow("1", "You hear the English meaning")
-                    instructionRow("2", "A short pause to recall the Chinese")
+                    instructionRow("2", viewModel.answersAloud ? "Say the Chinese word out loud" : "A short pause to recall the Chinese")
                     instructionRow("3", "You hear the Chinese word")
                     instructionRow("4", "The character, pinyin and meaning stay on screen")
                 }
@@ -192,7 +200,7 @@ struct ImprintView: View {
                 }
                 .accessibilityLabel("Stop")
             } else {
-                Button(action: { viewModel.start() }) {
+                Button(action: { Task { await viewModel.start() } }) {
                     HStack(spacing: 12) {
                         Image(systemName: "play.circle.fill")
                             .font(.system(size: 24))
@@ -214,9 +222,73 @@ struct ImprintView: View {
         }
     }
 
+    private var answerAloudCard: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Toggle(isOn: Binding(
+                get: { viewModel.answersAloud },
+                set: { isOn in Task { await viewModel.setAnswerAloud(isOn) } }
+            )) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Answer Out Loud")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(Color("PrimaryText"))
+                    Text("Say the Chinese before you hear it. Nothing is corrected; your answers count toward accuracy and Smart Review.")
+                        .font(.system(size: 13))
+                        .foregroundColor(Color("SecondaryText"))
+                }
+            }
+            .tint(Color("VibrantOrange"))
+            .accessibilityIdentifier("imprint.answerAloud")
+
+            if let message = viewModel.message {
+                Text(message)
+                    .font(.system(size: 13))
+                    .foregroundColor(.orange)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 14)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color("SecondaryBackground"))
+        )
+    }
+
+    private func lastScoreCard(_ score: ImprintScore) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("Last session")
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundColor(Color("PrimaryText"))
+            if let accuracy = score.accuracy {
+                Text("\(Int((accuracy * 100).rounded()))% correct · \(score.answered.counted("word")) answered")
+                    .font(.system(size: 14))
+                    .foregroundColor(Color("PrimaryText"))
+            }
+            if score.silent > 0 {
+                Text("\(score.silent.counted("word")) without an answer")
+                    .font(.system(size: 13))
+                    .foregroundColor(Color("SecondaryText"))
+            }
+            if !score.missedWordIds.isEmpty {
+                Text("\(score.missedWordIds.count.counted("word")) added to Smart Review")
+                    .font(.system(size: 13))
+                    .foregroundColor(Color("SecondaryText"))
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 14)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color("SecondaryBackground"))
+        )
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier("imprint.lastScore")
+    }
+
     private var isRevealed: Bool {
         switch viewModel.playbackState {
-        case .speakingEnglish, .pausing: return false
+        case .speakingEnglish, .listening, .pausing: return false
         case .idle, .speakingChinese, .completed: return true
         }
     }
@@ -246,131 +318,6 @@ struct ImprintView: View {
 
             Spacer()
         }
-    }
-}
-
-final class ImprintViewModel: ObservableObject {
-    @Published private(set) var isPlaying = false
-    @Published private(set) var currentWord: VocabularyItem?
-    @Published private(set) var currentIndex = 0
-    @Published private(set) var totalWords = 0
-    @Published private(set) var progress: Double = 0
-    @Published private(set) var playbackState: PlaybackState = .idle
-    @Published var chapters: Set<String> = []
-
-    private let vocabularyService: VocabularyServiceProtocol
-    private let speech: SpeechSpeaking
-    private let pauseBeforeChinese: TimeInterval
-    private let pauseAfterWord: TimeInterval
-    private var words: [VocabularyItem] = []
-    // Invalidates pending playback steps after pause/stop/restart
-    private var playbackGeneration = 0
-
-    enum PlaybackState {
-        case idle
-        case speakingEnglish
-        case pausing
-        case speakingChinese
-        case completed
-
-        var description: String {
-            switch self {
-            case .idle: return "Ready"
-            case .speakingEnglish: return "English"
-            case .pausing: return "Think…"
-            case .speakingChinese: return "Chinese"
-            case .completed: return "Completed"
-            }
-        }
-    }
-
-    init(
-        vocabularyService: VocabularyServiceProtocol = VocabularyService.shared,
-        speech: SpeechSpeaking = TextToSpeechService.shared,
-        pauseBeforeChinese: TimeInterval = 2.0,
-        pauseAfterWord: TimeInterval = 1.5
-    ) {
-        self.vocabularyService = vocabularyService
-        self.speech = speech
-        self.pauseBeforeChinese = pauseBeforeChinese
-        self.pauseAfterWord = pauseAfterWord
-    }
-
-    var canResume: Bool {
-        !words.isEmpty && currentIndex < words.count && currentWord != nil
-    }
-
-    func start() {
-        if !canResume {
-            words = vocabularyService.vocabularyForChapters(chapters)
-            guard !words.isEmpty else { return }
-            currentIndex = 0
-        }
-
-        totalWords = words.count
-        isPlaying = true
-        playCurrentWord()
-    }
-
-    func pause() {
-        playbackGeneration += 1
-        isPlaying = false
-        playbackState = .idle
-        speech.stopSpeaking()
-    }
-
-    func stop() {
-        pause()
-        currentIndex = 0
-        progress = 0
-        currentWord = nil
-        words = []
-    }
-
-    private func playCurrentWord() {
-        guard currentIndex < words.count else {
-            completePlayback()
-            return
-        }
-
-        let word = words[currentIndex]
-        currentWord = word
-        progress = Double(currentIndex) / Double(totalWords)
-
-        playbackGeneration += 1
-        let generation = playbackGeneration
-        let chinese = UserProgressService.shared.settings.useTraditional ? word.traditional : word.simplified
-
-        playbackState = .speakingEnglish
-        speech.speak(english: word.shortTranslation) { [weak self] in
-            self?.step(generation: generation, after: 0) { this in
-                this.playbackState = .pausing
-                this.step(generation: generation, after: this.pauseBeforeChinese) { this in
-                    this.playbackState = .speakingChinese
-                    this.speech.speak(chinese: chinese) { [weak this] in
-                        this?.step(generation: generation, after: this?.pauseAfterWord ?? 0) { this in
-                            this.currentIndex += 1
-                            this.playCurrentWord()
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private func step(generation: Int, after delay: TimeInterval, action: @escaping (ImprintViewModel) -> Void) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
-            guard let self, self.isPlaying, self.playbackGeneration == generation else { return }
-            action(self)
-        }
-    }
-
-    private func completePlayback() {
-        isPlaying = false
-        playbackState = .completed
-        progress = 1.0
-        words = []
-        currentIndex = 0
     }
 }
 

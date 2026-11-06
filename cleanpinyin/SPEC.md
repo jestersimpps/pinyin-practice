@@ -79,6 +79,8 @@ The bank is built by `scripts/import_hsk_wordlist.py` from drkameleon/complete-h
 - **IMP-1** The learner picks chapters, then presses Start. For each word the app speaks the English meaning, waits 2 s, speaks the Chinese word, then shows the character, pinyin and meaning. Then it moves on.
 - **IMP-2** Each step starts when the previous speech has finished. It is not timed by estimates.
 - **IMP-3** Pause keeps the position and Resume continues from it. Stop resets to the start. Leaving the screen stops all speech.
+- **IMP-4** Imprint keeps playing with the screen locked or the app in the background. It shows on the lock screen as Now Playing (the English meaning, never the Chinese, so it doesn't give the answer away), and the lock-screen or headphone play/pause controls work. A phone call or other audio interruption pauses it. Silence plays between words so iOS doesn't suspend the session.
+- **IMP-5** **Answer Out Loud** (off by default, needs microphone and speech permission, only offered where on-device Mandarin recognition exists): after the English, the app listens for up to 5 s instead of the fixed pause. Nothing is corrected during the session: the answer is graded silently and the Chinese plays as usual. A correct answer is recorded as correct (Good); right syllables with a wrong tone as a miss rated Hard; a different word as a miss rated Again, so misses come back in Smart Review. Saying nothing is counted as "no answer" and not recorded. When the session ends, a **Last session** card shows accuracy, words answered, words without an answer and how many went to Smart Review, and the session is saved to the progress history.
 
 ## 7. Progress & motivation
 

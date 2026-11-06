@@ -73,11 +73,7 @@ final class TextToSpeechService: NSObject, ObservableObject, SpeechSpeaking {
     }
 
     private func enqueue(text: String, language: String, completion: (() -> Void)?) {
-        let session = AVAudioSession.sharedInstance()
-        if session.category != .playback || session.mode != .spokenAudio {
-            try? session.setCategory(.playback, mode: .spokenAudio, options: .duckOthers)
-        }
-        try? session.setActive(true)
+        AudioSessionCoordinator.shared.activateForSpeech()
 
         let utterance = AVSpeechUtterance(string: text)
         utterance.voice = voice(forLanguage: language)
@@ -93,7 +89,7 @@ final class TextToSpeechService: NSObject, ObservableObject, SpeechSpeaking {
 
         if !synthesizer.isSpeaking {
             isSpeaking = false
-            try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+            AudioSessionCoordinator.shared.deactivateIfIdle()
         }
         if runCompletion { completion?() }
     }

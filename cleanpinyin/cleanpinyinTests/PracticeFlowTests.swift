@@ -432,6 +432,8 @@ final class FakeRecognizer: SpeechRecognizing {
         }
         try await Task.sleep(for: .milliseconds(20))
         let transcript = transcripts.removeFirst()
+        // An empty transcript stands for a turn where the learner says nothing
+        guard !transcript.isEmpty else { throw SpeechRecognitionError.noSpeech }
         if isAcceptable(transcript) {
             acceptedEarly.append(transcript)
         }
