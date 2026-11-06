@@ -46,6 +46,8 @@ final class PracticeViewModel: ObservableObject {
     private let progressService: UserProgressServiceProtocol
     private let speech: SpeechSpeaking?
     private let recognizer: SpeechRecognizing?
+    private let listeningCue: ListeningCueing?
+    private var cuedWordId: String?
     private let spokenChecker = SpokenAnswerChecker()
     private let listenPollInterval: Duration
     private let maximumSilentListens = 3
@@ -72,6 +74,7 @@ final class PracticeViewModel: ObservableObject {
         progressService: UserProgressServiceProtocol = UserProgressService.shared,
         speech: SpeechSpeaking? = TextToSpeechService.shared,
         recognizer: SpeechRecognizing? = SpeechRecognizerFactory.makeDefault(),
+        listeningCue: ListeningCueing? = ListeningCue.shared,
         autoSubmitDelay: TimeInterval = AppConstants.Timing.autoSubmitDelay,
         advanceDelay: TimeInterval = AppConstants.Timing.correctAnswerAdvanceDelay,
         listenPollInterval: Duration = .milliseconds(100)
@@ -81,6 +84,7 @@ final class PracticeViewModel: ObservableObject {
         self.progressService = progressService
         self.speech = speech
         self.recognizer = recognizer
+        self.listeningCue = listeningCue
         self.autoSubmitDelay = autoSubmitDelay
         self.advanceDelay = advanceDelay
         self.listenPollInterval = listenPollInterval
@@ -209,6 +213,8 @@ final class PracticeViewModel: ObservableObject {
                     speechMessage = "Voice paused. Tap the microphone to keep going."
                     return
                 }
+            } catch is CancellationError {
+                continue
             } catch {
                 guard isHandsFree, !Task.isCancelled else { return }
                 stopHandsFree()
@@ -239,6 +245,12 @@ final class PracticeViewModel: ObservableObject {
         }
 
         guard let word = currentWord else { throw SpeechRecognitionError.noSpeech }
+        // Beep once per word; listening again after a silent take stays quiet
+        if cuedWordId != word.id {
+            cuedWordId = word.id
+            await listeningCue?.playReadyCue()
+            guard isHandsFree, currentWord?.id == word.id else { throw CancellationError() }
+        }
         let checker = spokenChecker
         listeningState = .listening
         defer { listeningState = .idle }

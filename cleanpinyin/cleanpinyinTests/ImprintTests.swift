@@ -8,6 +8,7 @@ struct ImprintTests {
     private let progress: UserProgressService
     private let speech = SpeechSpy()
     private let background = BackgroundSpy()
+    private let cue = CueSpy()
     private let vocabulary = FourWordVocabulary()
 
     init() {
@@ -24,6 +25,7 @@ struct ImprintTests {
             speech: speech,
             recognizer: recognizer,
             background: background,
+            listeningCue: cue,
             pauseBeforeChinese: 0,
             pauseAfterWord: 0,
             answerWindow: .seconds(1)
@@ -62,17 +64,18 @@ struct ImprintTests {
         try await waitUntil { imprint.playbackState == .completed }
 
         let score = try #require(imprint.lastScore)
-        #expect(score.correct == 1 && score.partial == 1 && score.incorrect == 1 && score.silent == 1)
+        #expect(score.correct == 1 && score.partial == 1 && score.incorrect == 1 && score.answered == 3)
         #expect(score.accuracy == 1.0 / 3.0)
         #expect(score.missedWordIds == ["马", "谢谢"])
 
         #expect(progress.progress.learnedWords.contains("你好"))
-        #expect(!progress.progress.reviewCards.keys.contains("他"), "a silent turn isn't a mistake")
+        #expect(!progress.progress.reviewCards.keys.contains("他"), "an unanswered word is ignored")
         #expect(Set(progress.progress.dueWordIds()).isSuperset(of: ["谢谢"]))
         #expect(progress.sessions.last?.accuracy.rounded() == 33)
 
         let chinese = speech.spoken.filter { word in vocabulary.words.contains { $0.simplified == word } }
         #expect(chinese == vocabulary.words.map(\.simplified), "every word is still read out, right or wrong")
+        #expect(cue.plays == 4, "a beep before each answer window")
     }
 
     @Test("IMP-4 playback runs as a lock-screen session and ends cleanly")

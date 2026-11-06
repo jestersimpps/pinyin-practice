@@ -8,6 +8,7 @@ struct PracticeFlowTests {
     private let vocabulary = VocabularyService.shared
     private let progress: UserProgressService
     private let speech = SpeechSpy()
+    private let cue = CueSpy()
 
     init() {
         let suite = "cleanpinyin.tests.\(UUID().uuidString)"
@@ -23,6 +24,7 @@ struct PracticeFlowTests {
             progressService: progress,
             speech: speech,
             recognizer: recognizer,
+            listeningCue: cue,
             autoSubmitDelay: 0.05,
             advanceDelay: 0.05,
             listenPollInterval: .milliseconds(10)
@@ -315,6 +317,7 @@ struct PracticeFlowTests {
         #expect(progress.progress.learnedWords.isSuperset(of: [first.id, second.id]))
         #expect(recognizer.acceptedEarly == ["\(first.simplified)。", second.simplified], "the recognizer is told each word's correct answer so it can stop early")
         #expect(session.listeningState != .preparing("Getting ready…"))
+        #expect(cue.plays >= 2, "a beep each time the app starts listening for a new word")
     }
 
     @Test("SAY-6 a heard miss shows and says the answer, then moves on by itself")
@@ -356,6 +359,7 @@ struct PracticeFlowTests {
         try await waitUntil { !session.isHandsFree }
 
         #expect(session.speechMessage == "Voice paused. Tap the microphone to keep going.")
+        #expect(cue.plays == 1, "listening again for the same word doesn't beep again")
         #expect(progress.settings.handsFreeVoice)
         #expect(progress.progress.totalAttempts == 0)
     }
@@ -460,4 +464,9 @@ final class SpeechSpy: SpeechSpeaking {
     }
 
     func stopSpeaking() {}
+}
+
+final class CueSpy: ListeningCueing {
+    private(set) var plays = 0
+    func playReadyCue() async { plays += 1 }
 }

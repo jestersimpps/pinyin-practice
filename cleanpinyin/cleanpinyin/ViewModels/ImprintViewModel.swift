@@ -4,7 +4,6 @@ struct ImprintScore: Equatable {
     var correct = 0
     var partial = 0
     var incorrect = 0
-    var silent = 0
     var missedWordIds: [String] = []
 
     var answered: Int { correct + partial + incorrect }
@@ -52,6 +51,7 @@ final class ImprintViewModel: ObservableObject {
     private let speech: SpeechSpeaking
     private let recognizer: SpeechRecognizing?
     private let background: BackgroundPlaying?
+    private let listeningCue: ListeningCueing?
     private let spokenChecker = SpokenAnswerChecker()
     private let pauseBeforeChinese: TimeInterval
     private let pauseAfterWord: TimeInterval
@@ -69,6 +69,7 @@ final class ImprintViewModel: ObservableObject {
         speech: SpeechSpeaking = TextToSpeechService.shared,
         recognizer: SpeechRecognizing? = SpeechRecognizerFactory.makeDefault(),
         background: BackgroundPlaying? = BackgroundPlayback.shared,
+        listeningCue: ListeningCueing? = ListeningCue.shared,
         pauseBeforeChinese: TimeInterval = 2.0,
         pauseAfterWord: TimeInterval = 1.5,
         answerWindow: Duration = .seconds(5)
@@ -78,6 +79,7 @@ final class ImprintViewModel: ObservableObject {
         self.speech = speech
         self.recognizer = recognizer
         self.background = background
+        self.listeningCue = listeningCue
         self.pauseBeforeChinese = pauseBeforeChinese
         self.pauseAfterWord = pauseAfterWord
         self.answerWindow = answerWindow
@@ -213,6 +215,8 @@ final class ImprintViewModel: ObservableObject {
         let window = answerWindow
 
         Task { @MainActor [weak self] in
+            await self?.listeningCue?.playReadyCue()
+            guard let self, self.isPlaying, self.playbackGeneration == generation else { return }
             let deadline = Task {
                 try await Task.sleep(for: window)
                 recognizer.stopListening()
@@ -222,17 +226,18 @@ final class ImprintViewModel: ObservableObject {
             }
             deadline.cancel()
 
-            guard let self, self.isPlaying, self.playbackGeneration == generation else { return }
+            guard self.isPlaying, self.playbackGeneration == generation else { return }
             self.record(heard, for: word)
-            self.speakChinese(word, generation: generation)
+            self.playbackState = .pausing
+            self.step(generation: generation, after: self.pauseBeforeChinese) { this in
+                this.speakChinese(word, generation: generation)
+            }
         }
     }
 
     private func record(_ heard: String?, for word: VocabularyItem) {
-        guard let heard, !heard.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            score.silent += 1
-            return
-        }
+        // A word left unanswered is ignored: it isn't scored and doesn't go to Smart Review
+        guard let heard, !heard.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
 
         switch spokenChecker.evaluate(transcript: heard, word: word).result {
         case .correct:
@@ -272,9 +277,8 @@ final class ImprintViewModel: ObservableObject {
             score = ImprintScore()
             sessionStart = nil
         }
-        guard listensThisSession, score.answered + score.silent > 0 else { return }
+        guard listensThisSession, score.answered > 0 else { return }
         lastScore = score
-        guard score.answered > 0 else { return }
 
         let levels = Set(chapters.compactMap { vocabularyService.chapter(withId: $0)?.hskLevel })
         progressService.endSession(

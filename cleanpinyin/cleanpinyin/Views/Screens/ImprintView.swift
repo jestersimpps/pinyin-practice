@@ -264,11 +264,6 @@ struct ImprintView: View {
                     .font(.system(size: 14))
                     .foregroundColor(Color("PrimaryText"))
             }
-            if score.silent > 0 {
-                Text("\(score.silent.counted("word")) without an answer")
-                    .font(.system(size: 13))
-                    .foregroundColor(Color("SecondaryText"))
-            }
             if !score.missedWordIds.isEmpty {
                 Text("\(score.missedWordIds.count.counted("word")) added to Smart Review")
                     .font(.system(size: 13))
