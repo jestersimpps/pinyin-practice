@@ -129,7 +129,11 @@ struct ImprintView: View {
                     Text(UserProgressService.shared.settings.useTraditional ? word.traditional : word.simplified)
                         .font(.system(size: 100, weight: .bold, design: .rounded))
                         .foregroundColor(Color("PrimaryText"))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.4)
                         .frame(height: 120)
+                        .opacity(isRevealed ? 1 : 0)
+                        .accessibilityHidden(!isRevealed)
 
                     Text(word.shortTranslation)
                         .font(.system(size: 18, weight: .medium))
@@ -140,7 +144,10 @@ struct ImprintView: View {
                     Text(word.pinyin)
                         .font(.system(size: 16, weight: .regular))
                         .foregroundColor(Color("PrimaryText").opacity(0.7))
+                        .opacity(isRevealed ? 1 : 0)
+                        .accessibilityHidden(!isRevealed)
                 }
+                .animation(.easeInOut(duration: 0.3), value: isRevealed)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 20)
                 .background(
@@ -204,6 +211,13 @@ struct ImprintView: View {
                 .disabled(selectedChapters.isEmpty)
                 .opacity(selectedChapters.isEmpty ? 0.5 : 1.0)
             }
+        }
+    }
+
+    private var isRevealed: Bool {
+        switch viewModel.playbackState {
+        case .speakingEnglish, .pausing: return false
+        case .idle, .speakingChinese, .completed: return true
         }
     }
 

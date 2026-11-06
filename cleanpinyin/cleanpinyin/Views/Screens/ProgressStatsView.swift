@@ -175,8 +175,16 @@ struct ProgressStatsView: View {
                                     endPoint: .bottom
                                 )
                             )
+
+                            PointMark(
+                                x: .value("Date", dataPoint.date),
+                                y: .value("Accuracy", dataPoint.accuracy)
+                            )
+                            .foregroundStyle(Color("VibrantOrange"))
                         }
                     }
+                    .chartYScale(domain: 0...100)
+                    .dailyAxis(domain: chartDateDomain)
                 }
             }
         }
@@ -184,7 +192,7 @@ struct ProgressStatsView: View {
 
     private var dailyWordsChartSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            SectionHeader(title: "Daily Words Learned", icon: "calendar")
+            SectionHeader(title: "Words Practised per Day", icon: "calendar")
 
             let wordsData = progressService.getDailyWordsLearned(days: selectedTimeRange.days)
 
@@ -205,6 +213,7 @@ struct ProgressStatsView: View {
                             .cornerRadius(4)
                         }
                     }
+                    .dailyAxis(domain: chartDateDomain)
                 }
             }
         }
@@ -212,7 +221,7 @@ struct ProgressStatsView: View {
 
     private var dailyPracticeTimeChartSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            SectionHeader(title: "Daily Practice Time", icon: "clock")
+            SectionHeader(title: "Minutes per Day", icon: "clock")
 
             let timeData = progressService.getDailyPracticeTime(days: selectedTimeRange.days)
 
@@ -233,6 +242,7 @@ struct ProgressStatsView: View {
                             .cornerRadius(4)
                         }
                     }
+                    .dailyAxis(domain: chartDateDomain)
                 }
             }
         }
@@ -302,6 +312,20 @@ struct ProgressStatsView: View {
                     .fill(Color("SecondaryBackground"))
             )
         }
+    }
+
+    private var chartDateDomain: ClosedRange<Date> {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        let end = calendar.date(byAdding: .day, value: 1, to: today) ?? today
+        let firstSession = progressService.sessions.map(\.date).min() ?? today
+        let start: Date
+        if selectedTimeRange.days > 0 {
+            start = calendar.date(byAdding: .day, value: 1 - selectedTimeRange.days, to: today) ?? today
+        } else {
+            start = min(calendar.startOfDay(for: firstSession), calendar.date(byAdding: .day, value: -6, to: today) ?? today)
+        }
+        return start...end
     }
 
     private var dayStreak: Int {
@@ -498,5 +522,17 @@ private struct AchievementRow: View {
                     .foregroundColor(Color("SuccessGreen"))
             }
         }
+    }
+}
+
+private extension View {
+    func dailyAxis(domain: ClosedRange<Date>) -> some View {
+        chartXScale(domain: domain)
+            .chartXAxis {
+                AxisMarks(values: .automatic(desiredCount: 4)) { _ in
+                    AxisGridLine()
+                    AxisValueLabel(format: .dateTime.month(.abbreviated).day())
+                }
+            }
     }
 }
