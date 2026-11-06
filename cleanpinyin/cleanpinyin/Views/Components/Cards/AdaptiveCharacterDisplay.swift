@@ -65,6 +65,7 @@ struct AdaptiveCharacterDisplay: View {
                 .foregroundColor(Color("PrimaryText"))
                 .lineLimit(1)
                 .minimumScaleFactor(0.35)
+                .accessibilityIdentifier("practice.character")
                 .padding(.horizontal, 56)
                 .frame(maxWidth: .infinity)
                 .scaleEffect(!isKeyboardVisible && feedbackState == .correct ? 1.1 : 1.0)

@@ -107,11 +107,11 @@ struct SelectionBottomBar: View {
 
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("\(wordCount) words selected")
+                    Text("\(wordCount.counted("word")) selected")
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(Color("PrimaryText"))
 
-                    Text(chapterCount == 1 ? "1 chapter" : "\(chapterCount) chapters")
+                    Text(chapterCount.counted("chapter"))
                         .font(.system(size: 14, weight: .regular))
                         .foregroundColor(Color("SecondaryText"))
                 }

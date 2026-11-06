@@ -58,7 +58,7 @@ struct ChapterCompletionView: View {
                         .font(.system(size: 24, weight: .medium))
                         .foregroundColor(.white.opacity(0.8))
                     
-                    Text("\(chapterProgress.wordsCompleted.count) words mastered")
+                    Text("\(chapterProgress.wordsCompleted.count.counted("word")) mastered")
                         .font(.system(size: 18))
                         .foregroundColor(.white.opacity(0.6))
                 }

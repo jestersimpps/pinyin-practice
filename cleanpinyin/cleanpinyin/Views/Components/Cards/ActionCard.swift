@@ -89,6 +89,7 @@ struct ActionCard: View {
         }
         .buttonStyle(PlainButtonStyle())
         .disabled(isDisabled)
+        .accessibilityIdentifier(title)
         .onLongPressGesture(minimumDuration: .infinity, maximumDistance: .infinity, pressing: { pressing in
             withAnimation(.easeInOut(duration: 0.1)) {
                 isPressed = pressing

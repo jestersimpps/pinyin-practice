@@ -79,7 +79,7 @@ struct ProgressStatsView: View {
                 StatCard(
                     title: "Total Practice",
                     value: formatPracticeTime(progressService.getTotalPracticeMinutes()),
-                    subtitle: "\(progressService.progress.totalAttempts) attempts",
+                    subtitle: progressService.progress.totalAttempts.counted("attempt"),
                     icon: "clock.fill",
                     color: Color("VibrantOrange")
                 )

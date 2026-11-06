@@ -10,7 +10,15 @@ import SwiftUI
 @main
 struct cleanpinyinApp: App {
     @AppStorage("preferredColorScheme") private var preferredColorScheme: String = "system"
-    
+
+    init() {
+        #if DEBUG
+        if CommandLine.arguments.contains("-ui-testing"), let bundleId = Bundle.main.bundleIdentifier {
+            UserDefaults.standard.removePersistentDomain(forName: bundleId)
+        }
+        #endif
+    }
+
     var body: some Scene {
         WindowGroup {
             SetupView()

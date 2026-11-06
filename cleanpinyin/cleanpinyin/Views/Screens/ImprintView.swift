@@ -99,6 +99,7 @@ struct ImprintView: View {
                         .fill(Color("SecondaryBackground"))
                 )
             }
+            .accessibilityIdentifier("imprint.selectChapters")
 
             VStack(alignment: .leading, spacing: 12) {
                 Text("How Imprint Mode Works:")
@@ -210,7 +211,7 @@ struct ImprintView: View {
         switch selectedChapters.count {
         case 0: return "No chapters selected"
         case 1: return "1 chapter selected"
-        default: return "\(selectedChapters.count) chapters selected"
+        default: return "\(selectedChapters.count.counted("chapter")) selected"
         }
     }
 
@@ -390,7 +391,7 @@ struct ImprintChapterSelectionView: View {
                 }
 
                 HStack {
-                    Text("\(selectedChapters.count) chapters selected")
+                    Text("\(selectedChapters.count.counted("chapter")) selected")
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(Color("SecondaryText"))
 
@@ -449,7 +450,7 @@ private struct ImprintChapterCard: View {
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(isSelected ? .white : Color("PrimaryText"))
 
-                Text(chapter.kind == .curriculum ? chapter.title : "\(chapter.wordCount) words")
+                Text(chapter.kind == .curriculum ? chapter.title : chapter.wordCount.counted("word"))
                     .font(.system(size: 12))
                     .foregroundColor(isSelected ? .white.opacity(0.85) : Color("SecondaryText"))
                     .lineLimit(2)
@@ -474,5 +475,7 @@ private struct ImprintChapterCard: View {
         }
         .scaleEffect(isSelected ? 1.05 : 1.0)
         .animation(.easeInOut(duration: 0.2), value: isSelected)
+        .accessibilityIdentifier("imprint.\(chapter.id)")
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }

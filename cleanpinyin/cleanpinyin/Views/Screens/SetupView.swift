@@ -70,6 +70,7 @@ struct SetupView: View {
     private var statsSection: some View {
         HStack(spacing: 16) {
             StatBox(
+                identifier: "home.wordsLearned",
                 title: "Words Learned",
                 value: "\(progressService.wordsLearnedCount)",
                 icon: "checkmark.seal.fill",
@@ -81,6 +82,7 @@ struct SetupView: View {
             .animation(.spring(response: 0.5, dampingFraction: 0.6).delay(0.1), value: animateStats)
 
             StatBox(
+                identifier: "home.dayStreak",
                 title: "Day Streak",
                 value: formatStreak(progressService.currentDayStreak),
                 icon: "flame.fill",
@@ -101,7 +103,7 @@ struct SetupView: View {
                 icon: "play.circle.fill",
                 color: Color("MidnightGreen"),
                 action: { practiceLaunch = PracticeLaunch(mode: quickPracticeMode) },
-                badge: "\(wordCount(for: quickPracticeMode)) words"
+                badge: wordCount(for: quickPracticeMode).counted("word")
             )
 
             ActionCard(
@@ -126,7 +128,7 @@ struct SetupView: View {
                 icon: "arrow.triangle.2.circlepath",
                 color: Color.red,
                 action: { practiceLaunch = PracticeLaunch(mode: .review) },
-                badge: incorrectWordCount > 0 ? "\(incorrectWordCount) words" : nil,
+                badge: incorrectWordCount > 0 ? incorrectWordCount.counted("word") : nil,
                 isDisabled: incorrectWordCount == 0
             )
 
@@ -213,6 +215,7 @@ struct SetupView: View {
 }
 
 private struct StatBox: View {
+    let identifier: String
     let title: String
     let value: String
     let icon: String
@@ -226,6 +229,7 @@ private struct StatBox: View {
                 Image(systemName: icon)
                     .font(.title3)
                     .foregroundColor(color)
+                    .accessibilityHidden(true)
                 Spacer()
             }
             
@@ -264,6 +268,9 @@ private struct StatBox: View {
                 action?()
             }
         }
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.isButton)
+        .accessibilityIdentifier(identifier)
     }
 }
 

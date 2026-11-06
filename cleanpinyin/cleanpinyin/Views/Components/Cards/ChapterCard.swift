@@ -31,7 +31,7 @@ struct ChapterCard: View {
                             .lineLimit(2)
                             .multilineTextAlignment(.leading)
 
-                        Text("\(chapter.wordCount) words")
+                        Text(chapter.wordCount.counted("word"))
                             .font(.system(size: 12, weight: .medium))
                             .foregroundColor(secondaryTextColor)
                     }
@@ -57,6 +57,9 @@ struct ChapterCard: View {
         }
         .buttonStyle(PlainButtonStyle())
         .disabled(!isUnlocked)
+        .accessibilityIdentifier(chapter.id)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
+        .accessibilityHint(isUnlocked ? "" : "Locked. Complete 80% of the previous chapter to unlock.")
     }
 
     @ViewBuilder
