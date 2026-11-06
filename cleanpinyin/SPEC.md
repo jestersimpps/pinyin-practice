@@ -39,7 +39,7 @@ Words live in `Resources/Data/<level>.min.json`, one file per HSK level. Optiona
 
 - **PRA-1** A session works through a fixed list of words, one at a time. The header shows a progress bar, words done / total, overall accuracy and the current combo (correct answers in a row).
 - **PRA-2** **Correct:** green feedback, a haptic tap, the word is spoken (if **Speak on Correct Answer** is on) and the session moves to the next word after 1 s (1.5 s on the last word). **Next** skips the wait.
-- **PRA-3** **Incorrect or partial:** the correct pinyin, the meaning and the hints are shown, and the miss is recorded once per word. The learner can retype. A correct retype turns the feedback green, counts toward chapter progress and clears the word from Review Mistakes, but does not auto-advance. A visible **Next** button is always available.
+- **PRA-3** **Incorrect or partial:** the correct pinyin, the meaning and the hints are shown, and the miss is recorded once per word. The learner can retype. A correct retype turns the feedback green, counts toward chapter progress and clears the word from the mistakes list without rescheduling it, but does not auto-advance. A visible **Next** button is always available.
 - **PRA-4** **Skip** (button, or swipe right) counts as a miss and reveals the answer, just like an incorrect answer.
 - **PRA-5** **Hint** (lightbulb, or swipe left) toggles the character and pronunciation hints. It's only available when hints are enabled.
 - **PRA-6** The speaker button reads the word aloud at any time.
@@ -49,12 +49,12 @@ Words live in `Resources/Data/<level>.min.json`, one file per HSK level. Optiona
 
 ## 4. Practice modes
 
-- **MODE-1 Quick Practice** resumes the last chapter selection, or the last review session if mistakes remain. Otherwise it practises the HSK levels chosen in Settings (default HSK 1).
+- **MODE-1 Quick Practice** resumes the last chapter selection, or the last review session if words are still due. Otherwise it practises the HSK levels chosen in Settings (default HSK 1).
   - **Sequential order:** words not yet learned come first, in frequency order, followed by learned words. Each session therefore continues where the learner left off.
   - **Random order:** shuffled, with never-seen words first.
 - **MODE-2 Chapter Practice** practises the selected unlocked chapters (see §5).
 - **MODE-3 Custom Practice** practises any chapters or custom lists the learner picks, locked or not. It's a one-off and does not change the Quick Practice levels or the chapter selection.
-- **MODE-4 Review Mistakes** practises the words whose latest answer was wrong, each word once. It is disabled when there are none.
+- **MODE-4 Smart Review** practises the words that are due under spaced repetition (§12), each once, most overdue first. It is disabled when nothing is due, and then says when the next review is.
 - **MODE-5** The Quick Practice card shows how many words the selected levels contain. Its subtitle says what it will do.
 
 ## 5. Chapters
@@ -77,7 +77,7 @@ Words live in `Resources/Data/<level>.min.json`, one file per HSK level. Optiona
 - **PROG-2** **Accuracy** is correct answers divided by attempts, across all time.
 - **PROG-3** **Day streak** counts consecutive calendar days with at least one answer. It continues if the learner practised today or yesterday, and resets to 0 once a full day is missed. The best day streak is kept.
 - **PROG-4** **Combo** counts correct answers in a row. Any miss resets it to 0. It is shown during practice.
-- **PROG-5** The Progress screen shows learned words (of 4,993), accuracy, total practice time and words to review. It also shows the day streak and best, charts for accuracy, words per day and minutes per day (week / month / all time), learned words per HSK level, and achievements.
+- **PROG-5** The Progress screen shows learned words (of 4,993), accuracy, total practice time and words due now. It also shows the day streak and best, charts for accuracy, words per day and minutes per day (week / month / all time), learned words per HSK level, and achievements.
 - **PROG-6** **Reset All Progress** asks for confirmation, then clears progress and history but keeps settings.
 
 ## 8. Settings
@@ -109,3 +109,11 @@ Words live in `Resources/Data/<level>.min.json`, one file per HSK level. Optiona
 - **TUT-2** **Why?** asks Apple's on-device model (FoundationModels) for a one-to-two sentence explanation and a memory tip. The prompt carries the correct pinyin, each syllable's tone and the app's own diagnosis (tone, spelling or skipped), so the model explains rather than guesses. Errors show a short "couldn't help" message.
 - **TUT-3** **Use it** asks for three short example sentences at the learner's HSK level. The app keeps only sentences of at most 30 characters that contain the word, are written in Chinese characters only and have an English translation; at most three are shown. Pinyin comes from the system transliterator, not the model. (It uses dictionary tones, so 喜欢 reads xǐ huān rather than the spoken xǐ huan.) Tapping a sentence reads it aloud.
 - **TUT-4** Example sentences are cached per word on the device, so they appear instantly next time.
+
+## 12. Smart review (spaced repetition)
+
+- **REV-1** Every word gets a review card scheduled with FSRS-5 (default weights, 90% target retention, intervals of 1 to 365 days). A first answer sets the initial stability and difficulty. Each later answer updates them using the time since the last review, and the next due date is the interval at which recall is predicted to fall to 90%.
+- **REV-2** A forgotten word (**Again**) is due again straight away.
+- **REV-3** Answers are rated automatically: correct first time = **Good**; correct after opening hints = **Hard**; right syllables, wrong tones = **Hard** (still a miss for accuracy and combo); wrong, skipped or wrong spoken word = **Again**. Retyping after a miss does not reschedule the word.
+- **REV-4** The review queue lists due words, most overdue first. Misses recorded before scheduling existed (no card yet) come first.
+- **REV-5** Cards are saved with progress, survive updates and are cleared by Reset All Progress.

@@ -123,13 +123,13 @@ struct SetupView: View {
             )
 
             ActionCard(
-                title: "Review Mistakes",
-                subtitle: incorrectWordCount > 0 ? "Practise words you got wrong" : "No mistakes to review yet",
+                title: "Smart Review",
+                subtitle: reviewSubtitle,
                 icon: "arrow.triangle.2.circlepath",
                 color: Color.red,
                 action: { practiceLaunch = PracticeLaunch(mode: .review) },
-                badge: incorrectWordCount > 0 ? incorrectWordCount.counted("word") : nil,
-                isDisabled: incorrectWordCount == 0
+                badge: dueCount > 0 ? "\(dueCount) due" : nil,
+                isDisabled: dueCount == 0
             )
 
             ActionCard(
@@ -158,15 +158,23 @@ struct SetupView: View {
         }
     }
 
-    private var incorrectWordCount: Int {
-        progressService.progress.incorrectWords.count
+    private var dueCount: Int {
+        progressService.dueCount
+    }
+
+    private var reviewSubtitle: String {
+        if dueCount > 0 { return "Words due now, timed so you don't forget" }
+        guard let next = progressService.progress.nextReviewDate() else {
+            return "Words you practise come back here"
+        }
+        return "All caught up · next \(next.formatted(.relative(presentation: .named)))"
     }
 
     // Quick Practice resumes the last chapter or review session, otherwise practises the chosen levels
     private var quickPracticeMode: LearningMode {
         let settings = progressService.settings
         switch settings.lastPracticeMode {
-        case .review where progressService.hasIncorrectWords:
+        case .review where dueCount > 0:
             return .review
         case .chapters where !settings.selectedChapters.isEmpty:
             return .chapters(settings.selectedChapters)
@@ -196,7 +204,7 @@ struct SetupView: View {
         switch mode {
         case .levels(let levels): return vocabularyService.vocabularyForLevels(levels).count
         case .chapters(let ids), .custom(let ids): return vocabularyService.vocabularyForChapters(ids).count
-        case .review: return incorrectWordCount
+        case .review: return dueCount
         }
     }
 

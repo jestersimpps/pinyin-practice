@@ -34,7 +34,7 @@ final class PracticeViewModel: ObservableObject {
     var combo: Int { sessionManager.combo }
     var accuracy: String { progressService.progress.formattedAccuracy }
     var settings: PracticeSettings { progressService.settings }
-    var canAnswerBySpeaking: Bool { recognizer?.isSupported == true }
+    var canAnswerBySpeaking: Bool { recognizer != nil }
 
     var nextChapter: Chapter? {
         completedChapter.flatMap { vocabularyService.nextChapter(after: $0) }
@@ -54,6 +54,7 @@ final class PracticeViewModel: ObservableObject {
     private let advanceDelay: TimeInterval
 
     private var hasRecordedIncorrectForCurrentWord = false
+    private var usedHintForCurrentWord = false
     private var autoSubmitWorkItem: DispatchWorkItem?
     private var autoAdvanceWorkItem: DispatchWorkItem?
 
@@ -164,7 +165,7 @@ final class PracticeViewModel: ObservableObject {
         guard let word = currentWord, feedbackState == .none else { return }
         autoSubmitWorkItem?.cancel()
         sessionManager.recordAttempt(isCorrect: false)
-        recordIncorrect(for: word)
+        recordIncorrect(for: word, rating: .again)
         lastMistake = MistakeContext(word: word, answer: "", kind: .skipped)
         wasSkipped = true
         feedbackState = .incorrect
@@ -180,6 +181,10 @@ final class PracticeViewModel: ObservableObject {
         autoAdvanceWorkItem?.cancel()
         recognizer?.stopListening()
         sessionManager.endSession(progressService: progressService, hskLevels: sessionLevels)
+    }
+
+    func markHintUsed() {
+        usedHintForCurrentWord = true
     }
 
     func speak(chinese text: String) {
@@ -231,7 +236,7 @@ final class PracticeViewModel: ObservableObject {
         case .chapters(let ids), .custom(let ids):
             words = vocabularyService.vocabularyForChapters(ids)
         case .review:
-            words = vocabularyService.reviewVocabulary(incorrectWordIds: progressService.progress.incorrectWords)
+            return vocabularyService.words(withIds: progressService.progress.dueWordIds(at: Date()))
         }
 
         let progress = progressService.progress
@@ -259,6 +264,7 @@ final class PracticeViewModel: ObservableObject {
         feedbackState = .none
         wasSkipped = false
         hasRecordedIncorrectForCurrentWord = false
+        usedHintForCurrentWord = false
         chapterHandler.resetTimer()
     }
 
@@ -289,7 +295,7 @@ final class PracticeViewModel: ObservableObject {
     private func acceptCorrection(for word: VocabularyItem) {
         feedbackState = .correct
         if hasRecordedIncorrectForCurrentWord {
-            progressService.recordAnswer(for: word, isCorrect: true)
+            progressService.recordAnswer(for: word, isCorrect: true, rating: nil)
             hasRecordedIncorrectForCurrentWord = false
         }
         if settings.speakOnCorrectAnswer {
@@ -311,12 +317,12 @@ final class PracticeViewModel: ObservableObject {
                 answer: spokenAnswer?.heardPinyin ?? userInput,
                 kind: result == .partial ? .tone : .spelling
             )
-            recordIncorrect(for: word)
+            recordIncorrect(for: word, rating: result == .partial ? .hard : .again)
         }
     }
 
     private func handleCorrectAnswer(for word: VocabularyItem) {
-        progressService.recordAnswer(for: word, isCorrect: true)
+        progressService.recordAnswer(for: word, isCorrect: true, rating: usedHintForCurrentWord ? .hard : .good)
         if settings.speakOnCorrectAnswer {
             speech?.speak(chinese: displayText(for: word))
         }
@@ -327,9 +333,9 @@ final class PracticeViewModel: ObservableObject {
         }
     }
 
-    private func recordIncorrect(for word: VocabularyItem) {
+    private func recordIncorrect(for word: VocabularyItem, rating: ReviewRating) {
         guard !hasRecordedIncorrectForCurrentWord else { return }
-        progressService.recordAnswer(for: word, isCorrect: false)
+        progressService.recordAnswer(for: word, isCorrect: false, rating: rating)
         hasRecordedIncorrectForCurrentWord = true
         updateChapterProgress(for: word, isCorrect: false)
     }
@@ -392,7 +398,7 @@ final class PracticeViewModel: ObservableObject {
         case .custom:
             return "Custom Practice"
         case .review:
-            return "Review Mistakes"
+            return "Smart Review"
         }
     }
 }

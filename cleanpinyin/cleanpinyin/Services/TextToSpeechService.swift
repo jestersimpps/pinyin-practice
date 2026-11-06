@@ -40,7 +40,9 @@ final class TextToSpeechService: NSObject, ObservableObject, SpeechSpeaking {
     private func speak(text: String, language: String, rate: Float, completion: (() -> Void)?) {
         stopSpeaking()
         let session = AVAudioSession.sharedInstance()
-        try? session.setCategory(.playback, mode: .spokenAudio, options: .duckOthers)
+        if session.category != .playback || session.mode != .spokenAudio {
+            try? session.setCategory(.playback, mode: .spokenAudio, options: .duckOthers)
+        }
         try? session.setActive(true)
 
         let utterance = AVSpeechUtterance(string: text)

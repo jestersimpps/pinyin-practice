@@ -5,7 +5,7 @@ protocol UserProgressServiceProtocol: AnyObject {
     var settings: PracticeSettings { get set }
     var sessions: [PracticeSession] { get }
 
-    func recordAnswer(for word: VocabularyItem, isCorrect: Bool)
+    func recordAnswer(for word: VocabularyItem, isCorrect: Bool, rating: ReviewRating?)
     func resetProgress()
     func endSession(startTime: Date, wordsStudied: Int, correctAnswers: Int, totalAttempts: Int, hskLevels: [Int])
     func recordChapterAttempt(chapterId: String, totalWords: Int, isCorrect: Bool, practiceTime: TimeInterval)

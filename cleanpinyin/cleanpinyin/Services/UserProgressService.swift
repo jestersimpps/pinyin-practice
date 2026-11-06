@@ -42,8 +42,8 @@ final class UserProgressService: ObservableObject, UserProgressServiceProtocol {
     }
 
     // MARK: - Answers
-    func recordAnswer(for word: VocabularyItem, isCorrect: Bool) {
-        progress.recordAnswer(wordId: word.id, isCorrect: isCorrect)
+    func recordAnswer(for word: VocabularyItem, isCorrect: Bool, rating: ReviewRating?) {
+        progress.recordAnswer(wordId: word.id, isCorrect: isCorrect, rating: rating)
     }
 
     // MARK: - Sessions
@@ -134,6 +134,10 @@ final class UserProgressService: ObservableObject, UserProgressServiceProtocol {
 
     var wordsLearnedCount: Int {
         progress.learnedWords.count
+    }
+
+    var dueCount: Int {
+        progress.dueWordIds().count
     }
 
     var currentDayStreak: Int {

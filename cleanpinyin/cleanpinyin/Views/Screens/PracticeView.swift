@@ -292,6 +292,7 @@ struct PracticeView: View {
 
     private func toggleHint() {
         showHint.toggle()
+        if showHint { viewModel.markHintUsed() }
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
     }
 
@@ -324,7 +325,7 @@ struct PracticeView: View {
         switch viewModel.mode {
         case .chapters: return "Chapter Practice"
         case .custom: return "Custom Practice"
-        case .review: return "Review Mistakes"
+        case .review: return "Smart Review"
         case .levels(let levels):
             let names = levels.sorted().map { "HSK \($0)" }.joined(separator: ", ")
             return viewModel.settings.practiceMode == .random ? "\(names) · Random" : names

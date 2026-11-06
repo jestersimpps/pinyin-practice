@@ -11,6 +11,7 @@ final class TutorViewModel: ObservableObject {
 
     @Published private(set) var explanation: LoadState<TutorExplanation> = .idle
     @Published private(set) var examples: LoadState<[ExampleSentence]> = .idle
+    @Published private(set) var isAvailable = false
 
     private let tutor: Tutoring?
     private let cache: TutorExampleCache
@@ -19,15 +20,14 @@ final class TutorViewModel: ObservableObject {
     init(tutor: Tutoring? = TutorFactory.makeDefault(), cache: TutorExampleCache = .shared) {
         self.tutor = tutor
         self.cache = cache
+        isAvailable = tutor?.isAvailable == true
     }
 
-    var isAvailable: Bool {
-        tutor?.isAvailable == true
-    }
-
+    // Availability is re-checked per word because the model can finish downloading mid-session
     func reset(for wordId: String?) {
         guard wordId != currentWordId else { return }
         currentWordId = wordId
+        isAvailable = tutor?.isAvailable == true
         explanation = .idle
         examples = .idle
     }

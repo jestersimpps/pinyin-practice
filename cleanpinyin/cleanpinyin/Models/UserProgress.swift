@@ -12,10 +12,11 @@ struct UserProgress: Codable, Equatable {
     var seenWords: Set<String> = []
     var learnedWords: Set<String> = []
     var chapterProgress: [String: ChapterProgress] = [:]
+    var reviewCards: [String: ReviewCard] = [:]
 
     private enum CodingKeys: String, CodingKey {
         case correctAnswers, totalAttempts, combo, bestCombo, dayStreak, bestDayStreak
-        case lastPracticeDate, incorrectWords, seenWords, learnedWords, chapterProgress
+        case lastPracticeDate, incorrectWords, seenWords, learnedWords, chapterProgress, reviewCards
     }
 
     private enum LegacyCodingKeys: String, CodingKey {
@@ -41,6 +42,7 @@ struct UserProgress: Codable, Equatable {
         learnedWords = try container.decodeIfPresent(Set<String>.self, forKey: .learnedWords)
             ?? seenWords.subtracting(incorrectWords)
         chapterProgress = try container.decodeIfPresent([String: ChapterProgress].self, forKey: .chapterProgress) ?? [:]
+        reviewCards = try container.decodeIfPresent([String: ReviewCard].self, forKey: .reviewCards) ?? [:]
     }
 
     var accuracy: Double {
@@ -52,7 +54,18 @@ struct UserProgress: Codable, Equatable {
         String(format: "%.0f%%", accuracy)
     }
 
-    mutating func recordAnswer(wordId: String, isCorrect: Bool, at date: Date = Date(), calendar: Calendar = .current) {
+    // rating schedules the word's next review; nil records the answer without rescheduling
+    mutating func recordAnswer(
+        wordId: String,
+        isCorrect: Bool,
+        rating: ReviewRating? = nil,
+        at date: Date = Date(),
+        calendar: Calendar = .current,
+        scheduler: FSRSScheduler = FSRSScheduler()
+    ) {
+        if let rating {
+            reviewCards[wordId] = scheduler.review(reviewCards[wordId], rating: rating, at: date)
+        }
         totalAttempts += 1
         seenWords.insert(wordId)
         recordPracticeDay(date, calendar: calendar)
@@ -67,6 +80,20 @@ struct UserProgress: Codable, Equatable {
             combo = 0
             incorrectWords.insert(wordId)
         }
+    }
+
+    // Words to review now, most overdue first; misses from before scheduling existed come first
+    func dueWordIds(at date: Date = Date()) -> [String] {
+        let unscheduledMisses = incorrectWords.filter { reviewCards[$0] == nil }.sorted()
+        let due = reviewCards
+            .filter { $0.value.due <= date }
+            .sorted { $0.value.due < $1.value.due }
+            .map(\.key)
+        return unscheduledMisses + due
+    }
+
+    func nextReviewDate(after date: Date = Date()) -> Date? {
+        reviewCards.values.map(\.due).filter { $0 > date }.min()
     }
 
     // The streak survives until a full calendar day passes without practice

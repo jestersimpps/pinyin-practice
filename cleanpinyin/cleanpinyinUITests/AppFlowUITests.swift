@@ -30,7 +30,7 @@ final class AppFlowUITests: XCTestCase {
 
         answerField.tap()
         answerField.typeText("de")
-        waitUntil(character, "label != '的'")
+        XCTAssertTrue(app.staticTexts["1/150"].waitForExistence(timeout: 5), "the correct answer should submit itself and advance")
 
         app.buttons["Close practice"].tap()
         waitUntil(app.buttons["home.wordsLearned"], "label BEGINSWITH '1'")
@@ -61,7 +61,7 @@ final class AppFlowUITests: XCTestCase {
 
     // PRA-3, PRA-4, MODE-4
     func testWrongAnswerShowsCorrectionAndFeedsReview() {
-        XCTAssertFalse(app.buttons["Review Mistakes"].isEnabled)
+        XCTAssertFalse(app.buttons["Smart Review"].isEnabled)
 
         openQuickPractice()
         answerField.tap()
@@ -70,13 +70,13 @@ final class AppFlowUITests: XCTestCase {
 
         XCTAssertTrue(app.staticTexts["Correct answer: de"].waitForExistence(timeout: 3))
         app.buttons["Next"].tap()
-        waitUntil(character, "label != '的'")
+        XCTAssertTrue(app.staticTexts["1/150"].waitForExistence(timeout: 5))
 
         app.buttons["Close practice"].tap()
-        let review = app.buttons["Review Mistakes"]
+        let review = app.buttons["Smart Review"]
         XCTAssertTrue(review.waitForExistence(timeout: 3))
         XCTAssertTrue(review.isEnabled)
-        XCTAssertTrue(review.label.contains("1 word"))
+        XCTAssertTrue(review.label.contains("1 due"))
     }
 
     // CH-3, MODE-2

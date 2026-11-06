@@ -173,7 +173,7 @@ struct PracticeFlowTests {
     func sequentialResumes() throws {
         let levelWords = vocabulary.vocabularyForLevel(1)
         for word in levelWords.prefix(3) {
-            progress.recordAnswer(for: word, isCorrect: true)
+            progress.recordAnswer(for: word, isCorrect: true, rating: .good)
         }
         let session = makeSession(.levels([1]))
         #expect(session.currentWord?.id == levelWords[3].id)
@@ -194,11 +194,50 @@ struct PracticeFlowTests {
         #expect(session.totalWords == chapter.wordCount)
     }
 
+    @Test("REV-3 answers are rated: correct is good, a hint makes it hard, a miss is again")
+    func answersAreRated() throws {
+        let session = makeSession(.levels([1]))
+        let first = try #require(session.currentWord)
+        session.userInput = answer(for: first)
+        session.checkAnswer()
+        session.nextWord()
+
+        let second = try #require(session.currentWord)
+        session.markHintUsed()
+        session.userInput = answer(for: second)
+        session.checkAnswer()
+        session.nextWord()
+
+        let third = try #require(session.currentWord)
+        session.skipWord()
+
+        let cards = progress.progress.reviewCards
+        let scheduler = FSRSScheduler()
+        let now = Date()
+        #expect(cards[first.id]?.stability == scheduler.review(nil, rating: .good, at: now).stability)
+        #expect(cards[second.id]?.stability == scheduler.review(nil, rating: .hard, at: now).stability)
+        #expect(cards[third.id]?.stability == scheduler.review(nil, rating: .again, at: now).stability)
+        #expect(progress.progress.dueWordIds() == [third.id])
+    }
+
+    @Test("REV-3 retyping after a miss does not reschedule the word")
+    func correctionKeepsSchedule() throws {
+        let session = makeSession(.levels([1]))
+        let word = try #require(session.currentWord)
+        session.userInput = "zzz"
+        session.checkAnswer()
+        let afterMiss = progress.progress.reviewCards[word.id]
+
+        session.userInput = answer(for: word)
+        #expect(session.feedbackState == .correct)
+        #expect(progress.progress.reviewCards[word.id] == afterMiss)
+    }
+
     @Test("MODE-4 review practises each missed word once")
     func reviewMode() throws {
         let words = Array(vocabulary.vocabularyForLevel(1).prefix(3))
         for word in words {
-            progress.recordAnswer(for: word, isCorrect: false)
+            progress.recordAnswer(for: word, isCorrect: false, rating: .again)
         }
         let session = makeSession(.review)
         #expect(session.totalWords == 3)
@@ -231,7 +270,7 @@ struct PracticeFlowTests {
     @Test("PROG-6 resetting progress keeps settings")
     func resetKeepsSettings() throws {
         progress.settings.requireTones = true
-        progress.recordAnswer(for: try #require(vocabulary.allVocabulary.first), isCorrect: true)
+        progress.recordAnswer(for: try #require(vocabulary.allVocabulary.first), isCorrect: true, rating: .good)
         progress.resetProgress()
         #expect(progress.progress == UserProgress())
         #expect(progress.sessions.isEmpty)

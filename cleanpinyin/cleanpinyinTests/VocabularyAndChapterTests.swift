@@ -117,14 +117,11 @@ struct ChapterTests {
         #expect(vocabulary.nextChapter(after: vocabulary.chaptersForLevel(6).last!) == nil)
     }
 
-    @Test("MODE-4 review words are listed once each")
-    func reviewIsDeduplicated() {
-        let customWordIds = vocabulary.chapters
-            .filter { $0.kind == .custom }
-            .flatMap { vocabulary.vocabularyByChapter[$0.id] ?? [] }
-            .map(\.id)
-        let review = vocabulary.reviewVocabulary(incorrectWordIds: Set(customWordIds))
-        #expect(review.count == Set(customWordIds).count)
+    @Test("MODE-4 review words keep their order and are listed once each")
+    func reviewWordsByIds() {
+        let ids = vocabulary.vocabularyForLevel(1).prefix(3).map(\.id)
+        let words = vocabulary.words(withIds: [ids[2], ids[0], ids[2], "unknown", ids[1]])
+        #expect(words.map(\.id) == [ids[2], ids[0], ids[1]])
         #expect(Set(vocabulary.allVocabulary.map(\.id)).count == vocabulary.allVocabulary.count)
     }
 }

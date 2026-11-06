@@ -85,8 +85,8 @@ struct ProgressStatsView: View {
                 )
 
                 StatCard(
-                    title: "Review Needed",
-                    value: "\(progressService.progress.incorrectWords.count)",
+                    title: "Due Now",
+                    value: "\(progressService.dueCount)",
                     subtitle: "words to review",
                     icon: "exclamationmark.circle.fill",
                     color: Color.red

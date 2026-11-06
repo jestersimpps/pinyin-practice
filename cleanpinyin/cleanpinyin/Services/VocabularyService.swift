@@ -63,8 +63,14 @@ final class VocabularyService: ObservableObject, VocabularyServiceProtocol {
         Self.uniqued(chapterIds.sorted().flatMap { vocabularyByChapter[$0] ?? [] })
     }
 
-    func reviewVocabulary(incorrectWordIds: Set<String>) -> [VocabularyItem] {
-        allVocabulary.filter { incorrectWordIds.contains($0.id) }
+    // Keeps the order of ids and drops unknown or repeated ones
+    func words(withIds ids: [String]) -> [VocabularyItem] {
+        let byId = Dictionary(allVocabulary.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        var seen = Set<String>()
+        return ids.compactMap { id in
+            guard seen.insert(id).inserted else { return nil }
+            return byId[id]
+        }
     }
 
     func chaptersForLevel(_ level: Int) -> [Chapter] {
