@@ -51,6 +51,7 @@ final class PracticeViewModel: ObservableObject {
     private let maximumSilentListens = 3
     private var handsFreeTask: Task<Void, Never>?
     private var isRecognizerPrepared = false
+    private var advancePending = false
     private let sessionManager = PracticeSessionManager()
     private let wordTracker = WordProgressTracker()
     private let validator = PinyinValidator()
@@ -121,6 +122,21 @@ final class PracticeViewModel: ObservableObject {
         let spoken = spokenChecker.evaluate(transcript: transcript, word: word)
         spokenAnswer = spoken
         apply(spoken.result, for: word)
+
+        if spoken.result != .correct {
+            revealAnswerAndMoveOn(for: word)
+        }
+    }
+
+    // A heard miss says the right answer aloud, then moves on once it has been spoken
+    private func revealAnswerAndMoveOn(for word: VocabularyItem) {
+        scheduleAutoAdvance(delayMultiplier: AppConstants.Timing.spokenMissFallbackMultiplier)
+        guard let speech else { return }
+
+        speech.speak(chinese: displayText(for: word)) { [weak self] in
+            guard let self, self.currentWord?.id == word.id, self.feedbackState != .none else { return }
+            self.scheduleAutoAdvance(delayMultiplier: AppConstants.Timing.afterAnswerSpokenMultiplier)
+        }
     }
 
     // Hands-free voice: once on, the app listens for every word until switched off or it hears silence too often
@@ -202,6 +218,7 @@ final class PracticeViewModel: ObservableObject {
     // Never listen while the app is talking, a correct answer is on screen, or a summary sheet is up
     private var canListenNow: Bool {
         feedbackState != .correct
+            && !advancePending
             && !showingChapterCompletion
             && !showingPracticeCompletion
             && speech?.isSpeaking != true
@@ -356,6 +373,7 @@ final class PracticeViewModel: ObservableObject {
         wasSkipped = false
         hasRecordedIncorrectForCurrentWord = false
         usedHintForCurrentWord = false
+        advancePending = false
         chapterHandler.resetTimer()
     }
 
@@ -431,8 +449,11 @@ final class PracticeViewModel: ObservableObject {
         updateChapterProgress(for: word, isCorrect: false)
     }
 
-    private func scheduleAutoAdvance() {
-        let delay = wordTracker.isLastWord ? advanceDelay * 1.5 : advanceDelay
+    private func scheduleAutoAdvance(delayMultiplier: Double = 1) {
+        autoAdvanceWorkItem?.cancel()
+        let base = advanceDelay * delayMultiplier
+        let delay = wordTracker.isLastWord ? base * 1.5 : base
+        advancePending = true
         let workItem = DispatchWorkItem { [weak self] in
             guard let self, !self.showingChapterCompletion else { return }
             self.nextWord()

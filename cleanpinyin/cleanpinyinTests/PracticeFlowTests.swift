@@ -294,18 +294,34 @@ struct PracticeFlowTests {
         #expect(session.listeningState != .preparing("Getting ready…"))
     }
 
-    @Test("SAY-6 after a miss, saying the right word moves on by itself")
-    func handsFreeCorrection() async throws {
-        let recognizer = FakeRecognizer(transcripts: ["谢谢", "的"])
+    @Test("SAY-6 a heard miss shows and says the answer, then moves on by itself")
+    func handsFreeMissMovesOn() async throws {
+        let first = try #require(makeSession(.levels([1])).currentWord)
+        let second = vocabulary.vocabularyForLevel(1).first { $0.id != first.id }!
+        let recognizer = FakeRecognizer(transcripts: ["谢谢", second.simplified])
+        progress.settings.speakOnCorrectAnswer = false
         let session = makeSession(.levels([1]), recognizer: recognizer)
-        let word = try #require(session.currentWord)
 
         await session.startHandsFree()
-        try await waitUntil { session.wordsCompleted == 1 }
+        try await waitUntil { session.currentWord?.id == second.id }
+        #expect(speech.spoken == [first.simplified], "the correct answer is read aloud after a miss, even with speak-on-correct off")
+        #expect(progress.progress.incorrectWords.contains(first.id))
 
-        #expect(session.currentWord?.id != word.id)
-        #expect(progress.progress.totalAttempts == 2)
-        #expect(progress.progress.reviewCards[word.id]?.lapses == 1, "the miss still schedules a review")
+        try await waitUntil { session.wordsCompleted == 2 }
+        #expect(progress.progress.learnedWords.contains(second.id))
+    }
+
+    @Test("SAY-6 the app does not listen while a missed word is waiting to move on")
+    func noListeningDuringMissPause() async throws {
+        let recognizer = FakeRecognizer(transcripts: ["谢谢", "的", "的"])
+        let session = makeSession(.levels([1]), recognizer: recognizer)
+        let first = try #require(session.currentWord)
+
+        await session.startHandsFree()
+        try await waitUntil { session.currentWord?.id != first.id }
+        #expect(progress.progress.totalAttempts >= 1)
+        #expect(progress.progress.reviewCards[first.id]?.lapses == 1)
+        #expect(!progress.progress.learnedWords.contains(first.id), "nothing heard during the pause counts for the missed word")
     }
 
     @Test("SAY-7 repeated silence pauses voice but keeps the preference")

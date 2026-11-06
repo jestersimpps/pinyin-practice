@@ -5,6 +5,8 @@ enum AppConstants {
         static let autoSubmitDelay: TimeInterval = 0.5
         static let correctAnswerAdvanceDelay: TimeInterval = 1.0
         static let lastWordAdvanceDelay: TimeInterval = 1.5
+        static let afterAnswerSpokenMultiplier = 1.2
+        static let spokenMissFallbackMultiplier = 5.0
     }
 
     enum Chapters {

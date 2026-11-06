@@ -103,7 +103,7 @@ Words live in `Resources/Data/<level>.min.json`, one file per HSK level. Optiona
 - **SAY-3** A spoken answer is recorded exactly like a typed one (PRA-2/PRA-3), and the screen shows what was heard with its pinyin.
 - **SAY-4** If permission is refused, voice stays off, nothing is recorded and a short message explains what to do. Tone grading is only as precise as the recogniser: a clear word with a slightly off tone may still pass.
 - **SAY-5** **Hands-free:** tapping the microphone turns voice answers on until it is tapped again; the choice is remembered and the next session starts listening by itself. While on, the app listens for every word without further taps. Each listen ends after a short silence, after 8 s without speech, or after 10 s. It never listens while the app is speaking, while a correct answer is on screen, or while a summary is shown. Typing still works at the same time, and the keyboard stays hidden.
-- **SAY-6** After a miss, the app keeps listening. Saying the correct word counts as a correction (PRA-3) and moves on to the next word automatically.
+- **SAY-6** Every heard answer moves on by itself. A correct answer moves on after 1 s. After a miss, the screen shows the correct pinyin and the app always reads the word aloud (whatever the Speak on Correct Answer setting), then moves on shortly after it has finished speaking; if that speech is interrupted, it moves on after 5 s anyway. The app does not listen during that pause. Typed answers keep PRA-3: a typed miss waits for Next.
 - **SAY-7** After three silent listens in a row (about 25 s), voice pauses with a message; tapping the microphone resumes it. Pausing does not change the remembered preference.
 
 ## 11. AI tutor (on-device language model)
