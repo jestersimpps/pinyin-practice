@@ -71,7 +71,7 @@ final class ScreenshotTourUITests: XCTestCase {
         tap("imprint.selectChapters")
         sleep(1)
         snapshot("10-imprint-select")
-        tap("imprint.chapter1")
+        tap("imprint.hsk3.0_hsk1_set1")
         tap("Done")
         tap("Start Imprint")
         sleep(3)

@@ -14,6 +14,7 @@ struct SettingsView: View {
                 
                 ScrollView {
                     VStack(spacing: 24) {
+                        wordListSection
                         themeSection
                         quickPracticeLevelsSection
                         practiceModeSection
@@ -47,6 +48,40 @@ struct SettingsView: View {
         }
     }
     
+    private var wordListSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            SectionHeader(title: "Word List", icon: "list.bullet.rectangle.fill")
+
+            VStack(spacing: 12) {
+                ForEach(HSKSyllabus.allCases) { syllabus in
+                    let isSelected = progressService.settings.syllabus == syllabus
+                    SelectableCard(
+                        isSelected: isSelected,
+                        action: { progressService.selectSyllabus(syllabus) }
+                    ) {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(syllabus.name)
+                                    .font(.system(size: 16, weight: .semibold))
+                                    .foregroundColor(isSelected ? .white : Color("PrimaryText"))
+                                Text("\(syllabus.summary) · \(VocabularyService.shared.wordCount(in: syllabus)) words")
+                                    .font(.system(size: 13))
+                                    .foregroundColor(isSelected ? .white.opacity(0.8) : Color("SecondaryText"))
+                            }
+                            Spacer()
+                        }
+                    }
+                    .accessibilityIdentifier("settings.wordList.\(syllabus.rawValue)")
+                    .accessibilityAddTraits(isSelected ? .isSelected : [])
+                }
+            }
+
+            Text("Your learned words and reviews carry over when you switch.")
+                .font(.system(size: 13))
+                .foregroundColor(Color("SecondaryText"))
+        }
+    }
+
     private var themeSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             SectionHeader(title: "Appearance", icon: "paintbrush.fill")
@@ -137,6 +172,11 @@ struct SettingsView: View {
             Text("All your progress stays on this device. No account, no tracking.")
                 .font(.system(size: 13))
                 .foregroundColor(Color("SecondaryText"))
+
+            Text("Word lists follow the official HSK syllabus. Word data from complete-hsk-vocabulary by Yanis Zafirópulos (MIT). English meanings from CC-CEDICT, licensed CC BY-SA 4.0.")
+                .font(.system(size: 13))
+                .foregroundColor(Color("SecondaryText"))
+                .accessibilityIdentifier("settings.credits")
         }
     }
 

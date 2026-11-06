@@ -120,6 +120,16 @@ struct SettingsTests {
         #expect(!settings.showPronunciationHints)
         #expect(!settings.showCharacterHints)
         #expect(settings.speakOnCorrectAnswer)
+        #expect(settings.syllabus == .hsk2, "people who studied before HSK 3.0 existed keep the HSK 2.0 list")
+    }
+
+    @Test("SET-7 new learners start on HSK 3.0 and the chosen word list is saved")
+    func wordListDefaultAndRoundTrip() throws {
+        var settings = PracticeSettings()
+        #expect(settings.syllabus == .hsk3)
+        settings.syllabus = .hsk2
+        let decoded = try JSONDecoder().decode(PracticeSettings.self, from: JSONEncoder().encode(settings))
+        #expect(decoded.syllabus == .hsk2)
     }
 
     @Test("SET-2 Quick Practice levels are always valid and never empty")

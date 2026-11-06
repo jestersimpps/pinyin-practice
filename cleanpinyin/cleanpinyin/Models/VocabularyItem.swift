@@ -8,10 +8,11 @@ struct VocabularyItem: Identifiable, Codable, Equatable {
     let p: [String]
     let m: [String]
     let c: [String]?
-    let ch: String
-    let ph: String
+    let ch: String?
+    let ph: String?
     let tn: String
-    let cp: Int?  // Curriculum chapter (1-80)
+    let lv: [String: Int]?
+    let cp: [String: Int]?
 
     // MARK: - Basic Properties
     var id: String { s }
@@ -19,9 +20,17 @@ struct VocabularyItem: Identifiable, Codable, Equatable {
     var traditional: String { t }
     var frequency: Int { q }
     var meanings: [String] { m }
-    var characterHint: String { ch }
-    var pronunciationHint: String { ph }
+    var characterHint: String { ch ?? "" }
+    var pronunciationHint: String { ph ?? "" }
     var toneNumbers: String { tn }
+
+    func level(in syllabus: HSKSyllabus) -> Int? {
+        lv?[syllabus.rawValue]
+    }
+
+    func curriculumChapter(in syllabus: HSKSyllabus) -> Int? {
+        cp?[syllabus.rawValue]
+    }
 
     // MARK: - Pinyin Properties
     var pinyin: String {

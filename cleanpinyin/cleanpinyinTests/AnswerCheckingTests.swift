@@ -84,12 +84,11 @@ extension VocabularyItem {
         simplified: String = "你好",
         toneNumbers: String = "ni3 hao3",
         meanings: [String] = ["hello"],
-        frequency: Int = 1,
-        chapter: Int? = nil
+        frequency: Int = 1
     ) -> VocabularyItem {
         VocabularyItem(
             s: simplified, t: simplified, r: "", q: frequency, p: [], m: meanings, c: nil,
-            ch: "", ph: "", tn: toneNumbers, cp: chapter
+            ch: nil, ph: nil, tn: toneNumbers, lv: nil, cp: nil
         )
     }
 }

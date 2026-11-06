@@ -30,7 +30,7 @@ final class AppFlowUITests: XCTestCase {
 
         answerField.tap()
         answerField.typeText("de")
-        XCTAssertTrue(app.staticTexts["1/150"].waitForExistence(timeout: 5), "the correct answer should submit itself and advance")
+        XCTAssertTrue(app.staticTexts["1/294"].waitForExistence(timeout: 5), "the correct answer should submit itself and advance")
 
         app.buttons["Close practice"].tap()
         waitUntil(app.buttons["home.wordsLearned"], "label BEGINSWITH '1'")
@@ -70,7 +70,7 @@ final class AppFlowUITests: XCTestCase {
 
         XCTAssertTrue(app.staticTexts["Correct answer: de"].waitForExistence(timeout: 3))
         app.buttons["Next"].tap()
-        XCTAssertTrue(app.staticTexts["1/150"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["1/294"].waitForExistence(timeout: 5))
 
         app.buttons["Close practice"].tap()
         let review = app.buttons["Smart Review"]
@@ -82,13 +82,13 @@ final class AppFlowUITests: XCTestCase {
     // CH-3, MODE-2
     func testChapterPracticeRespectsLocks() {
         app.buttons["Chapter Practice"].tap()
-        let first = app.buttons["chapter1"]
+        let first = app.buttons["hsk3.0_hsk1_set1"]
         XCTAssertTrue(first.waitForExistence(timeout: 3))
         XCTAssertTrue(first.isEnabled)
-        XCTAssertFalse(app.buttons["chapter2"].isEnabled)
+        XCTAssertFalse(app.buttons["hsk3.0_hsk1_set2"].isEnabled)
 
         first.tap()
-        XCTAssertTrue(app.staticTexts["29 words selected"].exists)
+        XCTAssertTrue(app.staticTexts["37 words selected"].exists)
         app.buttons["Start"].tap()
 
         XCTAssertTrue(app.staticTexts["Chapter Practice"].waitForExistence(timeout: 5))
@@ -97,28 +97,28 @@ final class AppFlowUITests: XCTestCase {
 
     // SET-2, MODE-5
     func testQuickPracticeLevelsComeFromSettings() {
-        XCTAssertTrue(app.buttons["Quick Practice"].label.contains("150 words"))
+        XCTAssertTrue(app.buttons["Quick Practice"].label.contains("294 words"))
 
         app.buttons["Settings"].tap()
         app.buttons["HSK 2"].tap()
         app.buttons["HSK 1"].tap()
         app.buttons["Done"].tap()
 
-        waitUntil(app.buttons["Quick Practice"], "label CONTAINS '147 words'")
+        waitUntil(app.buttons["Quick Practice"], "label CONTAINS '197 words'")
     }
 
     // MODE-3
     func testCustomPracticeDoesNotChangeQuickPractice() {
         app.buttons["Custom Practice"].tap()
         app.buttons["HSK 3"].tap()
-        app.buttons["hsk3_set1"].tap()
+        app.buttons["hsk3.0_hsk3_set1"].tap()
         app.buttons["Start"].tap()
 
         XCTAssertTrue(app.staticTexts["Custom Practice"].waitForExistence(timeout: 5))
         app.buttons["Close practice"].tap()
         app.buttons["Cancel"].tap()
 
-        waitUntil(app.buttons["Quick Practice"], "label CONTAINS '150 words'")
+        waitUntil(app.buttons["Quick Practice"], "label CONTAINS '294 words'")
     }
 
     // IMP-1, IMP-3
@@ -127,11 +127,11 @@ final class AppFlowUITests: XCTestCase {
         XCTAssertFalse(app.buttons["Start Imprint"].isEnabled)
 
         app.buttons["imprint.selectChapters"].tap()
-        app.buttons["imprint.chapter1"].tap()
+        app.buttons["imprint.hsk3.0_hsk1_set1"].tap()
         app.buttons["Done"].tap()
 
         app.buttons["Start Imprint"].tap()
-        XCTAssertTrue(app.staticTexts["1 of 29"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["1 of 37"].waitForExistence(timeout: 5))
 
         app.buttons["Stop"].tap()
         XCTAssertTrue(app.buttons["Start Imprint"].waitForExistence(timeout: 3))
@@ -141,8 +141,22 @@ final class AppFlowUITests: XCTestCase {
     // PROG-5
     func testProgressScreenShowsTotals() {
         app.buttons["Progress"].tap()
-        XCTAssertTrue(app.staticTexts["of 4993 HSK words"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.staticTexts["of 5181 HSK 3.0 words"].waitForExistence(timeout: 3))
         XCTAssertTrue(app.staticTexts["0-day streak"].exists)
         app.buttons["Done"].tap()
+    }
+
+    // SET-7, DATA-9
+    func testSwitchingWordList() {
+        app.buttons["home.wordList"].tap()
+        app.buttons["HSK 2.0 · The classic word list"].tap()
+        waitUntil(app.buttons["Quick Practice"], "label CONTAINS '150 words'")
+
+        app.buttons["Settings"].tap()
+        XCTAssertTrue(app.buttons["settings.wordList.hsk2"].isSelected)
+        app.buttons["settings.wordList.hsk3"].tap()
+        app.buttons["Done"].tap()
+
+        waitUntil(app.buttons["Quick Practice"], "label CONTAINS '294 words'")
     }
 }

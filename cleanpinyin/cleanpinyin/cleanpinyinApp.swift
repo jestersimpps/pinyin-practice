@@ -17,6 +17,7 @@ struct cleanpinyinApp: App {
             UserDefaults.standard.removePersistentDomain(forName: bundleId)
         }
         #endif
+        VocabularyService.shared.select(UserProgressService.shared.settings.syllabus)
     }
 
     var body: some Scene {

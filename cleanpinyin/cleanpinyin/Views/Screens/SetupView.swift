@@ -2,7 +2,7 @@ import SwiftUI
 
 struct SetupView: View {
     @ObservedObject private var progressService = UserProgressService.shared
-    private let vocabularyService = VocabularyService.shared
+    @ObservedObject private var vocabularyService = VocabularyService.shared
     @State private var practiceLaunch: PracticeLaunch?
     @State private var showingSettings = false
     @State private var showingCustomPractice = false
@@ -59,12 +59,42 @@ struct SetupView: View {
                 .font(.system(size: 36, weight: .bold, design: .rounded))
                 .foregroundColor(Color("PrimaryText"))
 
-            Text("Ready to practise your pinyin?")
-                .font(.system(size: 16, weight: .regular))
-                .foregroundColor(Color("SecondaryText"))
+            HStack {
+                Text("Ready to practise your pinyin?")
+                    .font(.system(size: 16, weight: .regular))
+                    .foregroundColor(Color("SecondaryText"))
+                Spacer()
+                wordListMenu
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.top, 20)
+    }
+
+    private var wordListMenu: some View {
+        Menu {
+            Picker("Word list", selection: Binding(
+                get: { progressService.settings.syllabus },
+                set: { progressService.selectSyllabus($0) }
+            )) {
+                ForEach(HSKSyllabus.allCases) { syllabus in
+                    Text("\(syllabus.name) · \(syllabus.summary)").tag(syllabus)
+                }
+            }
+        } label: {
+            HStack(spacing: 4) {
+                Text(progressService.settings.syllabus.name)
+                Image(systemName: "chevron.down")
+                    .font(.system(size: 11, weight: .bold))
+            }
+            .font(.system(size: 14, weight: .semibold))
+            .foregroundColor(Color("MidnightGreen"))
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .background(Capsule().fill(Color("MidnightGreen").opacity(0.12)))
+        }
+        .accessibilityIdentifier("home.wordList")
+        .accessibilityLabel("Word list: \(progressService.settings.syllabus.name)")
     }
 
     private var statsSection: some View {

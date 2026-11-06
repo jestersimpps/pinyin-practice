@@ -3,7 +3,7 @@ import SwiftUI
 struct ChapterSelectionView: View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject private var progressService = UserProgressService.shared
-    private let vocabularyService = VocabularyService.shared
+    @ObservedObject private var vocabularyService = VocabularyService.shared
     @State private var selectedLevel: Int = 1
     @State private var practiceLaunch: PracticeLaunch?
 

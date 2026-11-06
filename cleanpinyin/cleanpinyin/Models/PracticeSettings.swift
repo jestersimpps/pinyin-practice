@@ -3,6 +3,7 @@ import Foundation
 struct PracticeSettings: Codable, Equatable {
     static let hskLevels: ClosedRange<Int> = 1...6
 
+    var syllabus: HSKSyllabus = .hsk3
     var selectedHSKLevels: Set<Int> = [1] {
         didSet { selectedHSKLevels = Self.sanitized(selectedHSKLevels) }
     }
@@ -19,7 +20,7 @@ struct PracticeSettings: Codable, Equatable {
     var handsFreeVoice: Bool = false
 
     private enum CodingKeys: String, CodingKey {
-        case selectedHSKLevels, practiceMode, showEnglishTranslation, showPronunciationHints, showCharacterHints
+        case syllabus, selectedHSKLevels, practiceMode, showEnglishTranslation, showPronunciationHints, showCharacterHints
         case requireTones, useTraditional, showFullMeaning, selectedChapters, lastPracticeMode, speakOnCorrectAnswer, handsFreeVoice
         case showHints
     }
@@ -30,6 +31,8 @@ struct PracticeSettings: Codable, Equatable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let legacyShowHints = try container.decodeIfPresent(Bool.self, forKey: .showHints) ?? true
 
+        // Settings saved before HSK 3.0 existed were made while studying the HSK 2.0 list
+        syllabus = try container.decodeIfPresent(HSKSyllabus.self, forKey: .syllabus) ?? .hsk2
         selectedHSKLevels = Self.sanitized(try container.decodeIfPresent(Set<Int>.self, forKey: .selectedHSKLevels) ?? [1])
         practiceMode = try container.decodeIfPresent(PracticeMode.self, forKey: .practiceMode) ?? .sequential
         showEnglishTranslation = try container.decodeIfPresent(Bool.self, forKey: .showEnglishTranslation) ?? true
@@ -46,6 +49,7 @@ struct PracticeSettings: Codable, Equatable {
 
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(syllabus, forKey: .syllabus)
         try container.encode(selectedHSKLevels, forKey: .selectedHSKLevels)
         try container.encode(practiceMode, forKey: .practiceMode)
         try container.encode(showEnglishTranslation, forKey: .showEnglishTranslation)

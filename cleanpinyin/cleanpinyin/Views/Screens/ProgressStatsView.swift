@@ -4,7 +4,7 @@ import Charts
 struct ProgressStatsView: View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject private var progressService = UserProgressService.shared
-    private let vocabularyService = VocabularyService.shared
+    @ObservedObject private var vocabularyService = VocabularyService.shared
     @State private var selectedTimeRange: TimeRange = .week
 
     enum TimeRange: String, CaseIterable {
@@ -61,7 +61,7 @@ struct ProgressStatsView: View {
                 StatCard(
                     title: "Words Learned",
                     value: "\(progressService.wordsLearnedCount)",
-                    subtitle: "of \(vocabularyService.hskWordCount) HSK words",
+                    subtitle: "of \(vocabularyService.hskWordCount) \(vocabularyService.syllabus.name) words",
                     icon: "book.fill",
                     color: Color("MidnightGreen")
                 )

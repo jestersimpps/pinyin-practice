@@ -7,8 +7,8 @@ enum VocabularyLoadingError: Error {
 }
 
 class VocabularyFileLoader {
-    func loadVocabularyFromJSON(level: Int) -> Result<[VocabularyItem], VocabularyLoadingError> {
-        let resourceName = "\(level).min"
+    func loadWordBank() -> Result<[VocabularyItem], VocabularyLoadingError> {
+        let resourceName = "words.min"
 
         guard let url = Bundle.main.url(forResource: resourceName, withExtension: "json") else {
             return .failure(.fileNotFound(fileName: "\(resourceName).json"))

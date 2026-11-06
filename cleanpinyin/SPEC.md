@@ -8,7 +8,9 @@ Each rule has an ID (`ANS-3`, `CH-2`, …). Tests in `cleanpinyinTests` name the
 
 ## 1. Vocabulary data
 
-Words live in `Resources/Data/<level>.min.json`, one file per HSK level. Optional study lists live in `Resources/CustomData/*.json`.
+All words live in one word bank, `Resources/Data/words.min.json`, shared by two word lists: **HSK 3.0** (the 2026 syllabus, levels 1–6, 5,181 words) and **HSK 2.0** (the classic list, 4,993 words). 3,156 words are in both. Optional study lists live in `Resources/CustomData/*.json`.
+
+The bank is built by `scripts/import_hsk_wordlist.py` from drkameleon/complete-hsk-vocabulary (MIT; meanings from CC-CEDICT, CC BY-SA 4.0) and the official HSK 3.0 syllabus vocabulary with pinyin. Rerunning it is safe: it only adds missing words and reapplies reviewed fixes.
 
 | Field | Meaning |
 |---|---|
@@ -17,13 +19,18 @@ Words live in `Resources/Data/<level>.min.json`, one file per HSK level. Optiona
 | `m` | English meanings, most useful first |
 | `q` | frequency rank (lower is more common) |
 | `ch` / `ph` | character and pronunciation memory hints |
-| `cp` | curriculum chapter (1–80), present for HSK 1–2 only |
+| `lv` | HSK level per word list, e.g. `{"hsk3": 1, "hsk2": 1}`. A word is only in the lists it has a level for. |
+| `cp` | curriculum chapter (1–80) per word list; present for HSK 2.0 levels 1–2 only |
 
 - **DATA-1** Every syllable in `tn` is letters followed by a tone number 1–5. The syllable count equals the character count, except for erhua words that end in 儿.
 - **DATA-2** `ü` is written as `v`, so 女 is `nv3` and is shown as `nǚ`.
 - **DATA-3** Only proper nouns start with a capital letter (北京 `Bei3 jing1`). A common word never leads with a surname, abbreviation or place-name meaning: 白 means "white", not "surname Bai".
 - **DATA-4** A word appears at most once per HSK level. A word can appear in a custom list as well as in an HSK level; both refer to the same progress.
-- **DATA-5** Every level file loads and decodes. A broken custom list is skipped and doesn't affect the rest.
+- **DATA-5** The word bank loads and decodes, and each list has its expected level sizes (HSK 3.0: 294 / 197 / 487 / 972 / 1,547 / 1,684; HSK 2.0: 150 / 147 / 298 / 598 / 1,300 / 2,500). A broken custom list is skipped and doesn't affect the rest.
+- **DATA-6** Both lists read from the same bank, so a fix to a word's reading, meaning or hints applies in both.
+- **DATA-7** Every word in the official HSK 3.0 syllabus uses the syllabus reading (看 `kan4`, 便宜 `pian2 yi5`, 雨 `yu3`), including neutral tones. 一 and 不 keep their dictionary tone, since learners type that rather than the tone-sandhi form.
+- **DATA-8** Traditional characters are the standard form of the word's main reading (从 → 從), never a rare variant. Meanings never lead with a "variant of" or "surname" note.
+- **DATA-9** The learner picks the word list (SET-7). Switching changes the levels, chapters, Quick Practice and Progress counts. Learned words, reviews and day streaks are per word, so they carry over; Smart Review covers words from both lists. Chapter selections from the other list are cleared.
 
 ## 2. Answer checking
 
@@ -60,9 +67,10 @@ Words live in `Resources/Data/<level>.min.json`, one file per HSK level. Optiona
 ## 5. Chapters
 
 - **CH-1** HSK 1–2 words are grouped by their curriculum chapter (`cp`). A chapter appears only if it has words, and it uses its curriculum title (`你好 Hello`).
-- **CH-2** HSK 3–6 words have no curriculum chapter yet. They are split by frequency into near-equal sets of at most 40 words. Each set is titled and iconed after a featured word it actually contains ("Set 1: 世界 World", globe), so the list reads like chapters without claiming a topic the words don't share. Titles and icons live in `Resources/set-themes.json` (editable); icons are unique within a level. If a theme no longer matches its set, the set falls back to its word range as title.
+- **CH-2** HSK 2.0 levels 3–6 and all HSK 3.0 levels have no curriculum chapters yet. They are split by frequency into near-equal sets of at most 40 words. Each set is titled and iconed after a featured word it actually contains ("Set 1: 世界 World", globe), so the list reads like chapters without claiming a topic the words don't share. Titles and icons live in `Resources/set-themes.json` (editable); icons are unique within a level. If a theme no longer matches its set, the set falls back to its word range as title.
 - **CH-3** Within a level, the first chapter is always unlocked. Each later chapter unlocks once the chapter before it, in that level's list, is at least 80% complete. Empty curriculum slots are skipped and never block anything.
 - **CH-4** A chapter's completion is the share of its words answered correctly at least once during chapter or custom practice.
+- **CH-6** Each word list has its own chapters. HSK 2.0 keeps its original chapter ids (`chapter1`, `hsk3_set1`) so saved progress still matches; HSK 3.0 ids start with `hsk3.0_` and never collide with them.
 - **CH-5** Completing a chapter shows a celebration with **Continue to Next Chapter** (the next chapter in the level, or the first chapter of the next level), **Review This Chapter** and **Back to Chapters**. **Continue** is only offered when a next chapter exists.
 
 ## 6. Imprint mode (listening)
@@ -77,7 +85,7 @@ Words live in `Resources/Data/<level>.min.json`, one file per HSK level. Optiona
 - **PROG-2** **Accuracy** is correct answers divided by attempts, across all time.
 - **PROG-3** **Day streak** counts consecutive calendar days with at least one answer. It continues if the learner practised today or yesterday, and resets to 0 once a full day is missed. The best day streak is kept.
 - **PROG-4** **Combo** counts correct answers in a row. Any miss resets it to 0. It is shown during practice.
-- **PROG-5** The Progress screen shows learned words (of 4,993), accuracy, total practice time and words due now. It also shows the day streak and best, charts for accuracy, words per day and minutes per day (week / month / all time), learned words per HSK level, and achievements.
+- **PROG-5** The Progress screen shows learned words (of the chosen list's word count), accuracy, total practice time and words due now. It also shows the day streak and best, charts for accuracy, words per day and minutes per day (week / month / all time), learned words per HSK level, and achievements.
 - **PROG-6** **Reset All Progress** asks for confirmation, then clears progress and history but keeps settings.
 
 ## 8. Settings
@@ -88,6 +96,7 @@ Words live in `Resources/Data/<level>.min.json`, one file per HSK level. Optiona
 - **SET-4** Toggles: Require Tones, Show English, Pronunciation Hints, Character Hints, Traditional Characters, Full Meanings, Speak on Correct Answer.
 - **SET-5** Settings are saved immediately. Unknown or missing keys fall back to defaults, so updates never wipe settings.
 - **SET-6** An About section shows the app version.
+- **SET-7** Word list: HSK 3.0 or HSK 2.0, chosen in Settings or from the switcher on the home screen. New learners start on HSK 3.0; settings saved before the word list existed keep HSK 2.0, the list they were studying.
 
 ## 9. Platform & quality
 

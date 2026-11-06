@@ -127,6 +127,13 @@ final class UserProgressService: ObservableObject, UserProgressServiceProtocol {
         }
     }
 
+    // Switches the vocabulary before publishing the setting, so screens redraw with the new list
+    func selectSyllabus(_ syllabus: HSKSyllabus, vocabulary: VocabularyService = .shared) {
+        vocabulary.select(syllabus)
+        settings.syllabus = syllabus
+        cleanupSelectedChapters(vocabulary: vocabulary)
+    }
+
     // MARK: - Progress Queries
     var hasIncorrectWords: Bool {
         !progress.incorrectWords.isEmpty

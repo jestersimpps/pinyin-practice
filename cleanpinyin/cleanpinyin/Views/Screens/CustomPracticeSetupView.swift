@@ -2,7 +2,7 @@ import SwiftUI
 
 struct CustomPracticeSetupView: View {
     @Environment(\.dismiss) var dismiss
-    private let vocabularyService = VocabularyService.shared
+    @ObservedObject private var vocabularyService = VocabularyService.shared
     @State private var selectedLevel: Int = VocabularyService.shared.hasCustomChapters ? Chapter.customLevel : 1
     @State private var practiceLaunch: PracticeLaunch?
     @State private var selectedChapters: Set<String> = []
