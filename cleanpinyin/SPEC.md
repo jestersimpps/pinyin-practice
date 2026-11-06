@@ -102,3 +102,10 @@ Words live in `Resources/Data/<level>.min.json`, one file per HSK level. Optiona
 - **SAY-2** The transcript is reduced to its Chinese characters (digits become numerals) and converted to pinyin. Hearing the word itself, or a same-sounding word with the same tones (他/她 for tā), is **correct**. The same syllables with other tones are **partial**. Anything else is **incorrect**.
 - **SAY-3** A spoken answer is recorded exactly like a typed one (PRA-2/PRA-3), and the screen shows what was heard with its pinyin.
 - **SAY-4** If permission is refused or nothing is heard, nothing is recorded and a short message explains what to do. Tone grading is only as precise as the recogniser: a clear word with a slightly off tone may still pass.
+
+## 11. AI tutor (on-device language model)
+
+- **TUT-1** On iOS 26 devices where Apple Intelligence is available and enabled, a tutor panel appears under the word after any miss (wrong letters, wrong tones or skip). Without the on-device model the panel never appears and the app behaves as before.
+- **TUT-2** **Why?** asks Apple's on-device model (FoundationModels) for a one-to-two sentence explanation and a memory tip. The prompt carries the correct pinyin, each syllable's tone and the app's own diagnosis (tone, spelling or skipped), so the model explains rather than guesses. Errors show a short "couldn't help" message.
+- **TUT-3** **Use it** asks for three short example sentences at the learner's HSK level. The app keeps only sentences of at most 30 characters that contain the word, are written in Chinese characters only and have an English translation; at most three are shown. Pinyin comes from the system transliterator, not the model. (It uses dictionary tones, so 喜欢 reads xǐ huān rather than the spoken xǐ huan.) Tapping a sentence reads it aloud.
+- **TUT-4** Example sentences are cached per word on the device, so they appear instantly next time.

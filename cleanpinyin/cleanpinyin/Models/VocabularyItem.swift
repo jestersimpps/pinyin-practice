@@ -1,6 +1,6 @@
 import Foundation
 
-struct VocabularyItem: Identifiable, Codable {
+struct VocabularyItem: Identifiable, Codable, Equatable {
     let s: String
     let t: String
     let r: String

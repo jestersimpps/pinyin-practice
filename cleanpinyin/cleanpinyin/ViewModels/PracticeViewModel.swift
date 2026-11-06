@@ -16,6 +16,7 @@ final class PracticeViewModel: ObservableObject {
     @Published private(set) var listeningState: ListeningState = .idle
     @Published private(set) var spokenAnswer: SpokenAnswer?
     @Published var speechMessage: String?
+    @Published private(set) var lastMistake: MistakeContext?
 
     enum ListeningState: Equatable {
         case idle
@@ -164,6 +165,7 @@ final class PracticeViewModel: ObservableObject {
         autoSubmitWorkItem?.cancel()
         sessionManager.recordAttempt(isCorrect: false)
         recordIncorrect(for: word)
+        lastMistake = MistakeContext(word: word, answer: "", kind: .skipped)
         wasSkipped = true
         feedbackState = .incorrect
     }
@@ -178,6 +180,17 @@ final class PracticeViewModel: ObservableObject {
         autoAdvanceWorkItem?.cancel()
         recognizer?.stopListening()
         sessionManager.endSession(progressService: progressService, hskLevels: sessionLevels)
+    }
+
+    func speak(chinese text: String) {
+        speech?.speak(chinese: text)
+    }
+
+    var currentHSKLevel: Int {
+        guard let word = currentWord else { return 1 }
+        return PracticeSettings.hskLevels.first { level in
+            vocabularyService.vocabularyForLevel(level).contains { $0.id == word.id }
+        } ?? 1
     }
 
     func displayText(for word: VocabularyItem) -> String {
@@ -241,6 +254,7 @@ final class PracticeViewModel: ObservableObject {
         recognizer?.stopListening()
         spokenAnswer = nil
         speechMessage = nil
+        lastMistake = nil
         userInput = ""
         feedbackState = .none
         wasSkipped = false
@@ -292,6 +306,11 @@ final class PracticeViewModel: ObservableObject {
         if result == .correct {
             handleCorrectAnswer(for: word)
         } else {
+            lastMistake = MistakeContext(
+                word: word,
+                answer: spokenAnswer?.heardPinyin ?? userInput,
+                kind: result == .partial ? .tone : .spelling
+            )
             recordIncorrect(for: word)
         }
     }

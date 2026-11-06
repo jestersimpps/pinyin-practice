@@ -94,6 +94,31 @@ struct PracticeFlowTests {
         #expect(session.currentWord?.id != word.id)
     }
 
+    @Test("TUT-1 each kind of miss is described for the tutor")
+    func mistakeKinds() throws {
+        progress.settings.requireTones = true
+        let session = makeSession(.levels([1]))
+        while let word = session.currentWord, !word.toneNumbers.contains(where: { "1234".contains($0) }) {
+            session.skipWord()
+            session.nextWord()
+        }
+        let first = try #require(session.currentWord)
+        session.userInput = first.toneNumbers.filter(\.isLetter)
+        session.checkAnswer()
+        #expect(session.lastMistake?.kind == .tone)
+        #expect(session.lastMistake?.answer == first.toneNumbers.filter(\.isLetter))
+
+        session.nextWord()
+        #expect(session.lastMistake == nil)
+        session.userInput = "zzz"
+        session.checkAnswer()
+        #expect(session.lastMistake?.kind == .spelling)
+
+        session.nextWord()
+        session.skipWord()
+        #expect(session.lastMistake?.kind == .skipped)
+    }
+
     @Test("PRA-4 skipping counts as a miss and reveals the answer")
     func skip() throws {
         let session = makeSession(.levels([1]))

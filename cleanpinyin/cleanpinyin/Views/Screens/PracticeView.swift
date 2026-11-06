@@ -2,6 +2,7 @@ import SwiftUI
 
 struct PracticeView: View {
     @StateObject private var viewModel: PracticeViewModel
+    @StateObject private var tutor = TutorViewModel()
     @Environment(\.dismiss) private var dismiss
     @State private var showingSettings = false
     @State private var keyboardHeight: CGFloat = 0
@@ -72,6 +73,9 @@ struct PracticeView: View {
                 .interactiveDismissDisabled()
             }
         }
+        .onChange(of: viewModel.currentWord?.id, initial: true) { _, wordId in
+            tutor.reset(for: wordId)
+        }
         .onChange(of: viewModel.feedbackState) { _, newState in
             switch newState {
             case .correct:
@@ -117,6 +121,16 @@ struct PracticeView: View {
                             )
                             .padding(.horizontal, 16)
                             .id("character")
+                        }
+
+                        if tutor.isAvailable, let mistake = viewModel.lastMistake {
+                            TutorPanel(
+                                tutor: tutor,
+                                mistake: mistake,
+                                hskLevel: viewModel.currentHSKLevel,
+                                onSpeak: viewModel.speak(chinese:)
+                            )
+                            .padding(.horizontal, 16)
                         }
                     }
                     .padding(.vertical, 16)
