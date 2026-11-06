@@ -17,11 +17,12 @@ struct PracticeSettings: Codable, Equatable {
     var selectedChapters: Set<String> = []
     var lastPracticeMode: LastPracticeMode = .quick
     var speakOnCorrectAnswer: Bool = true
+    var speakMeaningOnNewWord: Bool = true
     var handsFreeVoice: Bool = false
 
     private enum CodingKeys: String, CodingKey {
         case syllabus, selectedHSKLevels, practiceMode, showEnglishTranslation, showPronunciationHints, showCharacterHints
-        case requireTones, useTraditional, showFullMeaning, selectedChapters, lastPracticeMode, speakOnCorrectAnswer, handsFreeVoice
+        case requireTones, useTraditional, showFullMeaning, selectedChapters, lastPracticeMode, speakOnCorrectAnswer, speakMeaningOnNewWord, handsFreeVoice
         case showHints
     }
 
@@ -44,6 +45,7 @@ struct PracticeSettings: Codable, Equatable {
         selectedChapters = try container.decodeIfPresent(Set<String>.self, forKey: .selectedChapters) ?? []
         lastPracticeMode = try container.decodeIfPresent(LastPracticeMode.self, forKey: .lastPracticeMode) ?? .quick
         speakOnCorrectAnswer = try container.decodeIfPresent(Bool.self, forKey: .speakOnCorrectAnswer) ?? true
+        speakMeaningOnNewWord = try container.decodeIfPresent(Bool.self, forKey: .speakMeaningOnNewWord) ?? true
         handsFreeVoice = try container.decodeIfPresent(Bool.self, forKey: .handsFreeVoice) ?? false
     }
 
@@ -61,6 +63,7 @@ struct PracticeSettings: Codable, Equatable {
         try container.encode(selectedChapters, forKey: .selectedChapters)
         try container.encode(lastPracticeMode, forKey: .lastPracticeMode)
         try container.encode(speakOnCorrectAnswer, forKey: .speakOnCorrectAnswer)
+        try container.encode(speakMeaningOnNewWord, forKey: .speakMeaningOnNewWord)
         try container.encode(handsFreeVoice, forKey: .handsFreeVoice)
     }
 

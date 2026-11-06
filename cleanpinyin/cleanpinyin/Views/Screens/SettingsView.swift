@@ -1,4 +1,5 @@
 import SwiftUI
+import AVFoundation
 
 struct SettingsView: View {
     @Environment(\.dismiss) var dismiss
@@ -19,6 +20,7 @@ struct SettingsView: View {
                         quickPracticeLevelsSection
                         practiceModeSection
                         displayOptionsSection
+                        voiceSection
                         dataProgressSection
                         aboutSection
                     }
@@ -291,11 +293,80 @@ struct SettingsView: View {
                     description: "Use text-to-speech for Chinese pronunciation",
                     isOn: $progressService.settings.speakOnCorrectAnswer
                 )
+
+                Divider()
+                    .background(Color.gray.opacity(0.3))
+                    .padding(.horizontal, 16)
+
+                ToggleRow(
+                    title: "Speak English Meaning",
+                    description: "Read each new word's meaning aloud in practice",
+                    isOn: $progressService.settings.speakMeaningOnNewWord
+                )
             }
             .background(
                 RoundedRectangle(cornerRadius: 12)
                     .fill(Color("SecondaryBackground"))
             )
+        }
+    }
+
+    private var voiceSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            SectionHeader(title: "Voice", icon: "waveform")
+
+            VStack(spacing: 0) {
+                voiceRow(title: "Chinese", language: TextToSpeechService.chineseLanguage, sample: "你好，欢迎学习中文")
+                Divider()
+                    .background(Color.gray.opacity(0.3))
+                    .padding(.horizontal, 16)
+                voiceRow(title: "English", language: TextToSpeechService.englishLanguage, sample: "Hello, welcome to EchoLingo")
+            }
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color("SecondaryBackground"))
+            )
+
+            Text("EchoLingo uses the best voice on your iPhone. For a more natural sound, download an Enhanced or Premium voice in Settings › Accessibility › Spoken Content › Voices.")
+                .font(.system(size: 13))
+                .foregroundColor(Color("SecondaryText"))
+        }
+    }
+
+    private func voiceRow(title: String, language: String, sample: String) -> some View {
+        let voice = TextToSpeechService.shared.voice(forLanguage: language)
+        return HStack {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.system(size: 16))
+                    .foregroundColor(Color("PrimaryText"))
+                Text(voice.map { "\($0.name) · \(Self.qualityName($0.quality))" } ?? "Not installed")
+                    .font(.system(size: 13))
+                    .foregroundColor(Color("SecondaryText"))
+            }
+            Spacer()
+            Button {
+                if language == TextToSpeechService.chineseLanguage {
+                    TextToSpeechService.shared.speak(chinese: sample)
+                } else {
+                    TextToSpeechService.shared.speak(english: sample)
+                }
+            } label: {
+                Image(systemName: "play.circle.fill")
+                    .font(.system(size: 28))
+                    .foregroundColor(Color("VibrantOrange"))
+            }
+            .accessibilityLabel("Play \(title) voice sample")
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+    }
+
+    private static func qualityName(_ quality: AVSpeechSynthesisVoiceQuality) -> String {
+        switch quality {
+        case .premium: return "Premium"
+        case .enhanced: return "Enhanced"
+        default: return "Standard"
         }
     }
     

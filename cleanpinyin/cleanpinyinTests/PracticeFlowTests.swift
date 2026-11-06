@@ -37,6 +37,28 @@ struct PracticeFlowTests {
         try await Task.sleep(for: .milliseconds(200))
     }
 
+    @Test("PRA-10 each new word's English meaning is read aloud, after the previous answer")
+    func meaningIsSpoken() async throws {
+        let session = makeSession(.levels([1]))
+        session.begin()
+        let first = try #require(session.currentWord)
+        #expect(speech.spoken == [first.shortTranslation])
+
+        session.userInput = answer(for: first)
+        session.checkAnswer()
+        try await waitUntil { session.wordsCompleted == 1 }
+        let second = try #require(session.currentWord)
+        #expect(speech.spoken == [first.shortTranslation, first.simplified, second.shortTranslation])
+    }
+
+    @Test("PRA-10 the spoken meaning can be switched off")
+    func meaningCanBeSilenced() {
+        progress.settings.speakMeaningOnNewWord = false
+        let session = makeSession(.levels([1]))
+        session.begin()
+        #expect(speech.spoken.isEmpty)
+    }
+
     @Test("PRA-2 a correct answer is recorded, spoken and auto-advances")
     func correctAnswerAdvances() async throws {
         let session = makeSession(.levels([1]))
@@ -429,6 +451,10 @@ final class SpeechSpy: SpeechSpeaking {
     func speak(english: String, completion: (() -> Void)?) {
         spoken.append(english)
         completion?()
+    }
+
+    func speakAfterCurrent(english: String) {
+        spoken.append(english)
     }
 
     func stopSpeaking() {}

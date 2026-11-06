@@ -53,6 +53,7 @@ The bank is built by `scripts/import_hsk_wordlist.py` from drkameleon/complete-h
 - **PRA-7** When the last word is done, a summary appears: words studied, accuracy, time and best combo. The session is saved to history. **Continue Practice** starts a new round and **Back to Home** closes the session.
 - **PRA-8** Leaving a session early saves it if at least one word was completed.
 - **PRA-9** A session with no words shows an empty state with a way back. It never shows a blank screen.
+- **PRA-10** With **Speak English Meaning** on (the default), each new word's English meaning is read aloud when it appears. It waits for any answer still being spoken, so it never cuts off the Chinese, and hands-free listening starts only after it.
 
 ## 4. Practice modes
 
@@ -93,7 +94,8 @@ The bank is built by `scripts/import_hsk_wordlist.py` from drkameleon/complete-h
 - **SET-1** Appearance: Light / Dark / System.
 - **SET-2** Quick Practice levels: pick one or more of HSK 1–6. At least one stays selected.
 - **SET-3** Word order: Sequential / Random.
-- **SET-4** Toggles: Require Tones, Show English, Pronunciation Hints, Character Hints, Traditional Characters, Full Meanings, Speak on Correct Answer.
+- **SET-4** Toggles: Require Tones, Show English, Pronunciation Hints, Character Hints, Traditional Characters, Full Meanings, Speak on Correct Answer, Speak English Meaning.
+- **SET-8** Voice: the app speaks with the best installed voice per language (Premium, then Enhanced, then the system default) and shows which one, with a sample button and a note on downloading better voices in iOS Settings.
 - **SET-5** Settings are saved immediately. Unknown or missing keys fall back to defaults, so updates never wipe settings.
 - **SET-6** An About section shows the app version.
 - **SET-7** Word list: HSK 3.0 or HSK 2.0, chosen in Settings or from the switcher on the home screen. New learners start on HSK 3.0; settings saved before the word list existed keep HSK 2.0, the list they were studying.

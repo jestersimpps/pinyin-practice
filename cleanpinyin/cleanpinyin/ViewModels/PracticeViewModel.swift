@@ -52,6 +52,7 @@ final class PracticeViewModel: ObservableObject {
     private var handsFreeTask: Task<Void, Never>?
     private var isRecognizerPrepared = false
     private var advancePending = false
+    private var hasBegun = false
     private let sessionManager = PracticeSessionManager()
     private let wordTracker = WordProgressTracker()
     private let validator = PinyinValidator()
@@ -92,6 +93,8 @@ final class PracticeViewModel: ObservableObject {
         if case .chapters(let ids) = mode {
             progressService.settings.selectedChapters = ids
         }
+        hasBegun = true
+        announceCurrentWord()
     }
 
     func startNewRound() {
@@ -380,6 +383,15 @@ final class PracticeViewModel: ObservableObject {
         usedHintForCurrentWord = false
         advancePending = false
         chapterHandler.resetTimer()
+        if hasBegun {
+            announceCurrentWord()
+        }
+    }
+
+    // Reads the new word's English meaning aloud, after any answer that is still being spoken
+    private func announceCurrentWord() {
+        guard settings.speakMeaningOnNewWord, let word = currentWord else { return }
+        speech?.speakAfterCurrent(english: word.shortTranslation)
     }
 
     // MARK: - Input handling
