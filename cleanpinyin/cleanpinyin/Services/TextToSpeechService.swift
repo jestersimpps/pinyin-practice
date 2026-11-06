@@ -2,6 +2,7 @@ import Foundation
 import AVFoundation
 
 protocol SpeechSpeaking: AnyObject {
+    var isSpeaking: Bool { get }
     func speak(chinese: String, completion: (() -> Void)?)
     func speak(english: String, completion: (() -> Void)?)
     func stopSpeaking()

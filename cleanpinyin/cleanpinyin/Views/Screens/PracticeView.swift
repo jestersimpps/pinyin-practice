@@ -149,7 +149,7 @@ struct PracticeView: View {
                 feedbackState: viewModel.feedbackState,
                 showHintButton: hintsAvailable && viewModel.feedbackState == .none,
                 micState: micState,
-                onMicTap: { Task { await viewModel.toggleListening() } },
+                onMicTap: toggleVoice,
                 onCheck: viewModel.checkAnswer,
                 onNext: goToNextWord,
                 onSkip: skipWord,
@@ -273,15 +273,27 @@ struct PracticeView: View {
     private func startPractice() {
         viewModel.begin()
         guard viewModel.hasWords else { return }
+
+        if viewModel.settings.handsFreeVoice, viewModel.canAnswerBySpeaking {
+            Task { await viewModel.startHandsFree() }
+            return
+        }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             isInputFocused = true
         }
     }
 
+    private func toggleVoice() {
+        if !viewModel.isHandsFree {
+            isInputFocused = false
+        }
+        Task { await viewModel.toggleHandsFree() }
+    }
+
     private func goToNextWord() {
         viewModel.nextWord()
         showHint = false
-        isInputFocused = true
+        isInputFocused = !viewModel.isHandsFree
     }
 
     private func skipWord() {
@@ -298,7 +310,7 @@ struct PracticeView: View {
 
     private func resetForNewRound() {
         showHint = false
-        isInputFocused = true
+        isInputFocused = !viewModel.isHandsFree
     }
 
     private func dismissKeyboard() {
@@ -314,8 +326,9 @@ struct PracticeView: View {
 
     private var micState: MobileInputZone.MicState? {
         guard viewModel.canAnswerBySpeaking else { return nil }
+        guard viewModel.isHandsFree else { return .off }
         switch viewModel.listeningState {
-        case .idle: return .idle
+        case .idle: return .waiting
         case .preparing: return .preparing
         case .listening: return .listening
         }

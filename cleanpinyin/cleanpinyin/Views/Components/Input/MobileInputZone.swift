@@ -2,9 +2,10 @@ import SwiftUI
 
 struct MobileInputZone: View {
     enum MicState: Equatable {
-        case idle
+        case off
         case preparing
         case listening
+        case waiting
     }
 
     @Binding var text: String
@@ -22,10 +23,11 @@ struct MobileInputZone: View {
         HStack(spacing: 8) {
             inputField
 
+            if let micState {
+                micButton(micState)
+            }
+
             if feedbackState == .none {
-                if let micState {
-                    micButton(micState)
-                }
                 if showHintButton {
                     hintButton
                 }
@@ -50,7 +52,7 @@ struct MobileInputZone: View {
 
     private var inputField: some View {
         HStack {
-            TextField(micState == .listening ? "Listening… say the word" : "Type the pinyin", text: $text)
+            TextField(placeholder, text: $text)
                 .textFieldStyle(.plain)
                 .font(.system(size: 18, weight: .regular))
                 .foregroundColor(Color("PrimaryText"))
@@ -82,25 +84,42 @@ struct MobileInputZone: View {
         )
     }
 
+    private var placeholder: String {
+        switch micState {
+        case .listening: return "Listening… say the word"
+        case .waiting, .preparing: return "Voice on · or type"
+        case .off, nil: return "Type the pinyin"
+        }
+    }
+
     private func micButton(_ state: MicState) -> some View {
         Button(action: onMicTap) {
             ZStack {
                 Circle()
                     .fill(state == .listening ? Color.red : Color("SecondaryBackground"))
+                Circle()
+                    .stroke(Color.red, lineWidth: state == .waiting ? 2 : 0)
                 if state == .preparing {
                     ProgressView()
                 } else {
-                    Image(systemName: state == .listening ? "stop.fill" : "mic.fill")
+                    Image(systemName: state == .listening ? "waveform" : "mic.fill")
                         .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(state == .listening ? .white : Color("MidnightGreen"))
+                        .foregroundColor(micIconColor(state))
+                        .symbolEffect(.variableColor.iterative, isActive: state == .listening)
                 }
             }
             .frame(width: 44, height: 44)
-            .scaleEffect(state == .listening ? 1.08 : 1)
-            .animation(state == .listening ? .easeInOut(duration: 0.6).repeatForever(autoreverses: true) : .default, value: state)
         }
-        .disabled(state == .preparing)
-        .accessibilityLabel(state == .listening ? "Stop listening" : "Say the answer")
+        .accessibilityLabel(state == .off ? "Turn on voice answers" : "Turn off voice answers")
+        .accessibilityValue(state == .listening ? "Listening" : "")
+    }
+
+    private func micIconColor(_ state: MicState) -> Color {
+        switch state {
+        case .listening: return .white
+        case .waiting, .preparing: return .red
+        case .off: return Color("MidnightGreen")
+        }
     }
 
     private var hintButton: some View {

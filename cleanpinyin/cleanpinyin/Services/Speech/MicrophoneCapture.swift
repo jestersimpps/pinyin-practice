@@ -13,9 +13,9 @@ final class MicrophoneCapture {
     private var lastVoiceTime: Date?
     private var noiseFloor: Float = 1
 
-    private let maxDuration: TimeInterval = 6
+    private let maxDuration: TimeInterval = 10
     private let trailingSilence: TimeInterval = 0.9
-    private let noSpeechTimeout: TimeInterval = 4
+    private let noSpeechTimeout: TimeInterval = 8
 
     func start(convertingTo format: AVAudioFormat? = nil, onEnd: @escaping () -> Void) throws {
         let session = AVAudioSession.sharedInstance()

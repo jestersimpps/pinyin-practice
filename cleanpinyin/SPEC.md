@@ -98,10 +98,13 @@ Words live in `Resources/Data/<level>.min.json`, one file per HSK level. Optiona
 
 ## 10. Say it (on-device speech recognition)
 
-- **SAY-1** When the device can recognise Mandarin on-device, the practice input row shows a microphone button. Tapping it records one answer; recording stops after a short silence, after 6 s, or when tapped again. On iOS 26 recognition uses SpeechAnalyzer/SpeechTranscriber, downloading the Mandarin model the first time. Older iOS versions, and devices where SpeechTranscriber lacks Mandarin, use SFSpeechRecognizer in on-device mode. Audio never leaves the device.
+- **SAY-1** When the device can recognise Mandarin on-device, the practice input row shows a microphone switch. On iOS 26 recognition uses SpeechAnalyzer/SpeechTranscriber, downloading the Mandarin model the first time. Older iOS versions, and devices where SpeechTranscriber lacks Mandarin, use SFSpeechRecognizer in on-device mode. Audio never leaves the device.
 - **SAY-2** The transcript is reduced to its Chinese characters (digits become numerals) and converted to pinyin. Hearing the word itself, or a same-sounding word with the same tones (他/她 for tā), is **correct**. The same syllables with other tones are **partial**. Anything else is **incorrect**.
 - **SAY-3** A spoken answer is recorded exactly like a typed one (PRA-2/PRA-3), and the screen shows what was heard with its pinyin.
-- **SAY-4** If permission is refused or nothing is heard, nothing is recorded and a short message explains what to do. Tone grading is only as precise as the recogniser: a clear word with a slightly off tone may still pass.
+- **SAY-4** If permission is refused, voice stays off, nothing is recorded and a short message explains what to do. Tone grading is only as precise as the recogniser: a clear word with a slightly off tone may still pass.
+- **SAY-5** **Hands-free:** tapping the microphone turns voice answers on until it is tapped again; the choice is remembered and the next session starts listening by itself. While on, the app listens for every word without further taps. Each listen ends after a short silence, after 8 s without speech, or after 10 s. It never listens while the app is speaking, while a correct answer is on screen, or while a summary is shown. Typing still works at the same time, and the keyboard stays hidden.
+- **SAY-6** After a miss, the app keeps listening. Saying the correct word counts as a correction (PRA-3) and moves on to the next word automatically.
+- **SAY-7** After three silent listens in a row (about 25 s), voice pauses with a message; tapping the microphone resumes it. Pausing does not change the remembered preference.
 
 ## 11. AI tutor (on-device language model)
 

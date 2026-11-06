@@ -24,7 +24,8 @@ struct PracticeFlowTests {
             speech: speech,
             recognizer: recognizer,
             autoSubmitDelay: 0.05,
-            advanceDelay: 0.05
+            advanceDelay: 0.05,
+            listenPollInterval: .milliseconds(10)
         )
     }
 
@@ -277,52 +278,104 @@ struct PracticeFlowTests {
         #expect(progress.settings.requireTones)
     }
 
-    @Test("SAY-3 a spoken answer is graded and recorded like a typed one")
-    func spokenAnswerIsGraded() async throws {
-        let recognizer = FakeRecognizer(transcript: "的。")
+    @Test("SAY-5 hands-free voice answers each word in turn without tapping")
+    func handsFreeAnswersEachWord() async throws {
+        let first = try #require(makeSession(.levels([1])).currentWord)
+        let second = vocabulary.vocabularyForLevel(1).first { $0.id != first.id && !progress.progress.learnedWords.contains($0.id) }!
+        let recognizer = FakeRecognizer(transcripts: ["\(first.simplified)。", second.simplified])
         let session = makeSession(.levels([1]), recognizer: recognizer)
-        let word = try #require(session.currentWord)
-        #expect(word.simplified == "的")
 
-        await session.toggleListening()
+        await session.startHandsFree()
+        #expect(session.isHandsFree)
+        #expect(progress.settings.handsFreeVoice)
 
-        #expect(session.spokenAnswer?.heardText == "的")
-        #expect(session.feedbackState == .correct)
-        #expect(progress.progress.learnedWords == [word.id])
-        #expect(session.listeningState == .idle)
+        try await waitUntil { session.wordsCompleted == 2 }
+        #expect(progress.progress.learnedWords.isSuperset(of: [first.id, second.id]))
+        #expect(session.listeningState != .preparing("Getting ready…"))
     }
 
-    @Test("SAY-4 without permission nothing is recorded and the learner is told why")
-    func spokenAnswerNeedsPermission() async throws {
-        let recognizer = FakeRecognizer(transcript: "的", permissionGranted: false)
+    @Test("SAY-6 after a miss, saying the right word moves on by itself")
+    func handsFreeCorrection() async throws {
+        let recognizer = FakeRecognizer(transcripts: ["谢谢", "的"])
         let session = makeSession(.levels([1]), recognizer: recognizer)
+        let word = try #require(session.currentWord)
 
-        await session.toggleListening()
+        await session.startHandsFree()
+        try await waitUntil { session.wordsCompleted == 1 }
 
-        #expect(session.feedbackState == .none)
+        #expect(session.currentWord?.id != word.id)
+        #expect(progress.progress.totalAttempts == 2)
+        #expect(progress.progress.reviewCards[word.id]?.lapses == 1, "the miss still schedules a review")
+    }
+
+    @Test("SAY-7 repeated silence pauses voice but keeps the preference")
+    func handsFreePausesOnSilence() async throws {
+        let session = makeSession(.levels([1]), recognizer: FakeRecognizer(transcripts: []))
+
+        await session.startHandsFree()
+        try await waitUntil { !session.isHandsFree }
+
+        #expect(session.speechMessage == "Voice paused. Tap the microphone to keep going.")
+        #expect(progress.settings.handsFreeVoice)
+        #expect(progress.progress.totalAttempts == 0)
+    }
+
+    @Test("SAY-5 the microphone switch turns voice on and off and remembers it")
+    func handsFreeToggle() async throws {
+        let session = makeSession(.levels([1]), recognizer: FakeRecognizer(transcripts: [], silenceDelay: .seconds(5)))
+
+        await session.toggleHandsFree()
+        #expect(session.isHandsFree && progress.settings.handsFreeVoice)
+
+        await session.toggleHandsFree()
+        #expect(!session.isHandsFree && !progress.settings.handsFreeVoice)
+    }
+
+    @Test("SAY-4 without permission voice stays off and the learner is told why")
+    func handsFreeNeedsPermission() async {
+        let session = makeSession(.levels([1]), recognizer: FakeRecognizer(transcripts: ["的"], permissionGranted: false))
+
+        await session.startHandsFree()
+
+        #expect(!session.isHandsFree)
+        #expect(!progress.settings.handsFreeVoice)
         #expect(progress.progress.totalAttempts == 0)
         #expect(session.speechMessage == SpeechRecognitionError.permissionDenied.errorDescription)
     }
 
-    @Test("SAY-4 hearing nothing leaves the word unanswered")
-    func spokenAnswerNoSpeech() async throws {
-        let recognizer = FakeRecognizer(transcript: nil)
-        let session = makeSession(.levels([1]), recognizer: recognizer)
+    @Test("SAY-3 a spoken answer is graded and recorded like a typed one")
+    func spokenAnswerIsGraded() throws {
+        let session = makeSession(.levels([1]))
+        let word = try #require(session.currentWord)
 
-        await session.toggleListening()
+        session.submitSpokenAnswer("的。")
 
-        #expect(session.feedbackState == .none)
-        #expect(session.speechMessage == SpeechRecognitionError.noSpeech.errorDescription)
+        #expect(session.spokenAnswer?.heardText == "的")
+        #expect(session.feedbackState == .correct)
+        #expect(progress.progress.learnedWords == [word.id])
+    }
+
+    private func waitUntil(timeout: Duration = .seconds(3), _ condition: () -> Bool) async throws {
+        let deadline = ContinuousClock.now + timeout
+        while !condition() {
+            guard ContinuousClock.now < deadline else {
+                Issue.record("condition not met within \(timeout)")
+                return
+            }
+            try await Task.sleep(for: .milliseconds(20))
+        }
     }
 }
 
 final class FakeRecognizer: SpeechRecognizing {
-    private let transcript: String?
+    private var transcripts: [String]
     private let permissionGranted: Bool
+    private let silenceDelay: Duration
 
-    init(transcript: String?, permissionGranted: Bool = true) {
-        self.transcript = transcript
+    init(transcripts: [String], permissionGranted: Bool = true, silenceDelay: Duration = .milliseconds(20)) {
+        self.transcripts = transcripts
         self.permissionGranted = permissionGranted
+        self.silenceDelay = silenceDelay
     }
 
     var isSupported: Bool { true }
@@ -331,13 +384,18 @@ final class FakeRecognizer: SpeechRecognizing {
     func stopListening() {}
 
     func listen() async throws -> String {
-        guard let transcript else { throw SpeechRecognitionError.noSpeech }
-        return transcript
+        guard !transcripts.isEmpty else {
+            try await Task.sleep(for: silenceDelay)
+            throw SpeechRecognitionError.noSpeech
+        }
+        try await Task.sleep(for: .milliseconds(20))
+        return transcripts.removeFirst()
     }
 }
 
 final class SpeechSpy: SpeechSpeaking {
     private(set) var spoken: [String] = []
+    let isSpeaking = false
 
     func speak(chinese: String, completion: (() -> Void)?) {
         spoken.append(chinese)

@@ -16,6 +16,7 @@ final class PracticeViewModel: ObservableObject {
     @Published private(set) var listeningState: ListeningState = .idle
     @Published private(set) var spokenAnswer: SpokenAnswer?
     @Published var speechMessage: String?
+    @Published private(set) var isHandsFree = false
     @Published private(set) var lastMistake: MistakeContext?
 
     enum ListeningState: Equatable {
@@ -46,6 +47,10 @@ final class PracticeViewModel: ObservableObject {
     private let speech: SpeechSpeaking?
     private let recognizer: SpeechRecognizing?
     private let spokenChecker = SpokenAnswerChecker()
+    private let listenPollInterval: Duration
+    private let maximumSilentListens = 3
+    private var handsFreeTask: Task<Void, Never>?
+    private var isRecognizerPrepared = false
     private let sessionManager = PracticeSessionManager()
     private let wordTracker = WordProgressTracker()
     private let validator = PinyinValidator()
@@ -66,7 +71,8 @@ final class PracticeViewModel: ObservableObject {
         speech: SpeechSpeaking? = TextToSpeechService.shared,
         recognizer: SpeechRecognizing? = SpeechRecognizerFactory.makeDefault(),
         autoSubmitDelay: TimeInterval = AppConstants.Timing.autoSubmitDelay,
-        advanceDelay: TimeInterval = AppConstants.Timing.correctAnswerAdvanceDelay
+        advanceDelay: TimeInterval = AppConstants.Timing.correctAnswerAdvanceDelay,
+        listenPollInterval: Duration = .milliseconds(250)
     ) {
         self.mode = mode
         self.vocabularyService = vocabularyService
@@ -75,6 +81,7 @@ final class PracticeViewModel: ObservableObject {
         self.recognizer = recognizer
         self.autoSubmitDelay = autoSubmitDelay
         self.advanceDelay = advanceDelay
+        self.listenPollInterval = listenPollInterval
         startRound()
     }
 
@@ -116,35 +123,119 @@ final class PracticeViewModel: ObservableObject {
         apply(spoken.result, for: word)
     }
 
+    // Hands-free voice: once on, the app listens for every word until switched off or it hears silence too often
     @MainActor
-    func toggleListening() async {
-        guard let recognizer else { return }
-        if listeningState == .listening {
-            recognizer.stopListening()
-            return
+    func toggleHandsFree() async {
+        if isHandsFree {
+            stopHandsFree()
+            progressService.settings.handsFreeVoice = false
+        } else {
+            await startHandsFree()
         }
-        guard listeningState == .idle, let word = currentWord, feedbackState == .none else { return }
+    }
 
+    @MainActor
+    func startHandsFree() async {
+        guard let recognizer, !isHandsFree else { return }
         speechMessage = nil
         guard await recognizer.requestPermission() else {
             speechMessage = SpeechRecognitionError.permissionDenied.errorDescription
+            progressService.settings.handsFreeVoice = false
             return
         }
 
-        do {
+        progressService.settings.handsFreeVoice = true
+        isHandsFree = true
+        handsFreeTask?.cancel()
+        handsFreeTask = Task { @MainActor [weak self] in
+            await self?.runHandsFreeLoop()
+        }
+    }
+
+    func stopHandsFree() {
+        isHandsFree = false
+        handsFreeTask?.cancel()
+        handsFreeTask = nil
+        recognizer?.stopListening()
+        listeningState = .idle
+    }
+
+    @MainActor
+    private func runHandsFreeLoop() async {
+        var silentListens = 0
+
+        while isHandsFree, !Task.isCancelled {
+            guard let word = currentWord else {
+                stopHandsFree()
+                return
+            }
+            guard canListenNow else {
+                try? await Task.sleep(for: listenPollInterval)
+                continue
+            }
+
+            try? await Task.sleep(for: listenPollInterval)
+            guard isHandsFree, canListenNow, currentWord?.id == word.id else { continue }
+
+            do {
+                let transcript = try await listenForAnswer()
+                silentListens = 0
+                guard isHandsFree, currentWord?.id == word.id else { continue }
+                handleHeard(transcript, for: word)
+            } catch SpeechRecognitionError.noSpeech {
+                guard isHandsFree, currentWord?.id == word.id, feedbackState != .correct else { continue }
+                silentListens += 1
+                if silentListens >= maximumSilentListens {
+                    stopHandsFree()
+                    speechMessage = "Voice paused. Tap the microphone to keep going."
+                    return
+                }
+            } catch {
+                guard isHandsFree, !Task.isCancelled else { return }
+                stopHandsFree()
+                speechMessage = (error as? LocalizedError)?.errorDescription ?? SpeechRecognitionError.unavailable.errorDescription
+                return
+            }
+        }
+    }
+
+    // Never listen while the app is talking, a correct answer is on screen, or a summary sheet is up
+    private var canListenNow: Bool {
+        feedbackState != .correct
+            && !showingChapterCompletion
+            && !showingPracticeCompletion
+            && speech?.isSpeaking != true
+    }
+
+    @MainActor
+    private func listenForAnswer() async throws -> String {
+        guard let recognizer else { throw SpeechRecognitionError.unavailable }
+        if !isRecognizerPrepared {
             listeningState = .preparing("Getting ready…")
             try await recognizer.prepare { [weak self] status in
                 Task { @MainActor in self?.listeningState = .preparing(status) }
             }
-            speech?.stopSpeaking()
-            listeningState = .listening
-            let transcript = try await recognizer.listen()
-            listeningState = .idle
-            guard currentWord?.id == word.id else { return }
+            isRecognizerPrepared = true
+        }
+
+        listeningState = .listening
+        defer { listeningState = .idle }
+        return try await recognizer.listen()
+    }
+
+    private func handleHeard(_ transcript: String, for word: VocabularyItem) {
+        switch feedbackState {
+        case .none:
             submitSpokenAnswer(transcript)
-        } catch {
-            listeningState = .idle
-            speechMessage = (error as? LocalizedError)?.errorDescription ?? SpeechRecognitionError.noSpeech.errorDescription
+        case .incorrect, .partial:
+            let spoken = spokenChecker.evaluate(transcript: transcript, word: word)
+            spokenAnswer = spoken
+            if spoken.result == .correct {
+                acceptCorrection(for: word)
+                scheduleAutoAdvance()
+            }
+        case .correct:
+            break
         }
     }
 
@@ -179,7 +270,7 @@ final class PracticeViewModel: ObservableObject {
     func saveSessionOnExit() {
         autoSubmitWorkItem?.cancel()
         autoAdvanceWorkItem?.cancel()
-        recognizer?.stopListening()
+        stopHandsFree()
         sessionManager.endSession(progressService: progressService, hskLevels: sessionLevels)
     }
 
