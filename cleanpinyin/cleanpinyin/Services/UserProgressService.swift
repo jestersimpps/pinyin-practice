@@ -1,58 +1,44 @@
 import Foundation
-import SwiftUI
 
-class UserProgressService: ObservableObject, UserProgressServiceProtocol {
+final class UserProgressService: ObservableObject, UserProgressServiceProtocol {
     static let shared = UserProgressService()
 
     @Published var progress: UserProgress {
-        didSet {
-            saveProgress()
-        }
+        didSet { save(progress, forKey: Keys.progress) }
     }
 
     @Published var settings: PracticeSettings {
-        didSet {
-            saveSettings()
-        }
+        didSet { save(settings, forKey: Keys.settings) }
     }
 
-    @Published var sessions: [PracticeSession] = []
+    @Published private(set) var sessions: [PracticeSession] {
+        didSet { save(sessions, forKey: Keys.sessions) }
+    }
 
-    private let progressKey = "UserProgress"
-    private let settingsKey = "PracticeSettings"
-    private let sessionsKey = "PracticeSessions"
+    private enum Keys {
+        static let progress = "UserProgress"
+        static let settings = "PracticeSettings"
+        static let sessions = "PracticeSessions"
+    }
 
-    private init() {
-        progress = Self.load(UserProgress.self, forKey: "UserProgress") ?? UserProgress()
-        settings = Self.load(PracticeSettings.self, forKey: "PracticeSettings") ?? PracticeSettings()
-        sessions = Self.load([PracticeSession].self, forKey: "PracticeSessions") ?? []
+    private let defaults: UserDefaults
 
-        // Persist any new default values introduced since the last save
-        saveSettings()
+    init(defaults: UserDefaults = .standard) {
+        self.defaults = defaults
+        progress = Self.load(UserProgress.self, forKey: Keys.progress, from: defaults) ?? UserProgress()
+        settings = Self.load(PracticeSettings.self, forKey: Keys.settings, from: defaults) ?? PracticeSettings()
+        sessions = Self.load([PracticeSession].self, forKey: Keys.sessions, from: defaults) ?? []
     }
 
     // MARK: - Persistence
-    private static func load<T: Decodable>(_ type: T.Type, forKey key: String) -> T? {
-        guard let data = UserDefaults.standard.data(forKey: key) else { return nil }
+    private static func load<T: Decodable>(_ type: T.Type, forKey key: String, from defaults: UserDefaults) -> T? {
+        guard let data = defaults.data(forKey: key) else { return nil }
         return try? JSONDecoder().decode(type, from: data)
     }
 
     private func save<T: Encodable>(_ value: T, forKey key: String) {
-        if let encoded = try? JSONEncoder().encode(value) {
-            UserDefaults.standard.set(encoded, forKey: key)
-        }
-    }
-
-    private func saveProgress() {
-        save(progress, forKey: progressKey)
-    }
-
-    private func saveSettings() {
-        save(settings, forKey: settingsKey)
-    }
-
-    private func saveSessions() {
-        save(sessions, forKey: sessionsKey)
+        guard let encoded = try? JSONEncoder().encode(value) else { return }
+        defaults.set(encoded, forKey: key)
     }
 
     // MARK: - Answers
@@ -61,21 +47,17 @@ class UserProgressService: ObservableObject, UserProgressServiceProtocol {
     }
 
     // MARK: - Sessions
-    func endSession(startTime: Date, wordsStudied: Int, correctAnswers: Int, totalAttempts: Int) {
-        let duration = Date().timeIntervalSince(startTime)
+    func endSession(startTime: Date, wordsStudied: Int, correctAnswers: Int, totalAttempts: Int, hskLevels: [Int]) {
         let accuracy = totalAttempts > 0 ? Double(correctAnswers) / Double(totalAttempts) * 100 : 0
 
-        let session = PracticeSession(
+        sessions.append(PracticeSession(
             date: Date(),
-            duration: duration,
+            duration: Date().timeIntervalSince(startTime),
             wordsStudied: wordsStudied,
             correctAnswers: correctAnswers,
             accuracy: accuracy,
-            hskLevels: Array(settings.selectedHSKLevels)
-        )
-
-        sessions.append(session)
-        saveSessions()
+            hskLevels: hskLevels
+        ))
     }
 
     func getSessionsForTimeRange(_ days: Int) -> [PracticeSession] {
@@ -131,12 +113,18 @@ class UserProgressService: ObservableObject, UserProgressServiceProtocol {
         progress.getChapterProgress(chapterId: chapterId)
     }
 
-    func isChapterUnlocked(chapterId: String) -> Bool {
-        progress.isChapterUnlocked(chapterId: chapterId)
+    func isChapterUnlocked(_ chapter: Chapter, vocabulary: VocabularyServiceProtocol = VocabularyService.shared) -> Bool {
+        progress.isChapterUnlocked(chapter, levelChapters: vocabulary.chaptersForLevel(chapter.hskLevel))
     }
 
-    func cleanupSelectedChapters() {
-        settings.selectedChapters = settings.selectedChapters.filter { isChapterUnlocked(chapterId: $0) }
+    func cleanupSelectedChapters(vocabulary: VocabularyServiceProtocol = VocabularyService.shared) {
+        let valid = settings.selectedChapters.filter { id in
+            guard let chapter = vocabulary.chapter(withId: id) else { return false }
+            return isChapterUnlocked(chapter, vocabulary: vocabulary)
+        }
+        if valid != settings.selectedChapters {
+            settings.selectedChapters = valid
+        }
     }
 
     // MARK: - Progress Queries
@@ -144,22 +132,20 @@ class UserProgressService: ObservableObject, UserProgressServiceProtocol {
         !progress.incorrectWords.isEmpty
     }
 
-    func getTotalWordsLearned() -> Int {
-        progress.seenWords.count
+    var wordsLearnedCount: Int {
+        progress.learnedWords.count
     }
 
-    func getIncorrectWords() -> Set<String> {
-        progress.incorrectWords
+    var currentDayStreak: Int {
+        progress.currentDayStreak()
     }
 
-    func getWordsLearnedForLevel(_ level: Int) -> Int {
-        let vocabulary = VocabularyService.shared.vocabularyForLevel(level)
-        return vocabulary.filter { progress.seenWords.contains($0.id) }.count
+    func getWordsLearnedForLevel(_ level: Int, vocabulary: VocabularyServiceProtocol = VocabularyService.shared) -> Int {
+        vocabulary.vocabularyForLevel(level).filter { progress.learnedWords.contains($0.id) }.count
     }
 
     func resetProgress() {
         progress.reset()
         sessions.removeAll()
-        saveSessions()
     }
 }

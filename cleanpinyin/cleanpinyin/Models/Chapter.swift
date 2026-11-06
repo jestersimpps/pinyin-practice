@@ -1,9 +1,16 @@
 import Foundation
 
-struct Chapter: Identifiable, Codable {
+struct Chapter: Identifiable, Equatable {
     static let customLevel = 7
 
+    enum Kind: Equatable {
+        case curriculum
+        case frequencySet
+        case custom
+    }
+
     let id: String
+    let kind: Kind
     let hskLevel: Int
     let chapterNumber: Int
     let title: String
@@ -12,6 +19,6 @@ struct Chapter: Identifiable, Codable {
     let icon: String
 
     var displayTitle: String {
-        "Chapter \(chapterNumber): \(title)"
+        kind == .curriculum ? "Chapter \(chapterNumber): \(title)" : title
     }
 }

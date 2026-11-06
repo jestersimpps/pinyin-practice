@@ -3,18 +3,11 @@ import SwiftUI
 struct ChapterCompletionView: View {
     let chapter: Chapter
     let chapterProgress: ChapterProgress
+    let nextChapter: Chapter?
     let onContinue: () -> Void
     let onReview: () -> Void
-    @Environment(\.dismiss) var dismiss
-    
-    private var nextChapterInfo: (title: String, description: String, hskLevel: Int, icon: String)? {
-        guard chapter.chapterNumber < ChapterCurriculum.totalChapters else {
-            return nil
-        }
-        let info = ChapterCurriculum.getChapterInfo(chapter: chapter.chapterNumber + 1)
-        return (info.title, info.description, info.hskLevel, info.icon)
-    }
-    
+    let onBackToChapters: () -> Void
+
     var body: some View {
         ZStack {
             // Background gradient
@@ -96,14 +89,14 @@ struct ChapterCompletionView: View {
                 
                 // Action buttons
                 VStack(spacing: 16) {
-                    if let nextChapter = nextChapterInfo {
+                    if let nextChapter {
                         // Next chapter preview
                         VStack(spacing: 8) {
                             Text("Next Chapter")
                                 .font(.system(size: 14, weight: .medium))
                                 .foregroundColor(.white.opacity(0.6))
                             
-                            Text(nextChapter.title)
+                            Text(nextChapter.displayTitle)
                                 .font(.system(size: 20, weight: .semibold))
                                 .foregroundColor(.white)
                                 .multilineTextAlignment(.center)
@@ -139,7 +132,7 @@ struct ChapterCompletionView: View {
                             )
                     }
                     
-                    Button(action: { dismiss() }) {
+                    Button(action: onBackToChapters) {
                         Text("Back to Chapters")
                             .font(.system(size: 16, weight: .medium))
                             .foregroundColor(.white.opacity(0.6))

@@ -3,12 +3,12 @@ import SwiftUI
 struct ChapterSelectionView: View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject private var progressService = UserProgressService.shared
-    @ObservedObject private var vocabularyService = VocabularyService.shared
+    private let vocabularyService = VocabularyService.shared
     @State private var selectedLevel: Int = 1
-    @State private var showingPractice = false
+    @State private var practiceLaunch: PracticeLaunch?
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack {
                 Color("PrimaryBackground")
                     .ignoresSafeArea()
@@ -23,7 +23,7 @@ struct ChapterSelectionView: View {
                                     chapter: chapter,
                                     isSelected: progressService.settings.selectedChapters.contains(chapter.id),
                                     progress: progressService.getChapterProgress(chapterId: chapter.id),
-                                    isUnlocked: progressService.isChapterUnlocked(chapterId: chapter.id),
+                                    isUnlocked: progressService.isChapterUnlocked(chapter),
                                     action: { toggleChapter(chapter) }
                                 )
                             }
@@ -51,11 +51,12 @@ struct ChapterSelectionView: View {
                     .foregroundColor(.orange)
                 }
             }
-            .fullScreenCover(isPresented: $showingPractice) {
-                PracticeView()
+            .fullScreenCover(item: $practiceLaunch) { launch in
+                PracticeView(mode: launch.mode)
             }
             .onAppear {
                 progressService.cleanupSelectedChapters()
+                selectedLevel = initialLevel
             }
         }
     }
@@ -65,7 +66,7 @@ struct ChapterSelectionView: View {
     }
 
     private func toggleChapter(_ chapter: Chapter) {
-        guard progressService.isChapterUnlocked(chapterId: chapter.id) else {
+        guard progressService.isChapterUnlocked(chapter) else {
             UINotificationFeedbackGenerator().notificationOccurred(.warning)
             return
         }
@@ -83,8 +84,13 @@ struct ChapterSelectionView: View {
 
     private func startChapterPractice() {
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-        progressService.settings.isReviewMode = false
-        showingPractice = true
+        practiceLaunch = PracticeLaunch(mode: .chapters(progressService.settings.selectedChapters))
+    }
+
+    private var initialLevel: Int {
+        progressService.settings.selectedChapters
+            .compactMap { vocabularyService.chapter(withId: $0)?.hskLevel }
+            .min() ?? 1
     }
 }
 
@@ -105,7 +111,7 @@ struct SelectionBottomBar: View {
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(Color("PrimaryText"))
 
-                    Text("\(chapterCount) chapters")
+                    Text(chapterCount == 1 ? "1 chapter" : "\(chapterCount) chapters")
                         .font(.system(size: 14, weight: .regular))
                         .foregroundColor(Color("SecondaryText"))
                 }

@@ -1,6 +1,6 @@
 import Foundation
 
-struct ChapterProgress: Codable {
+struct ChapterProgress: Codable, Equatable {
     let chapterId: String
     var wordsCompleted: Set<String>
     var totalWords: Int

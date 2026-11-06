@@ -1,201 +1,193 @@
 import Foundation
-import SwiftUI
 
-class PracticeViewModel: ObservableObject {
+final class PracticeViewModel: ObservableObject {
     // MARK: - Published Properties
     @Published var userInput: String = "" {
-        didSet {
-            handleUserInputChange()
-        }
+        didSet { handleUserInputChange() }
     }
-    @Published var feedbackState: FeedbackState = .none
-    @Published var wasSkipped: Bool = false
+    @Published private(set) var feedbackState: FeedbackState = .none
+    @Published private(set) var wasSkipped = false
     @Published var showingChapterCompletion = false
-    @Published var completedChapter: Chapter?
-    @Published var completedChapterProgress: ChapterProgress?
+    @Published private(set) var completedChapter: Chapter?
+    @Published private(set) var completedChapterProgress: ChapterProgress?
     @Published var showingPracticeCompletion = false
-    @Published var sessionStats: SessionStats?
+    @Published private(set) var sessionStats: SessionStats?
+    @Published private(set) var mode: LearningMode
 
     // MARK: - Computed Properties
-    var currentWord: VocabularyItem? {
-        wordTracker.currentWord
+    var currentWord: VocabularyItem? { wordTracker.currentWord }
+    var wordsCompleted: Int { sessionManager.wordsCompleted }
+    var totalWords: Int { wordTracker.totalWords }
+    var progressPercentage: Double { wordTracker.progressPercentage }
+    var isPracticeComplete: Bool { wordTracker.isPracticeComplete }
+    var hasWords: Bool { totalWords > 0 }
+    var combo: Int { sessionManager.combo }
+    var accuracy: String { progressService.progress.formattedAccuracy }
+    var settings: PracticeSettings { progressService.settings }
+
+    var nextChapter: Chapter? {
+        completedChapter.flatMap { vocabularyService.nextChapter(after: $0) }
     }
 
-    var wordsCompleted: Int {
-        sessionManager.wordsCompleted
-    }
-
-    var totalWords: Int {
-        wordTracker.totalWords
-    }
-
-    var progressPercentage: Double {
-        wordTracker.progressPercentage
-    }
-
-    var isPracticeComplete: Bool {
-        wordTracker.isPracticeComplete
-    }
-
-    var isLastWord: Bool {
-        wordTracker.isLastWord
-    }
-
-    var currentStreak: Int {
-        progressService.progress.currentStreak
-    }
-
-    var accuracy: String {
-        progressService.progress.formattedAccuracy
-    }
-
-    private(set) var currentLearningMode: LearningMode?
-
-    // MARK: - Private Properties
-    private let vocabularyService = VocabularyService.shared
-    private let progressService = UserProgressService.shared
+    // MARK: - Dependencies
+    private let vocabularyService: VocabularyServiceProtocol
+    private let progressService: UserProgressServiceProtocol
+    private let speech: SpeechSpeaking?
     private let sessionManager = PracticeSessionManager()
     private let wordTracker = WordProgressTracker()
     private let validator = PinyinValidator()
-    private let inputDetector = InputCompletionDetector()
     private let chapterHandler = ChapterProgressHandler()
-    private let textToSpeech = TextToSpeechService.shared
+    private let autoSubmitDelay: TimeInterval
+    private let advanceDelay: TimeInterval
+
     private var hasRecordedIncorrectForCurrentWord = false
+    private var autoSubmitWorkItem: DispatchWorkItem?
     private var autoAdvanceWorkItem: DispatchWorkItem?
 
     // MARK: - Initialization
-    init() {
-        loadWords()
-        _ = sessionManager.startNewSession()
+    init(
+        mode: LearningMode,
+        vocabularyService: VocabularyServiceProtocol = VocabularyService.shared,
+        progressService: UserProgressServiceProtocol = UserProgressService.shared,
+        speech: SpeechSpeaking? = TextToSpeechService.shared,
+        autoSubmitDelay: TimeInterval = AppConstants.Timing.autoSubmitDelay,
+        advanceDelay: TimeInterval = AppConstants.Timing.correctAnswerAdvanceDelay
+    ) {
+        self.mode = mode
+        self.vocabularyService = vocabularyService
+        self.progressService = progressService
+        self.speech = speech
+        self.autoSubmitDelay = autoSubmitDelay
+        self.advanceDelay = advanceDelay
+        startRound()
     }
 
     // MARK: - Public Methods
-    func reloadWordsIfNeeded() {
-        _ = sessionManager.startNewSession()
-        showingPracticeCompletion = false
-        showingChapterCompletion = false
-        loadWords()
-    }
-
-    func startCustomPractice(levels: Set<Int>) {
-        currentLearningMode = .levels(levels)
-        loadWords()
-    }
-
-    func startChapterPractice(chapters: Set<String>) {
-        currentLearningMode = .chapters(chapters)
-        loadWords()
-    }
-
-    func startReviewPractice(incorrectWords: Set<String>) {
-        currentLearningMode = .review(incorrectWords)
-        loadWords()
-    }
-
-    func loadNextChapter() {
-        guard let currentChapter = completedChapter else { return }
-
-        let nextChapterNumber = currentChapter.chapterNumber + 1
-        if nextChapterNumber <= ChapterCurriculum.totalChapters {
-            let nextChapterId = ChapterIdentifier(chapterNumber: nextChapterNumber).value
-            progressService.settings.selectedChapters = [nextChapterId]
-            currentLearningMode = .chapters([nextChapterId])
-            loadWords()
+    func begin() {
+        progressService.settings.lastPracticeMode = mode.lastPracticeMode
+        if case .chapters(let ids) = mode {
+            progressService.settings.selectedChapters = ids
         }
     }
 
+    func startNewRound() {
+        showingPracticeCompletion = false
+        showingChapterCompletion = false
+        startRound()
+    }
+
+    func continueToNextChapter() {
+        guard let next = nextChapter else { return }
+        mode = .chapters([next.id])
+        begin()
+        startNewRound()
+    }
+
     func checkAnswer() {
-        guard let word = currentWord else { return }
+        guard let word = currentWord, feedbackState == .none else { return }
+        autoSubmitWorkItem?.cancel()
 
-        let result = validator.validateAnswer(
-            input: userInput,
-            word: word,
-            requireTones: progressService.settings.requireTones
-        )
-
+        let result = validator.validateAnswer(input: userInput, word: word, requireTones: settings.requireTones)
         sessionManager.recordAttempt(isCorrect: result == .correct)
         feedbackState = result.feedbackState
 
-        switch result {
-        case .correct:
-            handleCorrectAnswer(for: word, autoAdvance: true)
-        case .incorrect, .partial:
-            handleIncorrectAnswer(for: word)
+        if result == .correct {
+            handleCorrectAnswer(for: word)
+        } else {
+            recordIncorrect(for: word)
         }
     }
 
     func nextWord() {
         autoAdvanceWorkItem?.cancel()
-
-        guard !wordTracker.isPracticeComplete else {
-            checkForCompletion()
-            return
-        }
+        autoSubmitWorkItem?.cancel()
+        guard currentWord != nil else { return }
 
         sessionManager.recordWordCompletion()
-
         if wordTracker.moveToNextWord() {
             resetWordState()
         } else {
-            checkForCompletion()
+            finishRound()
         }
     }
 
     func skipWord() {
-        if let word = currentWord, !hasRecordedIncorrectForCurrentWord {
-            recordIncorrect(for: word)
-        }
+        guard let word = currentWord, feedbackState == .none else { return }
+        autoSubmitWorkItem?.cancel()
+        sessionManager.recordAttempt(isCorrect: false)
+        recordIncorrect(for: word)
         wasSkipped = true
         feedbackState = .incorrect
     }
 
-    func saveSessionOnExit() {
-        if wordsCompleted > 0 {
-            sessionManager.endSession(progressService: progressService)
-        }
+    func speakCurrentWord() {
+        guard let word = currentWord else { return }
+        speech?.speak(chinese: displayText(for: word))
     }
 
-    // MARK: - Private Methods
-    private func loadWords() {
-        let settings = progressService.settings
-        let wordsToStudy: [VocabularyItem]
+    func saveSessionOnExit() {
+        autoSubmitWorkItem?.cancel()
+        autoAdvanceWorkItem?.cancel()
+        sessionManager.endSession(progressService: progressService, hskLevels: sessionLevels)
+    }
 
-        switch currentLearningMode {
-        case .levels(let levels):
-            wordsToStudy = vocabularyService.vocabularyForLevels(levels)
-        case .chapters(let chapters):
-            wordsToStudy = vocabularyService.vocabularyForChapters(chapters)
-        case .review(let incorrectWords):
-            wordsToStudy = vocabularyService.reviewVocabulary(incorrectWordIds: incorrectWords)
-        case nil:
-            wordsToStudy = vocabularyService.vocabularyForLevels(settings.selectedHSKLevels)
-        }
+    func displayText(for word: VocabularyItem) -> String {
+        settings.useTraditional ? word.traditional : word.simplified
+    }
 
-        wordTracker.setWords(orderWords(wordsToStudy, mode: settings.practiceMode))
-        sessionManager.reset()
+    // MARK: - Round lifecycle
+    private func startRound() {
+        sessionManager.endSession(progressService: progressService, hskLevels: sessionLevels)
+        sessionStats = nil
+        completedChapter = nil
+        completedChapterProgress = nil
+        wordTracker.setWords(orderedWords(for: mode))
+        sessionManager.startNewSession()
         resetWordState()
     }
 
-    private func orderWords(_ words: [VocabularyItem], mode: PracticeMode) -> [VocabularyItem] {
+    private func finishRound() {
+        if case .chapters(let ids) = mode, ids.count == 1, let chapterId = ids.first,
+           progressService.getChapterProgress(chapterId: chapterId)?.isCompleted == true,
+           completedChapter == nil {
+            presentChapterCompletion(chapterId: chapterId)
+        }
+
+        sessionStats = sessionManager.getSessionStats(practiceModeName: practiceModeName)
+        sessionManager.endSession(progressService: progressService, hskLevels: sessionLevels)
+
+        if !showingChapterCompletion, sessionStats != nil {
+            showingPracticeCompletion = true
+        }
+    }
+
+    private func orderedWords(for mode: LearningMode) -> [VocabularyItem] {
+        let words: [VocabularyItem]
         switch mode {
+        case .levels(let levels):
+            words = vocabularyService.vocabularyForLevels(levels)
+        case .chapters(let ids), .custom(let ids):
+            words = vocabularyService.vocabularyForChapters(ids)
+        case .review:
+            words = vocabularyService.reviewVocabulary(incorrectWordIds: progressService.progress.incorrectWords)
+        }
+
+        let progress = progressService.progress
+        switch settings.practiceMode {
         case .sequential:
-            return words.sorted { $0.frequency < $1.frequency }
-
+            let byFrequency = words.sorted { $0.frequency < $1.frequency }
+            let unlearned = byFrequency.filter { !progress.learnedWords.contains($0.id) }
+            let learned = byFrequency.filter { progress.learnedWords.contains($0.id) }
+            return unlearned + learned
         case .random:
-            let seenWords = progressService.progress.seenWords
-            var shuffled = words.shuffled()
-            shuffled.sort { word1, word2 in
-                let word1Seen = seenWords.contains(word1.id)
-                let word2Seen = seenWords.contains(word2.id)
-
-                if word1Seen == word2Seen { return false }
-                return !word1Seen && word2Seen
-            }
-            return shuffled
+            let shuffled = words.shuffled()
+            return shuffled.filter { !progress.seenWords.contains($0.id) }
+                + shuffled.filter { progress.seenWords.contains($0.id) }
         }
     }
 
     private func resetWordState() {
+        autoSubmitWorkItem?.cancel()
         autoAdvanceWorkItem?.cancel()
         userInput = ""
         feedbackState = .none
@@ -204,83 +196,64 @@ class PracticeViewModel: ObservableObject {
         chapterHandler.resetTimer()
     }
 
+    // MARK: - Input handling
     private func handleUserInputChange() {
-        checkForAutoSubmit()
-        checkForCorrectAnswerAfterIncorrect()
+        autoSubmitWorkItem?.cancel()
+        guard let word = currentWord, !userInput.isEmpty else { return }
+
+        let result = validator.validateAnswer(input: userInput, word: word, requireTones: settings.requireTones)
+
+        switch feedbackState {
+        case .none where result == .correct:
+            scheduleAutoSubmit()
+        case .incorrect where result == .correct, .partial where result == .correct:
+            acceptCorrection(for: word)
+        default:
+            break
+        }
     }
 
-    private func checkForAutoSubmit() {
-        guard let word = currentWord else { return }
-
-        inputDetector.checkForAutoSubmit(
-            input: userInput,
-            word: word,
-            requireTones: progressService.settings.requireTones,
-            feedbackState: feedbackState,
-            onSubmit: { [weak self] in
-                self?.checkAnswer()
-            }
-        )
+    private func scheduleAutoSubmit() {
+        let workItem = DispatchWorkItem { [weak self] in self?.checkAnswer() }
+        autoSubmitWorkItem = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + autoSubmitDelay, execute: workItem)
     }
 
-    private func checkForCorrectAnswerAfterIncorrect() {
-        guard feedbackState == .incorrect || feedbackState == .partial,
-              let word = currentWord else { return }
-
-        let result = validator.validateAnswer(
-            input: userInput,
-            word: word,
-            requireTones: progressService.settings.requireTones
-        )
-
-        guard result == .correct else { return }
-
+    // A retyped answer after a miss turns green and counts toward the chapter, but the learner advances manually
+    private func acceptCorrection(for word: VocabularyItem) {
         feedbackState = .correct
-
         if hasRecordedIncorrectForCurrentWord {
             progressService.recordAnswer(for: word, isCorrect: true)
             hasRecordedIncorrectForCurrentWord = false
         }
-
-        // Corrected answers count toward chapter progress, but the user advances manually
-        handleCorrectAnswer(for: word, autoAdvance: false, recordGlobalAnswer: false)
+        if settings.speakOnCorrectAnswer {
+            speech?.speak(chinese: displayText(for: word))
+        }
+        updateChapterProgress(for: word, isCorrect: true)
     }
 
-    private func handleCorrectAnswer(for word: VocabularyItem, autoAdvance: Bool, recordGlobalAnswer: Bool = true) {
-        if recordGlobalAnswer {
-            progressService.recordAnswer(for: word, isCorrect: true)
+    // MARK: - Answer outcomes
+    private func handleCorrectAnswer(for word: VocabularyItem) {
+        progressService.recordAnswer(for: word, isCorrect: true)
+        if settings.speakOnCorrectAnswer {
+            speech?.speak(chinese: displayText(for: word))
         }
-
-        if progressService.settings.speakOnCorrectAnswer {
-            speak(word)
-        }
-
         updateChapterProgress(for: word, isCorrect: true)
 
-        if autoAdvance && !showingChapterCompletion {
+        if !showingChapterCompletion {
             scheduleAutoAdvance()
         }
     }
 
-    private func handleIncorrectAnswer(for word: VocabularyItem) {
-        guard !hasRecordedIncorrectForCurrentWord else { return }
-        recordIncorrect(for: word)
-    }
-
     private func recordIncorrect(for word: VocabularyItem) {
+        guard !hasRecordedIncorrectForCurrentWord else { return }
         progressService.recordAnswer(for: word, isCorrect: false)
         hasRecordedIncorrectForCurrentWord = true
         updateChapterProgress(for: word, isCorrect: false)
     }
 
-    private func speak(_ word: VocabularyItem) {
-        textToSpeech.speak(chinese: progressService.settings.useTraditional ? word.traditional : word.simplified)
-    }
-
     private func scheduleAutoAdvance() {
-        let delay: TimeInterval = isLastWord ? AppConstants.Timing.lastWordAdvanceDelay : AppConstants.Timing.correctAnswerAdvanceDelay
-
-        autoAdvanceWorkItem?.cancel()
+        let delay = wordTracker.isLastWord ? advanceDelay * 1.5 : advanceDelay
         let workItem = DispatchWorkItem { [weak self] in
             guard let self, !self.showingChapterCompletion else { return }
             self.nextWord()
@@ -289,8 +262,10 @@ class PracticeViewModel: ObservableObject {
         DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: workItem)
     }
 
+    // MARK: - Chapters
     private func updateChapterProgress(for word: VocabularyItem, isCorrect: Bool) {
-        guard case .chapters(let activeChapters) = currentLearningMode else { return }
+        let activeChapters = mode.chapterIds
+        guard !activeChapters.isEmpty else { return }
 
         let completedChapterId = chapterHandler.recordAttempt(
             for: word,
@@ -301,53 +276,41 @@ class PracticeViewModel: ObservableObject {
         )
 
         if let completedChapterId {
+            autoAdvanceWorkItem?.cancel()
             presentChapterCompletion(chapterId: completedChapterId)
         }
     }
 
-    private func checkForCompletion() {
-        guard wordsCompleted > 0, !showingChapterCompletion, !showingPracticeCompletion else { return }
-
-        if case .chapters(let chapters) = currentLearningMode,
-           chapters.count == 1,
-           let chapterId = chapters.first,
-           progressService.getChapterProgress(chapterId: chapterId)?.isCompleted == true {
-            presentChapterCompletion(chapterId: chapterId)
-            return
-        }
-
-        sessionManager.endSession(progressService: progressService)
-        sessionStats = sessionManager.getSessionStats(
-            practiceModeName: practiceModeName(),
-            currentStreak: progressService.progress.currentStreak,
-            bestStreak: progressService.progress.bestStreak
-        )
-
-        DispatchQueue.main.async {
-            self.showingPracticeCompletion = true
-        }
-    }
-
     private func presentChapterCompletion(chapterId: String) {
-        guard let chapter = vocabularyService.chapters.first(where: { $0.id == chapterId }) else { return }
-
+        guard let chapter = vocabularyService.chapter(withId: chapterId) else { return }
         completedChapter = chapter
         completedChapterProgress = progressService.getChapterProgress(chapterId: chapterId)
         showingChapterCompletion = true
     }
 
-    private func practiceModeName() -> String {
-        switch currentLearningMode {
+    // MARK: - Labels
+    private var sessionLevels: [Int] {
+        switch mode {
         case .levels(let levels):
-            let levelsStr = levels.sorted().map { "HSK \($0)" }.joined(separator: ", ")
-            let practiceType = progressService.settings.practiceMode == .random ? "Random Practice" : "Sequential Practice"
-            return "\(practiceType) - \(levelsStr)"
+            return levels.sorted()
+        case .chapters(let ids), .custom(let ids):
+            return Array(Set(ids.compactMap { vocabularyService.chapter(withId: $0)?.hskLevel })).sorted()
+        case .review:
+            return []
+        }
+    }
+
+    private var practiceModeName: String {
+        switch mode {
+        case .levels(let levels):
+            let levelNames = levels.sorted().map { "HSK \($0)" }.joined(separator: ", ")
+            return settings.practiceMode == .random ? "Random · \(levelNames)" : levelNames
         case .chapters:
             return "Chapter Practice"
+        case .custom:
+            return "Custom Practice"
         case .review:
             return "Review Mistakes"
-        case nil:
-            return "Practice"
         }
     }
 }

@@ -7,7 +7,7 @@ struct SettingsView: View {
     @State private var showingResetAlert = false
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack {
                 Color("PrimaryBackground")
                     .ignoresSafeArea()
@@ -15,9 +15,11 @@ struct SettingsView: View {
                 ScrollView {
                     VStack(spacing: 24) {
                         themeSection
+                        quickPracticeLevelsSection
                         practiceModeSection
                         displayOptionsSection
                         dataProgressSection
+                        aboutSection
                     }
                     .padding(.horizontal, 20)
                     .padding(.vertical, 16)
@@ -41,7 +43,7 @@ struct SettingsView: View {
                 progressService.resetProgress()
             }
         } message: {
-            Text("Are you sure you want to reset all your progress? This action cannot be undone.")
+            Text("This clears your learned words, streaks, chapter progress and history. Your settings are kept. This cannot be undone.")
         }
     }
     
@@ -77,9 +79,77 @@ struct SettingsView: View {
         }
     }
     
+    private var quickPracticeLevelsSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            SectionHeader(title: "Quick Practice Levels", icon: "graduationcap.fill")
+
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 3), spacing: 12) {
+                ForEach(Array(PracticeSettings.hskLevels), id: \.self) { level in
+                    let isSelected = progressService.settings.selectedHSKLevels.contains(level)
+                    Button(action: { toggleLevel(level) }) {
+                        Text("HSK \(level)")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(isSelected ? .white : Color("PrimaryText"))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(isSelected ? Color("MidnightGreen") : Color("SecondaryBackground"))
+                            )
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityAddTraits(isSelected ? .isSelected : [])
+                }
+            }
+        }
+    }
+
+    private func toggleLevel(_ level: Int) {
+        var levels = progressService.settings.selectedHSKLevels
+        if levels.contains(level) {
+            guard levels.count > 1 else { return }
+            levels.remove(level)
+        } else {
+            levels.insert(level)
+        }
+        progressService.settings.selectedHSKLevels = levels
+    }
+
+    private var aboutSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            SectionHeader(title: "About", icon: "info.circle.fill")
+
+            HStack {
+                Text("Version")
+                    .foregroundColor(Color("PrimaryText"))
+                Spacer()
+                Text(appVersion)
+                    .foregroundColor(Color("SecondaryText"))
+            }
+            .font(.system(size: 16))
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color("SecondaryBackground"))
+            )
+
+            Text("All your progress stays on this device. No account, no tracking.")
+                .font(.system(size: 13))
+                .foregroundColor(Color("SecondaryText"))
+        }
+    }
+
+    private var appVersion: String {
+        let info = Bundle.main.infoDictionary
+        let version = info?["CFBundleShortVersionString"] as? String ?? "1.0"
+        let build = info?["CFBundleVersion"] as? String ?? "1"
+        return "\(version) (\(build))"
+    }
+
     private var practiceModeSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            SectionHeader(title: "Practice Mode", icon: "brain.head.profile")
+            SectionHeader(title: "Word Order", icon: "brain.head.profile")
             
             VStack(spacing: 12) {
                 ForEach(PracticeMode.allCases, id: \.self) { mode in
@@ -118,7 +188,7 @@ struct SettingsView: View {
             VStack(spacing: 0) {
                 ToggleRow(
                     title: "Require Tones",
-                    description: "Must enter correct tone marks or numbers",
+                    description: "Answers need the right tones (numbers or marks)",
                     isOn: $progressService.settings.requireTones
                 )
                 
@@ -199,7 +269,7 @@ struct SettingsView: View {
                         Text("Words Learned")
                             .font(.system(size: 14, weight: .regular))
                             .foregroundColor(Color("SecondaryText"))
-                        Text("\(progressService.progress.wordsSeenCount)")
+                        Text("\(progressService.wordsLearnedCount)")
                             .font(.system(size: 20, weight: .semibold))
                             .foregroundColor(Color("PrimaryText"))
                     }

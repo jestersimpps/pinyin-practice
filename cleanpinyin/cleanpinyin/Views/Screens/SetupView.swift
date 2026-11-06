@@ -2,21 +2,21 @@ import SwiftUI
 
 struct SetupView: View {
     @ObservedObject private var progressService = UserProgressService.shared
-    @ObservedObject private var vocabularyService = VocabularyService.shared
-    @State private var showingPractice = false
+    private let vocabularyService = VocabularyService.shared
+    @State private var practiceLaunch: PracticeLaunch?
     @State private var showingSettings = false
     @State private var showingCustomPractice = false
     @State private var showingProgress = false
     @State private var showingChapterSelection = false
     @State private var showingImprint = false
     @State private var animateStats = false
-    
+
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack {
                 Color("PrimaryBackground")
                     .ignoresSafeArea()
-                
+
                 ScrollView {
                     VStack(spacing: 24) {
                         headerSection
@@ -28,9 +28,9 @@ struct SetupView: View {
                     .padding(.vertical, 20)
                 }
             }
-            .navigationBarHidden(true)
-            .fullScreenCover(isPresented: $showingPractice) {
-                PracticeView()
+            .toolbar(.hidden, for: .navigationBar)
+            .fullScreenCover(item: $practiceLaunch) { launch in
+                PracticeView(mode: launch.mode)
             }
             .sheet(isPresented: $showingSettings) {
                 SettingsView()
@@ -52,26 +52,26 @@ struct SetupView: View {
             animateStats = true
         }
     }
-    
+
     private var headerSection: some View {
-        VStack(spacing: 12) {
+        VStack(alignment: .leading, spacing: 12) {
             Text(greetingText)
                 .font(.system(size: 36, weight: .bold, design: .rounded))
                 .foregroundColor(Color("PrimaryText"))
-            
-            Text("Ready to practice your pinyin?")
+
+            Text("Ready to practise your pinyin?")
                 .font(.system(size: 16, weight: .regular))
                 .foregroundColor(Color("SecondaryText"))
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.top, 20)
     }
-    
+
     private var statsSection: some View {
         HStack(spacing: 16) {
             StatBox(
                 title: "Words Learned",
-                value: "\(progressService.getTotalWordsLearned())",
+                value: "\(progressService.wordsLearnedCount)",
                 icon: "checkmark.seal.fill",
                 color: Color("SuccessGreen"),
                 action: { showingProgress = true }
@@ -79,12 +79,12 @@ struct SetupView: View {
             .scaleEffect(animateStats ? 1 : 0.8)
             .opacity(animateStats ? 1 : 0)
             .animation(.spring(response: 0.5, dampingFraction: 0.6).delay(0.1), value: animateStats)
-            
+
             StatBox(
-                title: "Current Streak",
-                value: formatStreak(progressService.progress.currentStreak),
+                title: "Day Streak",
+                value: formatStreak(progressService.currentDayStreak),
                 icon: "flame.fill",
-                color: progressService.progress.currentStreak > 0 ? Color("VibrantOrange") : Color("SecondaryText"),
+                color: progressService.currentDayStreak > 0 ? Color("VibrantOrange") : Color("SecondaryText"),
                 action: { showingProgress = true }
             )
             .scaleEffect(animateStats ? 1 : 0.8)
@@ -92,7 +92,7 @@ struct SetupView: View {
             .animation(.spring(response: 0.5, dampingFraction: 0.6).delay(0.2), value: animateStats)
         }
     }
-    
+
     private var actionCardsSection: some View {
         VStack(spacing: 16) {
             ActionCard(
@@ -100,11 +100,10 @@ struct SetupView: View {
                 subtitle: quickPracticeSubtitle,
                 icon: "play.circle.fill",
                 color: Color("MidnightGreen"),
-                action: startQuickPractice,
-                badge: quickPracticeBadge,
-                isDisabled: availableWordCount == 0 && incorrectWordCount == 0
+                action: { practiceLaunch = PracticeLaunch(mode: quickPracticeMode) },
+                badge: "\(wordCount(for: quickPracticeMode)) words"
             )
-            
+
             ActionCard(
                 title: "Chapter Practice",
                 subtitle: "Study by structured lessons",
@@ -112,35 +111,35 @@ struct SetupView: View {
                 color: Color.purple,
                 action: { showingChapterSelection = true }
             )
-            
+
             ActionCard(
                 title: "Custom Practice",
-                subtitle: "Choose levels and categories",
+                subtitle: "Choose any chapters or lists",
                 icon: "slider.horizontal.3",
                 color: Color("VibrantOrange"),
                 action: { showingCustomPractice = true }
             )
-            
+
             ActionCard(
                 title: "Review Mistakes",
-                subtitle: "Practice words you got wrong",
+                subtitle: incorrectWordCount > 0 ? "Practise words you got wrong" : "No mistakes to review yet",
                 icon: "arrow.triangle.2.circlepath",
                 color: Color.red,
-                action: startReviewMode,
+                action: { practiceLaunch = PracticeLaunch(mode: .review) },
                 badge: incorrectWordCount > 0 ? "\(incorrectWordCount) words" : nil,
                 isDisabled: incorrectWordCount == 0
             )
-            
+
             ActionCard(
                 title: "Imprint Mode",
-                subtitle: "Audio-focused learning with visuals",
+                subtitle: "Listen and absorb, hands-free",
                 icon: "speaker.wave.3",
                 color: Color.blue,
                 action: { showingImprint = true }
             )
         }
     }
-    
+
     private var secondaryActionsSection: some View {
         HStack(spacing: 16) {
             SecondaryActionButton(
@@ -148,7 +147,7 @@ struct SetupView: View {
                 icon: "chart.line.uptrend.xyaxis",
                 action: { showingProgress = true }
             )
-            
+
             SecondaryActionButton(
                 title: "Settings",
                 icon: "gearshape.fill",
@@ -156,106 +155,60 @@ struct SetupView: View {
             )
         }
     }
-    
-    private var availableWordCount: Int {
-        vocabularyService.vocabularyForLevels(
-            progressService.settings.selectedHSKLevels
-        ).count
-    }
-    
+
     private var incorrectWordCount: Int {
-        progressService.getIncorrectWords().count
+        progressService.progress.incorrectWords.count
     }
-    
-    private var greetingText: String {
-        let hour = Calendar.current.component(.hour, from: Date())
-        switch hour {
-        case 0..<12: return "Good morning!"
-        case 12..<17: return "Good afternoon!"
-        default: return "Good evening!"
+
+    // Quick Practice resumes the last chapter or review session, otherwise practises the chosen levels
+    private var quickPracticeMode: LearningMode {
+        let settings = progressService.settings
+        switch settings.lastPracticeMode {
+        case .review where progressService.hasIncorrectWords:
+            return .review
+        case .chapters where !settings.selectedChapters.isEmpty:
+            return .chapters(settings.selectedChapters)
+        default:
+            return .levels(settings.selectedHSKLevels)
         }
     }
-    
+
     private var quickPracticeSubtitle: String {
-        let lastMode = progressService.settings.lastPracticeMode
-        
-        switch lastMode {
+        switch quickPracticeMode {
         case .review:
-            if progressService.hasIncorrectWords {
-                return "Continue reviewing mistakes"
-            } else {
-                return "Continue with custom practice"
-            }
-            
-        case .chapters:
-            if !progressService.settings.selectedChapters.isEmpty {
-                let count = progressService.settings.selectedChapters.count
-                return "Continue with \(count) chapter\(count == 1 ? "" : "s")"
-            } else {
-                return "Continue with custom practice"
-            }
-            
-        case .quick, .custom:
+            return "Continue reviewing mistakes"
+        case .chapters(let ids):
+            return "Continue with \(ids.count) chapter\(ids.count == 1 ? "" : "s")"
+        case .levels(let levels):
+            return "Continue \(levelNames(levels)) where you left off"
+        case .custom:
             return "Continue where you left off"
         }
     }
-    
-    private var quickPracticeBadge: String? {
-        if availableWordCount > 0 {
-            return "\(availableWordCount) words"
+
+    private func levelNames(_ levels: Set<Int>) -> String {
+        levels.sorted().map { "HSK \($0)" }.joined(separator: ", ")
+    }
+
+    private func wordCount(for mode: LearningMode) -> Int {
+        switch mode {
+        case .levels(let levels): return vocabularyService.vocabularyForLevels(levels).count
+        case .chapters(let ids), .custom(let ids): return vocabularyService.vocabularyForChapters(ids).count
+        case .review: return incorrectWordCount
         }
-        return nil
     }
-    
-    private func startQuickPractice() {
-        // Use the last practice mode
-        let lastMode = progressService.settings.lastPracticeMode
-        
-        switch lastMode {
-        case .review:
-            // Check if there are incorrect words to review
-            if progressService.hasIncorrectWords {
-                progressService.settings.selectedChapters = []
-                progressService.settings.isReviewMode = true
-            } else {
-                // Fall back to custom practice if no incorrect words
-                progressService.settings.selectedChapters = []
-                progressService.settings.isReviewMode = false
-                progressService.settings.lastPracticeMode = .custom
-            }
-            
-        case .chapters:
-            // Keep the selected chapters if any, otherwise fall back to custom
-            if progressService.settings.selectedChapters.isEmpty {
-                progressService.settings.lastPracticeMode = .custom
-            }
-            progressService.settings.isReviewMode = false
-            
-        case .quick, .custom:
-            // Continue with custom practice mode
-            progressService.settings.selectedChapters = []
-            progressService.settings.isReviewMode = false
+
+    private var greetingText: String {
+        let hour = Calendar.current.component(.hour, from: Date())
+        switch hour {
+        case 5..<12: return "Good morning!"
+        case 12..<18: return "Good afternoon!"
+        default: return "Good evening!"
         }
-        
-        showingPractice = true
     }
-    
-    private func startReviewMode() {
-        // Set review mode flag and clear other selections
-        progressService.settings.selectedChapters = []
-        progressService.settings.isReviewMode = true
-        showingPractice = true
-    }
-    
+
     private func formatStreak(_ streak: Int) -> String {
-        switch streak {
-        case 0:
-            return "0 days"
-        case 1:
-            return "1 day"
-        default:
-            return "\(streak) days"
-        }
+        streak == 1 ? "1 day" : "\(streak) days"
     }
 }
 

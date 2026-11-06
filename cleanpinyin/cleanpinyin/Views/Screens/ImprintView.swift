@@ -7,7 +7,7 @@ struct ImprintView: View {
     @State private var showingChapterSelection = false
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack {
                 Color("PrimaryBackground")
                     .ignoresSafeArea()
@@ -32,6 +32,9 @@ struct ImprintView: View {
             .onAppear {
                 viewModel.chapters = selectedChapters
             }
+            .onDisappear {
+                viewModel.stop()
+            }
             .sheet(isPresented: $showingChapterSelection) {
                 ImprintChapterSelectionView(selectedChapters: $selectedChapters) {
                     viewModel.chapters = selectedChapters
@@ -43,7 +46,7 @@ struct ImprintView: View {
     private var headerSection: some View {
         VStack(spacing: 12) {
             HStack {
-                Button("Cancel") {
+                Button("Close") {
                     viewModel.stop()
                     dismiss()
                 }
@@ -58,8 +61,9 @@ struct ImprintView: View {
                 Spacer()
 
                 // Balances the Cancel button so the title stays centered
-                Text("Cancel")
+                Text("Close")
                     .opacity(0)
+                    .accessibilityHidden(true)
             }
 
             Text("Audio-focused learning with visual support")
@@ -102,10 +106,10 @@ struct ImprintView: View {
                     .foregroundColor(Color("PrimaryText"))
 
                 VStack(alignment: .leading, spacing: 8) {
-                    instructionRow("1", "English meaning is spoken")
-                    instructionRow("2", "2-second pause for processing")
-                    instructionRow("3", "Chinese character is spoken")
-                    instructionRow("4", "Character is displayed visually")
+                    instructionRow("1", "You hear the English meaning")
+                    instructionRow("2", "A short pause to recall the Chinese")
+                    instructionRow("3", "You hear the Chinese word")
+                    instructionRow("4", "The character, pinyin and meaning stay on screen")
                 }
             }
             .padding(.horizontal, 16)
@@ -171,12 +175,14 @@ struct ImprintView: View {
                         .font(.system(size: 50))
                         .foregroundColor(.orange)
                 }
+                .accessibilityLabel("Pause")
 
                 Button(action: { viewModel.stop() }) {
                     Image(systemName: "stop.circle.fill")
                         .font(.system(size: 40))
                         .foregroundColor(Color("SecondaryText"))
                 }
+                .accessibilityLabel("Stop")
             } else {
                 Button(action: { viewModel.start() }) {
                     HStack(spacing: 12) {
@@ -228,17 +234,19 @@ struct ImprintView: View {
     }
 }
 
-class ImprintViewModel: ObservableObject {
-    @Published var isPlaying = false
-    @Published var currentWord: VocabularyItem?
-    @Published var currentIndex = 0
-    @Published var totalWords = 0
-    @Published var progress: Double = 0
-    @Published var playbackState: PlaybackState = .idle
+final class ImprintViewModel: ObservableObject {
+    @Published private(set) var isPlaying = false
+    @Published private(set) var currentWord: VocabularyItem?
+    @Published private(set) var currentIndex = 0
+    @Published private(set) var totalWords = 0
+    @Published private(set) var progress: Double = 0
+    @Published private(set) var playbackState: PlaybackState = .idle
     @Published var chapters: Set<String> = []
 
-    private let vocabularyService = VocabularyService.shared
-    private let textToSpeech = TextToSpeechService.shared
+    private let vocabularyService: VocabularyServiceProtocol
+    private let speech: SpeechSpeaking
+    private let pauseBeforeChinese: TimeInterval
+    private let pauseAfterWord: TimeInterval
     private var words: [VocabularyItem] = []
     // Invalidates pending playback steps after pause/stop/restart
     private var playbackGeneration = 0
@@ -253,16 +261,28 @@ class ImprintViewModel: ObservableObject {
         var description: String {
             switch self {
             case .idle: return "Ready"
-            case .speakingEnglish: return "Speaking English"
-            case .pausing: return "Pausing..."
-            case .speakingChinese: return "Speaking Chinese"
+            case .speakingEnglish: return "English"
+            case .pausing: return "Think…"
+            case .speakingChinese: return "Chinese"
             case .completed: return "Completed"
             }
         }
     }
 
+    init(
+        vocabularyService: VocabularyServiceProtocol = VocabularyService.shared,
+        speech: SpeechSpeaking = TextToSpeechService.shared,
+        pauseBeforeChinese: TimeInterval = 2.0,
+        pauseAfterWord: TimeInterval = 1.5
+    ) {
+        self.vocabularyService = vocabularyService
+        self.speech = speech
+        self.pauseBeforeChinese = pauseBeforeChinese
+        self.pauseAfterWord = pauseAfterWord
+    }
+
     var canResume: Bool {
-        !words.isEmpty && currentIndex > 0 && currentIndex < words.count
+        !words.isEmpty && currentIndex < words.count && currentWord != nil
     }
 
     func start() {
@@ -274,79 +294,68 @@ class ImprintViewModel: ObservableObject {
 
         totalWords = words.count
         isPlaying = true
-        playNextWord()
+        playCurrentWord()
     }
 
     func pause() {
         playbackGeneration += 1
         isPlaying = false
         playbackState = .idle
-        textToSpeech.stopSpeaking()
+        speech.stopSpeaking()
     }
 
     func stop() {
-        playbackGeneration += 1
-        isPlaying = false
-        playbackState = .idle
+        pause()
         currentIndex = 0
         progress = 0
         currentWord = nil
         words = []
-        textToSpeech.stopSpeaking()
     }
 
-    private func playNextWord() {
+    private func playCurrentWord() {
         guard currentIndex < words.count else {
             completePlayback()
             return
         }
 
-        currentWord = words[currentIndex]
+        let word = words[currentIndex]
+        currentWord = word
         progress = Double(currentIndex) / Double(totalWords)
-
-        playCurrentWord()
-    }
-
-    private func playCurrentWord() {
-        guard let word = currentWord else { return }
 
         playbackGeneration += 1
         let generation = playbackGeneration
+        let chinese = UserProgressService.shared.settings.useTraditional ? word.traditional : word.simplified
 
         playbackState = .speakingEnglish
-        textToSpeech.speak(english: word.shortTranslation, rate: 0.4)
-
-        let englishDuration = Double(word.shortTranslation.count) * 0.1 + 1.0
-        schedule(after: englishDuration, generation: generation) {
-            self.playbackState = .pausing
-
-            self.schedule(after: 2.0, generation: generation) {
-                self.playbackState = .speakingChinese
-                let character = UserProgressService.shared.settings.useTraditional ? word.traditional : word.simplified
-                self.textToSpeech.speak(chinese: character, rate: 0.5)
-
-                self.schedule(after: 2.0, generation: generation) {
-                    self.currentIndex += 1
-                    self.playNextWord()
+        speech.speak(english: word.shortTranslation) { [weak self] in
+            self?.step(generation: generation, after: 0) { this in
+                this.playbackState = .pausing
+                this.step(generation: generation, after: this.pauseBeforeChinese) { this in
+                    this.playbackState = .speakingChinese
+                    this.speech.speak(chinese: chinese) { [weak this] in
+                        this?.step(generation: generation, after: this?.pauseAfterWord ?? 0) { this in
+                            this.currentIndex += 1
+                            this.playCurrentWord()
+                        }
+                    }
                 }
             }
         }
     }
 
-    private func schedule(after delay: TimeInterval, generation: Int, action: @escaping () -> Void) {
+    private func step(generation: Int, after delay: TimeInterval, action: @escaping (ImprintViewModel) -> Void) {
         DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
             guard let self, self.isPlaying, self.playbackGeneration == generation else { return }
-            action()
+            action(self)
         }
     }
 
     private func completePlayback() {
+        isPlaying = false
         playbackState = .completed
         progress = 1.0
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            self.stop()
-        }
+        words = []
+        currentIndex = 0
     }
 }
 
@@ -358,7 +367,7 @@ struct ImprintChapterSelectionView: View {
     @State private var selectedLevel: Int = 1
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: 0) {
                 LevelTabBar(
                     tabs: LevelTabBar.Tab.hskLevels(),
@@ -435,10 +444,16 @@ private struct ImprintChapterCard: View {
 
     var body: some View {
         Button(action: action) {
-            VStack(spacing: 8) {
-                Text("Chapter \(chapter.chapterNumber)")
+            VStack(spacing: 6) {
+                Text(chapter.kind == .curriculum ? "Chapter \(chapter.chapterNumber)" : chapter.title)
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(isSelected ? .white : Color("PrimaryText"))
+
+                Text(chapter.kind == .curriculum ? chapter.title : "\(chapter.wordCount) words")
+                    .font(.system(size: 12))
+                    .foregroundColor(isSelected ? .white.opacity(0.85) : Color("SecondaryText"))
+                    .lineLimit(2)
+                    .multilineTextAlignment(.center)
 
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")

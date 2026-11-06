@@ -4,7 +4,7 @@ import Charts
 struct ProgressStatsView: View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject private var progressService = UserProgressService.shared
-    @ObservedObject private var vocabularyService = VocabularyService.shared
+    private let vocabularyService = VocabularyService.shared
     @State private var selectedTimeRange: TimeRange = .week
 
     enum TimeRange: String, CaseIterable {
@@ -22,7 +22,7 @@ struct ProgressStatsView: View {
     }
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack {
                 Color("PrimaryBackground")
                     .ignoresSafeArea()
@@ -60,8 +60,8 @@ struct ProgressStatsView: View {
             HStack(spacing: 16) {
                 StatCard(
                     title: "Words Learned",
-                    value: "\(progressService.progress.wordsSeenCount)",
-                    subtitle: "of \(vocabularyService.allVocabulary.count) total",
+                    value: "\(progressService.wordsLearnedCount)",
+                    subtitle: "of \(vocabularyService.hskWordCount) HSK words",
                     icon: "book.fill",
                     color: Color("MidnightGreen")
                 )
@@ -102,16 +102,16 @@ struct ProgressStatsView: View {
             HStack(spacing: 20) {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack(alignment: .lastTextBaseline, spacing: 4) {
-                        Text("\(progressService.progress.currentStreak)")
+                        Text("\(dayStreak)")
                             .font(.system(size: 48, weight: .bold, design: .rounded))
-                            .foregroundColor(progressService.progress.currentStreak > 0 ? Color("VibrantOrange") : Color("SecondaryText"))
+                            .foregroundColor(dayStreak > 0 ? Color("VibrantOrange") : Color("SecondaryText"))
 
                         Image(systemName: "flame.fill")
                             .font(.title)
-                            .foregroundColor(progressService.progress.currentStreak > 0 ? Color("VibrantOrange") : Color("SecondaryText"))
+                            .foregroundColor(dayStreak > 0 ? Color("VibrantOrange") : Color("SecondaryText"))
                     }
 
-                    Text(progressService.progress.currentStreak == 1 ? "1 Day Streak" : "\(progressService.progress.currentStreak) Days Streak")
+                    Text(dayStreak == 1 ? "1-day streak" : "\(dayStreak)-day streak")
                         .font(.system(size: 14, weight: .regular))
                         .foregroundColor(Color("SecondaryText"))
                 }
@@ -119,11 +119,11 @@ struct ProgressStatsView: View {
                 Spacer()
 
                 VStack(alignment: .trailing, spacing: 8) {
-                    Text("\(progressService.progress.bestStreak)")
+                    Text("\(progressService.progress.bestDayStreak)")
                         .font(.system(size: 32, weight: .semibold, design: .rounded))
                         .foregroundColor(Color("PrimaryText"))
 
-                    Text(progressService.progress.bestStreak == 1 ? "Best: 1 Day" : "Best: \(progressService.progress.bestStreak) Days")
+                    Text(progressService.progress.bestDayStreak == 1 ? "Best: 1 day" : "Best: \(progressService.progress.bestDayStreak) days")
                         .font(.system(size: 14, weight: .regular))
                         .foregroundColor(Color("SecondaryText"))
                 }
@@ -138,19 +138,14 @@ struct ProgressStatsView: View {
 
     private var accuracyChartSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            HStack {
-                SectionHeader(title: "Accuracy Trend", icon: "chart.line.uptrend.xyaxis")
-
-                Spacer()
-
-                Picker("Time Range", selection: $selectedTimeRange) {
-                    ForEach(TimeRange.allCases, id: \.self) { range in
-                        Text(range.rawValue).tag(range)
-                    }
+            Picker("Time Range", selection: $selectedTimeRange) {
+                ForEach(TimeRange.allCases, id: \.self) { range in
+                    Text(range.rawValue).tag(range)
                 }
-                .pickerStyle(SegmentedPickerStyle())
-                .frame(width: 200)
             }
+            .pickerStyle(.segmented)
+
+            SectionHeader(title: "Accuracy Trend", icon: "chart.line.uptrend.xyaxis")
 
             let accuracyData = progressService.getAccuracyTrend(days: selectedTimeRange.days)
 
@@ -271,31 +266,31 @@ struct ProgressStatsView: View {
             VStack(spacing: 12) {
                 AchievementRow(
                     title: "First Steps",
-                    description: "Complete your first 10 words",
+                    description: "Learn your first 10 words",
                     icon: "star.fill",
-                    isUnlocked: progressService.progress.wordsSeenCount >= 10,
-                    progress: min(1.0, Double(progressService.progress.wordsSeenCount) / 10.0)
+                    isUnlocked: progressService.wordsLearnedCount >= 10,
+                    progress: min(1.0, Double(progressService.wordsLearnedCount) / 10.0)
                 )
 
                 AchievementRow(
                     title: "Consistency Key",
                     description: "Reach a 7-day streak",
                     icon: "flame.fill",
-                    isUnlocked: progressService.progress.bestStreak >= 7,
-                    progress: min(1.0, Double(progressService.progress.bestStreak) / 7.0)
+                    isUnlocked: progressService.progress.bestDayStreak >= 7,
+                    progress: min(1.0, Double(progressService.progress.bestDayStreak) / 7.0)
                 )
 
                 AchievementRow(
                     title: "Accuracy Master",
-                    description: "Maintain 90% accuracy",
+                    description: "Keep 90% accuracy over 50+ answers",
                     icon: "target",
-                    isUnlocked: progressService.progress.accuracy >= 90,
+                    isUnlocked: progressService.progress.totalAttempts >= 50 && progressService.progress.accuracy >= 90,
                     progress: progressService.progress.accuracy / 100.0
                 )
 
                 AchievementRow(
                     title: "HSK Champion",
-                    description: "Complete all HSK1 words",
+                    description: "Learn every HSK 1 word",
                     icon: "graduationcap.fill",
                     isUnlocked: progressService.getWordsLearnedForLevel(1) == vocabularyService.vocabularyForLevel(1).count,
                     progress: Double(progressService.getWordsLearnedForLevel(1)) / Double(max(1, vocabularyService.vocabularyForLevel(1).count))
@@ -307,6 +302,10 @@ struct ProgressStatsView: View {
                     .fill(Color("SecondaryBackground"))
             )
         }
+    }
+
+    private var dayStreak: Int {
+        progressService.currentDayStreak
     }
 
     private func chartCard<Content: View>(@ViewBuilder content: () -> Content) -> some View {

@@ -3,7 +3,7 @@ import SwiftUI
 struct PracticeCompletionView: View {
     let sessionStats: SessionStats
     let onContinue: () -> Void
-    let onReview: () -> Void
+    let onFinish: () -> Void
     
     @State private var animateStats = false
 
@@ -73,10 +73,10 @@ struct PracticeCompletionView: View {
                         .animation(.spring(response: 0.5, dampingFraction: 0.6).delay(0.5), value: animateStats)
                         
                         CompletionStatCard(
-                            title: "Current Streak",
-                            value: "\(sessionStats.currentStreak)",
-                            icon: "flame.fill",
-                            color: sessionStats.currentStreak > 0 ? .orange : Color("SecondaryText")
+                            title: "Best Combo",
+                            value: "\(sessionStats.bestCombo)",
+                            icon: "bolt.fill",
+                            color: sessionStats.bestCombo > 0 ? .orange : Color("SecondaryText")
                         )
                         .scaleEffect(animateStats ? 1 : 0.8)
                         .opacity(animateStats ? 1 : 0)
@@ -112,7 +112,7 @@ struct PracticeCompletionView: View {
                             )
                     }
                     
-                    Button(action: onReview) {
+                    Button(action: onFinish) {
                         Text("Back to Home")
                             .font(.system(size: 16, weight: .medium))
                             .foregroundColor(Color("PrimaryText"))

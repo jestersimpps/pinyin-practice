@@ -1,35 +1,6 @@
 import Foundation
 
 struct ChapterCurriculum {
-    static let totalChapters = 80
-
-    static let levelRanges: [Int: ClosedRange<Int>] = [
-        1: 1...14,
-        2: 15...28,
-        3: 29...42,
-        4: 43...56,
-        5: 57...68,
-        6: 69...80
-    ]
-
-    static let reviewChapters = [28, 42, 56, 68, 80]
-
-    static func hskLevel(forChapter chapter: Int) -> Int {
-        levelRanges.first { $0.value.contains(chapter) }?.key ?? 1
-    }
-
-    static func firstChapter(forLevel level: Int) -> Int {
-        levelRanges[level]?.lowerBound ?? 1
-    }
-
-    static func globalChapterNumber(level: Int, localChapter: Int) -> Int {
-        firstChapter(forLevel: level) + localChapter - 1
-    }
-
-    static func isReviewChapter(_ chapter: Int) -> Bool {
-        reviewChapters.contains(chapter)
-    }
-    
     static let chapters: [Int: (title: String, description: String, icon: String)] = [
         // HSK 1
         1: ("你好 Hello", "Basic greetings, personal pronouns, introductions, numbers 0-10", "hand.wave"),
@@ -61,7 +32,7 @@ struct ChapterCurriculum {
         25: ("助动词 Modal Verbs", "Can/able to, should, want to, have to", "bubble.left.and.bubble.right"),
         26: ("完成时态 Completed Actions", "Aspect particles 了/过, currently happening, about to", "checkmark.circle"),
         27: ("家人称呼 Family Terms", "Extended family, relatives, in-laws", "figure.2.and.child.holdinghands"),
-        // Chapter 28 is reserved for HSK 2 review
+        28: ("人物 People and Family", "Family members, men and women, polite address", "person.2.wave.2"),
         
         // HSK 3
         29: ("描述人物 Describing People", "Physical appearance, personality, character traits", "person.crop.circle"),
@@ -124,15 +95,7 @@ struct ChapterCurriculum {
         // Chapter 80 is reserved for HSK 6 review
     ]
     
-    static func getChapterInfo(chapter: Int) -> (title: String, description: String, hskLevel: Int, icon: String) {
-        let info = chapters[chapter] ?? ("Chapter \(chapter)", "Chapter \(chapter) vocabulary", "book")
-        let level = hskLevel(forChapter: chapter)
-        return (info.title, info.description, level, info.icon)
-    }
-
-    // Number of practice chapters for a given HSK level (excluding review chapters)
-    static func chaptersForLevel(_ level: Int) -> Int {
-        guard let range = levelRanges[level] else { return 0 }
-        return range.count - reviewChapters.filter { range.contains($0) }.count
+    static func getChapterInfo(chapter: Int) -> (title: String, description: String, icon: String) {
+        chapters[chapter] ?? ("Chapter \(chapter)", "Chapter \(chapter) vocabulary", "book")
     }
 }

@@ -1,13 +1,12 @@
 import Foundation
 
-class VocabularyService: ObservableObject, VocabularyServiceProtocol {
+final class VocabularyService: ObservableObject, VocabularyServiceProtocol {
     static let shared = VocabularyService()
 
-    @Published var allVocabulary: [VocabularyItem] = []
-    @Published var vocabularyByLevel: [Int: [VocabularyItem]] = [:]
-    @Published var vocabularyByChapter: [String: [VocabularyItem]] = [:]
-    @Published var chapters: [Chapter] = []
-    @Published var isLoading = false
+    private(set) var allVocabulary: [VocabularyItem] = []
+    private(set) var vocabularyByLevel: [Int: [VocabularyItem]] = [:]
+    private(set) var vocabularyByChapter: [String: [VocabularyItem]] = [:]
+    private(set) var chapters: [Chapter] = []
 
     private let fileLoader = VocabularyFileLoader()
     private let customLoader = CustomVocabularyLoader()
@@ -17,26 +16,22 @@ class VocabularyService: ObservableObject, VocabularyServiceProtocol {
         loadVocabulary()
     }
 
-    func loadVocabulary() {
-        isLoading = true
-
+    private func loadVocabulary() {
         var allItems: [VocabularyItem] = []
-        chapters.removeAll()
-        vocabularyByChapter.removeAll()
 
-        for level in 1...6 {
+        for level in PracticeSettings.hskLevels {
             switch fileLoader.loadVocabularyFromJSON(level: level) {
             case .success(let items):
                 let sortedItems = items.sorted { $0.frequency < $1.frequency }
                 vocabularyByLevel[level] = sortedItems
                 allItems.append(contentsOf: sortedItems)
 
-                let (levelChapters, levelVocabularyByChapter) = chapterOrganizer.organizeIntoChapters(items: sortedItems, level: level)
-                chapters.append(contentsOf: levelChapters)
-                vocabularyByChapter.merge(levelVocabularyByChapter) { _, new in new }
+                let organized = chapterOrganizer.organizeIntoChapters(items: sortedItems, level: level)
+                chapters.append(contentsOf: organized.chapters)
+                vocabularyByChapter.merge(organized.vocabularyByChapter) { _, new in new }
 
             case .failure(let error):
-                print("Failed to load vocabulary for level \(level): \(error)")
+                assertionFailure("Failed to load vocabulary for level \(level): \(error)")
             }
         }
 
@@ -45,12 +40,19 @@ class VocabularyService: ObservableObject, VocabularyServiceProtocol {
         vocabularyByChapter.merge(customData.vocabularyByChapter) { _, new in new }
         allItems.append(contentsOf: customData.allItems)
 
-        allVocabulary = allItems
-        isLoading = false
+        allVocabulary = Self.uniqued(allItems)
+    }
+
+    var hskWordCount: Int {
+        PracticeSettings.hskLevels.reduce(0) { $0 + (vocabularyByLevel[$1]?.count ?? 0) }
+    }
+
+    var hasCustomChapters: Bool {
+        chapters.contains { $0.kind == .custom }
     }
 
     func vocabularyForLevels(_ levels: Set<Int>) -> [VocabularyItem] {
-        levels.sorted().flatMap { vocabularyByLevel[$0] ?? [] }
+        Self.uniqued(levels.sorted().flatMap { vocabularyByLevel[$0] ?? [] })
     }
 
     func vocabularyForLevel(_ level: Int) -> [VocabularyItem] {
@@ -58,7 +60,7 @@ class VocabularyService: ObservableObject, VocabularyServiceProtocol {
     }
 
     func vocabularyForChapters(_ chapterIds: Set<String>) -> [VocabularyItem] {
-        chapterIds.sorted().flatMap { vocabularyByChapter[$0] ?? [] }
+        Self.uniqued(chapterIds.sorted().flatMap { vocabularyByChapter[$0] ?? [] })
     }
 
     func reviewVocabulary(incorrectWordIds: Set<String>) -> [VocabularyItem] {
@@ -67,5 +69,28 @@ class VocabularyService: ObservableObject, VocabularyServiceProtocol {
 
     func chaptersForLevel(_ level: Int) -> [Chapter] {
         chapters.filter { $0.hskLevel == level }
+    }
+
+    func chapter(withId id: String) -> Chapter? {
+        chapters.first { $0.id == id }
+    }
+
+    func nextChapter(after chapter: Chapter) -> Chapter? {
+        guard chapter.kind != .custom else { return nil }
+
+        let levelChapters = chaptersForLevel(chapter.hskLevel)
+        if let index = levelChapters.firstIndex(of: chapter), index + 1 < levelChapters.count {
+            return levelChapters[index + 1]
+        }
+        return PracticeSettings.hskLevels
+            .filter { $0 > chapter.hskLevel }
+            .lazy
+            .compactMap { self.chaptersForLevel($0).first }
+            .first
+    }
+
+    private static func uniqued(_ items: [VocabularyItem]) -> [VocabularyItem] {
+        var seen = Set<String>()
+        return items.filter { seen.insert($0.id).inserted }
     }
 }

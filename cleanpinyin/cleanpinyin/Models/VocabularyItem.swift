@@ -29,14 +29,14 @@ struct VocabularyItem: Identifiable, Codable {
     }
 
     var possiblePinyinVariations: [String] {
-        toneNumbers.lowercased()
+        toneNumbers
             .split(separator: ",")
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
     }
 
     // MARK: - English Meaning Properties
-    var english: String {
-        UserProgressService.shared.settings.showFullMeaning ? englishFull : englishClean
+    func english(fullMeaning: Bool) -> String {
+        fullMeaning ? englishFull : englishClean
     }
 
     private var englishClean: String {
@@ -55,31 +55,5 @@ struct VocabularyItem: Identifiable, Codable {
 
     var shortTranslation: String {
         meanings.first ?? ""
-    }
-
-    // MARK: - Validation Methods
-    func isPinyinCorrect(_ input: String, requireTones: Bool = true) -> Bool {
-        let normalizedInput = input.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
-
-        for pinyin in possiblePinyinVariations {
-            if normalizedInput == pinyin {
-                return true
-            }
-
-            if !requireTones, stripToneNumbers(normalizedInput) == stripToneNumbers(pinyin) {
-                return true
-            }
-        }
-
-        return false
-    }
-
-    func isPinyinPartiallyCorrect(_ input: String) -> Bool {
-        let normalizedInput = stripToneNumbers(input.lowercased().trimmingCharacters(in: .whitespacesAndNewlines))
-        return possiblePinyinVariations.contains { stripToneNumbers($0) == normalizedInput }
-    }
-
-    private func stripToneNumbers(_ pinyin: String) -> String {
-        pinyin.replacingOccurrences(of: "[1-5]", with: "", options: .regularExpression)
     }
 }

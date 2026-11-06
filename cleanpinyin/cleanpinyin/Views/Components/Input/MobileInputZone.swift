@@ -4,27 +4,28 @@ struct MobileInputZone: View {
     @Binding var text: String
     var isFocused: FocusState<Bool>.Binding
     let feedbackState: FeedbackState
-    let onSubmit: () -> Void
+    let showHintButton: Bool
+    let onCheck: () -> Void
+    let onNext: () -> Void
     let onSkip: () -> Void
     let onHintToggle: () -> Void
-    let showHintButton: Bool
-    let showSkipButton: Bool
 
     var body: some View {
         HStack(spacing: 8) {
             inputField
 
-            if feedbackState == .correct {
-                nextButton
-            } else {
-                HStack(spacing: 8) {
-                    if showHintButton {
-                        hintButton
-                    }
-                    if showSkipButton {
-                        skipButton
-                    }
+            if feedbackState == .none {
+                if showHintButton {
+                    hintButton
                 }
+                if text.isEmpty {
+                    actionButton(title: "Skip", icon: "forward.fill", style: .secondary, action: onSkip)
+                        .accessibilityHint("Shows the answer and counts as a miss")
+                } else {
+                    actionButton(title: "Check", icon: "checkmark", style: .primary, action: onCheck)
+                }
+            } else {
+                actionButton(title: "Next", icon: "arrow.right", style: feedbackState == .correct ? .success : .primary, action: onNext)
             }
         }
         .padding(.horizontal, 16)
@@ -38,15 +39,16 @@ struct MobileInputZone: View {
 
     private var inputField: some View {
         HStack {
-            TextField("Enter pinyin...", text: $text)
+            TextField("Type the pinyin", text: $text)
                 .textFieldStyle(.plain)
                 .font(.system(size: 18, weight: .regular))
                 .foregroundColor(Color("PrimaryText"))
-                .autocapitalization(.none)
+                .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
                 .focused(isFocused)
-                .submitLabel(.go)
-                .onSubmit(onSubmit)
+                .submitLabel(feedbackState == .none ? .done : .next)
+                .onSubmit(feedbackState == .none ? onCheck : onNext)
+                .accessibilityLabel("Pinyin answer")
 
             if !text.isEmpty {
                 Button(action: { text = "" }) {
@@ -54,6 +56,7 @@ struct MobileInputZone: View {
                         .font(.system(size: 18))
                         .foregroundColor(Color("SecondaryText").opacity(0.6))
                 }
+                .accessibilityLabel("Clear answer")
             }
         }
         .padding(.horizontal, 16)
@@ -74,42 +77,38 @@ struct MobileInputZone: View {
                 .font(.system(size: 20))
                 .foregroundColor(Color("SecondaryText"))
                 .frame(width: 44, height: 44)
-                .background(
-                    Circle()
-                        .fill(Color("SecondaryBackground"))
-                )
+                .background(Circle().fill(Color("SecondaryBackground")))
         }
+        .accessibilityLabel("Show hints")
     }
 
-    private var skipButton: some View {
-        Button(action: onSkip) {
-            Label("Skip", systemImage: "forward.fill")
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundColor(Color("SecondaryText"))
-                .padding(.horizontal, 16)
-                .frame(height: 44)
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color("SecondaryBackground"))
-                )
-        }
+    private enum ButtonStyleKind {
+        case primary, secondary, success
     }
 
-    private var nextButton: some View {
-        Button(action: onSubmit) {
+    private func actionButton(title: String, icon: String, style: ButtonStyleKind, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
             HStack(spacing: 4) {
-                Text("Next")
+                Text(title)
                     .font(.system(size: 16, weight: .semibold))
-                Image(systemName: "arrow.right")
+                Image(systemName: icon)
                     .font(.system(size: 14, weight: .bold))
             }
-            .foregroundColor(.white)
-            .padding(.horizontal, 20)
+            .foregroundColor(style == .secondary ? Color("SecondaryText") : .white)
+            .padding(.horizontal, 16)
             .frame(height: 44)
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(Color("SuccessGreen"))
+                    .fill(background(for: style))
             )
+        }
+    }
+
+    private func background(for style: ButtonStyleKind) -> Color {
+        switch style {
+        case .primary: return Color("MidnightGreen")
+        case .secondary: return Color("SecondaryBackground")
+        case .success: return Color("SuccessGreen")
         }
     }
 

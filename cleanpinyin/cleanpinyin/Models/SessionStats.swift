@@ -1,13 +1,12 @@
 import Foundation
 
-struct SessionStats {
+struct SessionStats: Equatable {
     let wordsStudied: Int
     let correctAnswers: Int
     let totalAttempts: Int
     let practiceMode: String
     let duration: TimeInterval
-    let currentStreak: Int
-    let bestStreak: Int
+    let bestCombo: Int
 
     var accuracy: Double {
         guard totalAttempts > 0 else { return 0 }

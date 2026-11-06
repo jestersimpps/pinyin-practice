@@ -39,7 +39,7 @@ Words live in `Resources/Data/<level>.min.json`, one file per HSK level. Optiona
 
 - **PRA-1** A session works through a fixed list of words, one at a time. The header shows a progress bar, words done / total, overall accuracy and the current combo (correct answers in a row).
 - **PRA-2** **Correct:** green feedback, a haptic tap, the word is spoken (if **Speak on Correct Answer** is on) and the session moves to the next word after 1 s (1.5 s on the last word). **Next** skips the wait.
-- **PRA-3** **Incorrect or partial:** the correct pinyin, the meaning and the hints are shown, and the miss is recorded once per word. The learner can retype. A correct retype turns the feedback green but does not auto-advance. A visible **Next** button is always available.
+- **PRA-3** **Incorrect or partial:** the correct pinyin, the meaning and the hints are shown, and the miss is recorded once per word. The learner can retype. A correct retype turns the feedback green, counts toward chapter progress and clears the word from Review Mistakes, but does not auto-advance. A visible **Next** button is always available.
 - **PRA-4** **Skip** (button, or swipe right) counts as a miss and reveals the answer, just like an incorrect answer.
 - **PRA-5** **Hint** (lightbulb, or swipe left) toggles the character and pronunciation hints. It's only available when hints are enabled.
 - **PRA-6** The speaker button reads the word aloud at any time.
@@ -49,7 +49,7 @@ Words live in `Resources/Data/<level>.min.json`, one file per HSK level. Optiona
 
 ## 4. Practice modes
 
-- **MODE-1 Quick Practice** practises the HSK levels chosen in Settings (default HSK 1).
+- **MODE-1 Quick Practice** resumes the last chapter selection, or the last review session if mistakes remain. Otherwise it practises the HSK levels chosen in Settings (default HSK 1).
   - **Sequential order:** words not yet learned come first, in frequency order, followed by learned words. Each session therefore continues where the learner left off.
   - **Random order:** shuffled, with never-seen words first.
 - **MODE-2 Chapter Practice** practises the selected unlocked chapters (see §5).
@@ -60,9 +60,9 @@ Words live in `Resources/Data/<level>.min.json`, one file per HSK level. Optiona
 ## 5. Chapters
 
 - **CH-1** HSK 1–2 words are grouped by their curriculum chapter (`cp`). A chapter appears only if it has words, and it uses its curriculum title (`你好 Hello`).
-- **CH-2** HSK 3–6 words have no curriculum chapter yet. They are split by frequency into equal sets titled `Set N` with the word range (`Words 1–23`). They don't borrow topical titles they don't match.
+- **CH-2** HSK 3–6 words have no curriculum chapter yet. They are split by frequency into near-equal sets of at most 40 words, titled `Set N` with the word range (`Words 1–38`). They don't borrow topical titles they don't match.
 - **CH-3** Within a level, the first chapter is always unlocked. Each later chapter unlocks once the chapter before it, in that level's list, is at least 80% complete. Empty curriculum slots are skipped and never block anything.
-- **CH-4** A chapter's completion is the share of its words answered correctly at least once during chapter practice.
+- **CH-4** A chapter's completion is the share of its words answered correctly at least once during chapter or custom practice.
 - **CH-5** Completing a chapter shows a celebration with **Continue to Next Chapter** (the next chapter in the level, or the first chapter of the next level), **Review This Chapter** and **Back to Chapters**. **Continue** is only offered when a next chapter exists.
 
 ## 6. Imprint mode (listening)

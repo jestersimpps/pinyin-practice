@@ -2,21 +2,27 @@ import SwiftUI
 
 struct AdaptiveCharacterDisplay: View {
     let word: VocabularyItem
+    let displayText: String
+    let settings: PracticeSettings
     let feedbackState: FeedbackState
     let showHint: Bool
     let isKeyboardVisible: Bool
-    let onHintToggle: () -> Void
+    let onSpeak: () -> Void
 
     @State private var expandedTranslation = false
     @State private var expandedCharacterHint = false
     @State private var expandedPronunciationHint = false
-    @StateObject private var textToSpeech = TextToSpeechService.shared
+    @ObservedObject private var textToSpeech = TextToSpeechService.shared
+
+    private var isMiss: Bool {
+        feedbackState == .incorrect || feedbackState == .partial
+    }
 
     var body: some View {
         VStack(spacing: isKeyboardVisible ? 8 : 16) {
             characterSection
 
-            if feedbackState == .incorrect {
+            if isMiss {
                 InfoBanner(
                     icon: "checkmark.circle",
                     text: "Correct answer: \(word.pinyin)",
@@ -26,10 +32,10 @@ struct AdaptiveCharacterDisplay: View {
                 .transition(.opacity)
             }
 
-            if settings.showEnglishTranslation || feedbackState == .incorrect {
+            if settings.showEnglishTranslation || isMiss {
                 InfoBanner(
                     icon: "text.book.closed",
-                    text: word.english,
+                    text: word.english(fullMeaning: settings.showFullMeaning),
                     color: Color("SuccessGreen"),
                     compact: isKeyboardVisible,
                     isExpanded: $expandedTranslation
@@ -37,7 +43,7 @@ struct AdaptiveCharacterDisplay: View {
                 .transition(.opacity)
             }
 
-            if showHint || feedbackState == .incorrect {
+            if showHint || isMiss {
                 hints
                     .transition(.opacity)
             }
@@ -54,9 +60,12 @@ struct AdaptiveCharacterDisplay: View {
     // MARK: - Character
     private var characterSection: some View {
         ZStack {
-            Text(displayCharacter)
+            Text(displayText)
                 .font(.system(size: isKeyboardVisible ? 60 : 120, weight: .bold, design: .rounded))
                 .foregroundColor(Color("PrimaryText"))
+                .lineLimit(1)
+                .minimumScaleFactor(0.35)
+                .padding(.horizontal, 56)
                 .frame(maxWidth: .infinity)
                 .scaleEffect(!isKeyboardVisible && feedbackState == .correct ? 1.1 : 1.0)
 
@@ -129,9 +138,7 @@ struct AdaptiveCharacterDisplay: View {
     }
 
     private var speakerButton: some View {
-        Button(action: {
-            textToSpeech.speak(chinese: displayCharacter)
-        }) {
+        Button(action: onSpeak) {
             Image(systemName: textToSpeech.isSpeaking ? "speaker.wave.3.fill" : "speaker.wave.2.fill")
                 .font(.system(size: 20))
                 .foregroundColor(Color("PrimaryText").opacity(0.7))
@@ -144,16 +151,10 @@ struct AdaptiveCharacterDisplay: View {
         }
         .scaleEffect(textToSpeech.isSpeaking ? 1.1 : 1.0)
         .animation(.easeInOut(duration: 0.2), value: textToSpeech.isSpeaking)
+        .accessibilityLabel("Play pronunciation")
     }
 
     // MARK: - Computed Properties
-    private var displayCharacter: String {
-        settings.useTraditional ? word.traditional : word.simplified
-    }
-
-    private var settings: PracticeSettings {
-        UserProgressService.shared.settings
-    }
 
     private var feedbackIconName: String {
         switch feedbackState {

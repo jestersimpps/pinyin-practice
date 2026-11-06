@@ -1,12 +1,16 @@
 import SwiftUI
 
 struct PracticeView: View {
-    @StateObject private var viewModel = PracticeViewModel()
-    @Environment(\.dismiss) var dismiss
+    @StateObject private var viewModel: PracticeViewModel
+    @Environment(\.dismiss) private var dismiss
     @State private var showingSettings = false
     @State private var keyboardHeight: CGFloat = 0
     @FocusState private var isInputFocused: Bool
     @State private var showHint = false
+
+    init(mode: LearningMode) {
+        _viewModel = StateObject(wrappedValue: PracticeViewModel(mode: mode))
+    }
 
     var body: some View {
         ZStack {
@@ -17,79 +21,41 @@ struct PracticeView: View {
             VStack(spacing: 0) {
                 header
 
-                ScrollViewReader { proxy in
-                    ScrollView {
-                        VStack(spacing: 16) {
-                            if let word = viewModel.currentWord {
-                                AdaptiveCharacterDisplay(
-                                    word: word,
-                                    feedbackState: viewModel.feedbackState,
-                                    showHint: showHint,
-                                    isKeyboardVisible: keyboardHeight > 0,
-                                    onHintToggle: { showHint.toggle() }
-                                )
-                                .padding(.horizontal, 16)
-                                .id("character")
-                            }
-
-                            if keyboardHeight > 0 {
-                                Color.clear
-                                    .frame(height: keyboardHeight - 100)
-                            }
-                        }
-                        .padding(.vertical, 16)
-                    }
-                    .scrollIndicators(.hidden)
-                    .contentShape(Rectangle())
-                    .onTapGesture(perform: dismissKeyboard)
-                    .onChange(of: keyboardHeight) { _, newValue in
-                        if newValue > 0 {
-                            withAnimation {
-                                proxy.scrollTo("character", anchor: .top)
-                            }
-                        }
-                    }
+                if viewModel.hasWords {
+                    practiceContent
+                } else {
+                    emptyState
                 }
-
-                MobileInputZone(
-                    text: $viewModel.userInput,
-                    isFocused: $isInputFocused,
-                    feedbackState: viewModel.feedbackState,
-                    onSubmit: handleSubmit,
-                    onSkip: skipWord,
-                    onHintToggle: { showHint.toggle() },
-                    showHintButton: UserProgressService.shared.settings.showPronunciationHints && viewModel.feedbackState == .none,
-                    showSkipButton: viewModel.feedbackState == .none
-                )
-                .disabled(viewModel.isPracticeComplete)
-                .padding(.horizontal, 16)
-                .padding(.bottom, 16)
             }
         }
         .navigationBarHidden(true)
         .onAppear(perform: startPractice)
-        .onDisappear {
-            viewModel.saveSessionOnExit()
+        .onDisappear(perform: viewModel.saveSessionOnExit)
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { notification in
+            guard let frame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
+            withAnimation(.easeOut(duration: 0.25)) { keyboardHeight = frame.height }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
+            withAnimation(.easeOut(duration: 0.25)) { keyboardHeight = 0 }
         }
         .sheet(isPresented: $showingSettings) {
             SettingsView()
         }
         .sheet(isPresented: $viewModel.showingChapterCompletion) {
-            if let chapter = viewModel.completedChapter,
-               let progress = viewModel.completedChapterProgress {
+            if let chapter = viewModel.completedChapter, let progress = viewModel.completedChapterProgress {
                 ChapterCompletionView(
                     chapter: chapter,
                     chapterProgress: progress,
+                    nextChapter: viewModel.nextChapter,
                     onContinue: {
-                        viewModel.showingChapterCompletion = false
-                        viewModel.loadNextChapter()
+                        viewModel.continueToNextChapter()
                         resetForNewRound()
                     },
                     onReview: {
-                        viewModel.showingChapterCompletion = false
-                        viewModel.reloadWordsIfNeeded()
+                        viewModel.startNewRound()
                         resetForNewRound()
-                    }
+                    },
+                    onBackToChapters: { dismiss() }
                 )
             }
         }
@@ -98,36 +64,103 @@ struct PracticeView: View {
                 PracticeCompletionView(
                     sessionStats: stats,
                     onContinue: {
-                        viewModel.showingPracticeCompletion = false
-                        viewModel.reloadWordsIfNeeded()
+                        viewModel.startNewRound()
                         resetForNewRound()
                     },
-                    onReview: {
-                        dismiss()
-                    }
+                    onFinish: { dismiss() }
                 )
+                .interactiveDismissDisabled()
             }
         }
         .onChange(of: viewModel.feedbackState) { _, newState in
-            if newState == .correct {
+            switch newState {
+            case .correct:
                 showHint = false
                 UIImpactFeedbackGenerator(style: .light).impactOccurred()
-            } else if newState == .incorrect {
+            case .incorrect, .partial:
                 UINotificationFeedbackGenerator().notificationOccurred(.error)
+            case .none:
+                break
             }
         }
         .gesture(
-            DragGesture()
+            DragGesture(minimumDistance: 40)
                 .onEnded { value in
-                    if value.translation.width > 100 && viewModel.feedbackState == .none {
+                    guard abs(value.translation.width) > abs(value.translation.height) else { return }
+                    if value.translation.width > 100, viewModel.feedbackState == .none {
                         skipWord()
-                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                    } else if value.translation.width < -100 && UserProgressService.shared.settings.showPronunciationHints {
-                        showHint.toggle()
-                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                    } else if value.translation.width < -100, hintsAvailable {
+                        toggleHint()
                     }
                 }
         )
+    }
+
+    // MARK: - Content
+
+    private var practiceContent: some View {
+        VStack(spacing: 0) {
+            ScrollViewReader { proxy in
+                ScrollView {
+                    VStack(spacing: 16) {
+                        if let word = viewModel.currentWord {
+                            AdaptiveCharacterDisplay(
+                                word: word,
+                                displayText: viewModel.displayText(for: word),
+                                settings: viewModel.settings,
+                                feedbackState: viewModel.feedbackState,
+                                showHint: showHint,
+                                isKeyboardVisible: keyboardHeight > 0,
+                                onSpeak: viewModel.speakCurrentWord
+                            )
+                            .padding(.horizontal, 16)
+                            .id("character")
+                        }
+                    }
+                    .padding(.vertical, 16)
+                }
+                .scrollIndicators(.hidden)
+                .scrollDismissesKeyboard(.interactively)
+                .onChange(of: keyboardHeight) { _, newValue in
+                    guard newValue > 0 else { return }
+                    withAnimation { proxy.scrollTo("character", anchor: .top) }
+                }
+            }
+
+            MobileInputZone(
+                text: $viewModel.userInput,
+                isFocused: $isInputFocused,
+                feedbackState: viewModel.feedbackState,
+                showHintButton: hintsAvailable && viewModel.feedbackState == .none,
+                onCheck: viewModel.checkAnswer,
+                onNext: goToNextWord,
+                onSkip: skipWord,
+                onHintToggle: toggleHint
+            )
+            .disabled(viewModel.isPracticeComplete)
+            .padding(.horizontal, 16)
+            .padding(.bottom, 16)
+        }
+    }
+
+    private var emptyState: some View {
+        VStack(spacing: 16) {
+            Spacer()
+            Image(systemName: "tray")
+                .font(.system(size: 48))
+                .foregroundColor(Color("SecondaryText"))
+            Text("Nothing to practise")
+                .font(.title3.weight(.semibold))
+                .foregroundColor(Color("PrimaryText"))
+            Text("There are no words in this selection yet. Pick other levels or chapters to continue.")
+                .font(.body)
+                .foregroundColor(Color("SecondaryText"))
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 32)
+            PrimaryButton(title: "Back", icon: "chevron.left", action: { dismiss() })
+                .frame(width: 160)
+            Spacer()
+        }
     }
 
     // MARK: - Header
@@ -135,7 +168,7 @@ struct PracticeView: View {
     private var header: some View {
         VStack(spacing: 0) {
             HStack {
-                headerButton(icon: "chevron.left", color: Color("PrimaryText")) { dismiss() }
+                headerButton(icon: "chevron.left", color: Color("PrimaryText"), label: "Close practice") { dismiss() }
 
                 Spacer()
 
@@ -144,58 +177,54 @@ struct PracticeView: View {
                         .font(.system(size: 18, weight: .bold))
                         .foregroundColor(Color("PrimaryText"))
 
-                    if let subtitle = practiceSubtitle {
-                        Text(subtitle)
-                            .font(.system(size: 12, weight: .medium))
-                            .foregroundColor(Color("SecondaryText"))
-                    }
+                    Text(practiceSubtitle)
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(Color("SecondaryText"))
                 }
 
                 Spacer()
 
-                headerButton(icon: "gearshape.fill", color: Color("SecondaryText")) { showingSettings = true }
+                headerButton(icon: "gearshape.fill", color: Color("SecondaryText"), label: "Settings") { showingSettings = true }
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 16)
 
-            ProgressBar(progress: viewModel.progressPercentage)
-
-            statsRow
+            if viewModel.hasWords {
+                ProgressBar(progress: viewModel.progressPercentage)
+                statsRow
+            }
         }
     }
 
-    private func headerButton(icon: String, color: Color, action: @escaping () -> Void) -> some View {
+    private func headerButton(icon: String, color: Color, label: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Image(systemName: icon)
                 .font(.system(size: 20, weight: .semibold))
                 .foregroundColor(color)
-                .frame(width: 36, height: 36)
-                .background(
-                    Circle()
-                        .fill(Color("SecondaryBackground").opacity(0.5))
-                )
+                .frame(width: 44, height: 44)
+                .background(Circle().fill(Color("SecondaryBackground").opacity(0.5)))
         }
+        .accessibilityLabel(label)
     }
 
     private var statsRow: some View {
         HStack(spacing: 20) {
-            statItem(
-                icon: "flag.fill",
-                color: .blue,
-                text: "\(viewModel.wordsCompleted)/\(viewModel.totalWords)"
-            )
+            statItem(icon: "flag.fill", color: .blue, text: "\(viewModel.wordsCompleted)/\(viewModel.totalWords)")
+                .accessibilityLabel("\(viewModel.wordsCompleted) of \(viewModel.totalWords) words done")
 
             statItem(
                 icon: "target",
                 color: viewModel.accuracy == "0%" ? Color("SecondaryText") : Color("SuccessGreen"),
                 text: viewModel.accuracy
             )
+            .accessibilityLabel("Accuracy \(viewModel.accuracy)")
 
             statItem(
-                icon: "flame.fill",
-                color: viewModel.currentStreak == 0 ? Color("SecondaryText") : .orange,
-                text: "\(viewModel.currentStreak)"
+                icon: "bolt.fill",
+                color: viewModel.combo == 0 ? Color("SecondaryText") : .orange,
+                text: "\(viewModel.combo)"
             )
+            .accessibilityLabel("\(viewModel.combo) correct in a row")
         }
         .foregroundColor(Color("PrimaryText"))
         .frame(maxWidth: .infinity)
@@ -212,51 +241,40 @@ struct PracticeView: View {
             Text(text)
                 .font(.subheadline)
                 .fontWeight(.medium)
+                .monospacedDigit()
         }
+        .accessibilityElement(children: .ignore)
     }
 
     // MARK: - Actions
 
+    private var hintsAvailable: Bool {
+        viewModel.settings.showPronunciationHints || viewModel.settings.showCharacterHints
+    }
+
     private func startPractice() {
-        setupKeyboardObservers()
-
-        let progressService = UserProgressService.shared
-        let settings = progressService.settings
-
-        if settings.isReviewMode {
-            viewModel.startReviewPractice(incorrectWords: progressService.progress.incorrectWords)
-            progressService.settings.isReviewMode = false
-            progressService.settings.lastPracticeMode = .review
-        } else if !settings.selectedChapters.isEmpty {
-            viewModel.startChapterPractice(chapters: settings.selectedChapters)
-            progressService.settings.lastPracticeMode = .chapters
-        } else {
-            viewModel.startCustomPractice(levels: settings.selectedHSKLevels)
-        }
-
+        viewModel.begin()
+        guard viewModel.hasWords else { return }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             isInputFocused = true
         }
     }
 
-    private func handleSubmit() {
-        guard !viewModel.isPracticeComplete else { return }
-
-        if viewModel.feedbackState == .none {
-            viewModel.checkAnswer()
-        } else {
-            viewModel.nextWord()
-            showHint = false
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                isInputFocused = true
-            }
-        }
+    private func goToNextWord() {
+        viewModel.nextWord()
+        showHint = false
+        isInputFocused = true
     }
 
     private func skipWord() {
         viewModel.skipWord()
         showHint = false
-        isInputFocused = true
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+    }
+
+    private func toggleHint() {
+        showHint.toggle()
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
     }
 
     private func resetForNewRound() {
@@ -270,42 +288,14 @@ struct PracticeView: View {
         }
     }
 
-    private func setupKeyboardObservers() {
-        NotificationCenter.default.addObserver(
-            forName: UIResponder.keyboardWillShowNotification,
-            object: nil,
-            queue: .main
-        ) { notification in
-            if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
-                withAnimation(.easeOut(duration: 0.25)) {
-                    keyboardHeight = keyboardFrame.height
-                }
-            }
-        }
-
-        NotificationCenter.default.addObserver(
-            forName: UIResponder.keyboardWillHideNotification,
-            object: nil,
-            queue: .main
-        ) { _ in
-            withAnimation(.easeOut(duration: 0.25)) {
-                keyboardHeight = 0
-            }
-        }
-    }
-
-    // MARK: - Computed Properties
-
-    private var practiceSubtitle: String? {
-        switch viewModel.currentLearningMode {
-        case .chapters:
-            return "Chapter Practice"
-        case .review:
-            return "Review Mode"
-        case .levels:
-            return UserProgressService.shared.settings.practiceMode == .random ? "Random Mode" : nil
-        case nil:
-            return nil
+    private var practiceSubtitle: String {
+        switch viewModel.mode {
+        case .chapters: return "Chapter Practice"
+        case .custom: return "Custom Practice"
+        case .review: return "Review Mistakes"
+        case .levels(let levels):
+            let names = levels.sorted().map { "HSK \($0)" }.joined(separator: ", ")
+            return viewModel.settings.practiceMode == .random ? "\(names) · Random" : names
         }
     }
 }

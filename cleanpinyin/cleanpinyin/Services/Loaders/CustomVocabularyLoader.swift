@@ -45,7 +45,8 @@ class CustomVocabularyLoader {
             let chapterTitle = formatChapterTitle(from: filename)
 
             let chapter = Chapter(
-                id: ChapterIdentifier(customFileName: filename).value,
+                id: "custom_\(filename)",
+                kind: .custom,
                 hskLevel: Chapter.customLevel,
                 chapterNumber: chapterNumber,
                 title: chapterTitle,
