@@ -16,12 +16,13 @@ struct PracticeFlowTests {
         progress = UserProgressService(defaults: defaults)
     }
 
-    private func makeSession(_ mode: LearningMode) -> PracticeViewModel {
+    private func makeSession(_ mode: LearningMode, recognizer: SpeechRecognizing? = nil) -> PracticeViewModel {
         PracticeViewModel(
             mode: mode,
             vocabularyService: vocabulary,
             progressService: progress,
             speech: speech,
+            recognizer: recognizer,
             autoSubmitDelay: 0.05,
             advanceDelay: 0.05
         )
@@ -210,6 +211,64 @@ struct PracticeFlowTests {
         #expect(progress.progress == UserProgress())
         #expect(progress.sessions.isEmpty)
         #expect(progress.settings.requireTones)
+    }
+
+    @Test("SAY-3 a spoken answer is graded and recorded like a typed one")
+    func spokenAnswerIsGraded() async throws {
+        let recognizer = FakeRecognizer(transcript: "的。")
+        let session = makeSession(.levels([1]), recognizer: recognizer)
+        let word = try #require(session.currentWord)
+        #expect(word.simplified == "的")
+
+        await session.toggleListening()
+
+        #expect(session.spokenAnswer?.heardText == "的")
+        #expect(session.feedbackState == .correct)
+        #expect(progress.progress.learnedWords == [word.id])
+        #expect(session.listeningState == .idle)
+    }
+
+    @Test("SAY-4 without permission nothing is recorded and the learner is told why")
+    func spokenAnswerNeedsPermission() async throws {
+        let recognizer = FakeRecognizer(transcript: "的", permissionGranted: false)
+        let session = makeSession(.levels([1]), recognizer: recognizer)
+
+        await session.toggleListening()
+
+        #expect(session.feedbackState == .none)
+        #expect(progress.progress.totalAttempts == 0)
+        #expect(session.speechMessage == SpeechRecognitionError.permissionDenied.errorDescription)
+    }
+
+    @Test("SAY-4 hearing nothing leaves the word unanswered")
+    func spokenAnswerNoSpeech() async throws {
+        let recognizer = FakeRecognizer(transcript: nil)
+        let session = makeSession(.levels([1]), recognizer: recognizer)
+
+        await session.toggleListening()
+
+        #expect(session.feedbackState == .none)
+        #expect(session.speechMessage == SpeechRecognitionError.noSpeech.errorDescription)
+    }
+}
+
+final class FakeRecognizer: SpeechRecognizing {
+    private let transcript: String?
+    private let permissionGranted: Bool
+
+    init(transcript: String?, permissionGranted: Bool = true) {
+        self.transcript = transcript
+        self.permissionGranted = permissionGranted
+    }
+
+    var isSupported: Bool { true }
+    func requestPermission() async -> Bool { permissionGranted }
+    func prepare(status: @escaping (String) -> Void) async throws {}
+    func stopListening() {}
+
+    func listen() async throws -> String {
+        guard let transcript else { throw SpeechRecognitionError.noSpeech }
+        return transcript
     }
 }
 

@@ -95,3 +95,10 @@ Words live in `Resources/Data/<level>.min.json`, one file per HSK level. Optiona
 - **PLAT-2** Audio takes the audio session only while speaking. Other apps' audio is ducked during speech and restored afterwards.
 - **PLAT-3** All data stays on the device (UserDefaults). The app ships a privacy manifest that declares UserDefaults use and no tracking or data collection.
 - **PLAT-4** Every interactive element has an accessibility label. The app is usable in light and dark mode.
+
+## 10. Say it (on-device speech recognition)
+
+- **SAY-1** When the device can recognise Mandarin on-device, the practice input row shows a microphone button. Tapping it records one answer; recording stops after a short silence, after 6 s, or when tapped again. On iOS 26 recognition uses SpeechAnalyzer/SpeechTranscriber, downloading the Mandarin model the first time. Older iOS versions, and devices where SpeechTranscriber lacks Mandarin, use SFSpeechRecognizer in on-device mode. Audio never leaves the device.
+- **SAY-2** The transcript is reduced to its Chinese characters (digits become numerals) and converted to pinyin. Hearing the word itself, or a same-sounding word with the same tones (他/她 for tā), is **correct**. The same syllables with other tones are **partial**. Anything else is **incorrect**.
+- **SAY-3** A spoken answer is recorded exactly like a typed one (PRA-2/PRA-3), and the screen shows what was heard with its pinyin.
+- **SAY-4** If permission is refused or nothing is heard, nothing is recorded and a short message explains what to do. Tone grading is only as precise as the recogniser: a clear word with a slightly off tone may still pass.

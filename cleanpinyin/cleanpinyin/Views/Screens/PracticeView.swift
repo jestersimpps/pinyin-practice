@@ -111,6 +111,8 @@ struct PracticeView: View {
                                 feedbackState: viewModel.feedbackState,
                                 showHint: showHint,
                                 isKeyboardVisible: keyboardHeight > 0,
+                                spokenAnswer: viewModel.spokenAnswer,
+                                speechMessage: viewModel.speechMessage ?? preparingStatus,
                                 onSpeak: viewModel.speakCurrentWord
                             )
                             .padding(.horizontal, 16)
@@ -132,6 +134,8 @@ struct PracticeView: View {
                 isFocused: $isInputFocused,
                 feedbackState: viewModel.feedbackState,
                 showHintButton: hintsAvailable && viewModel.feedbackState == .none,
+                micState: micState,
+                onMicTap: { Task { await viewModel.toggleListening() } },
                 onCheck: viewModel.checkAnswer,
                 onNext: goToNextWord,
                 onSkip: skipWord,
@@ -285,6 +289,20 @@ struct PracticeView: View {
     private func dismissKeyboard() {
         if keyboardHeight > 0 {
             isInputFocused = false
+        }
+    }
+
+    private var preparingStatus: String? {
+        if case .preparing(let status) = viewModel.listeningState { return status }
+        return nil
+    }
+
+    private var micState: MobileInputZone.MicState? {
+        guard viewModel.canAnswerBySpeaking else { return nil }
+        switch viewModel.listeningState {
+        case .idle: return .idle
+        case .preparing: return .preparing
+        case .listening: return .listening
         }
     }
 

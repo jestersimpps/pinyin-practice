@@ -22,7 +22,6 @@ final class TextToSpeechService: NSObject, ObservableObject, SpeechSpeaking {
     private override init() {
         super.init()
         synthesizer.delegate = self
-        try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio, options: .duckOthers)
     }
 
     func speak(chinese: String, completion: (() -> Void)? = nil) {
@@ -40,7 +39,9 @@ final class TextToSpeechService: NSObject, ObservableObject, SpeechSpeaking {
 
     private func speak(text: String, language: String, rate: Float, completion: (() -> Void)?) {
         stopSpeaking()
-        try? AVAudioSession.sharedInstance().setActive(true)
+        let session = AVAudioSession.sharedInstance()
+        try? session.setCategory(.playback, mode: .spokenAudio, options: .duckOthers)
+        try? session.setActive(true)
 
         let utterance = AVSpeechUtterance(string: text)
         utterance.voice = AVSpeechSynthesisVoice(language: language)

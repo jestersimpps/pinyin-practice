@@ -13,6 +13,15 @@ final class PracticeViewModel: ObservableObject {
     @Published var showingPracticeCompletion = false
     @Published private(set) var sessionStats: SessionStats?
     @Published private(set) var mode: LearningMode
+    @Published private(set) var listeningState: ListeningState = .idle
+    @Published private(set) var spokenAnswer: SpokenAnswer?
+    @Published var speechMessage: String?
+
+    enum ListeningState: Equatable {
+        case idle
+        case preparing(String)
+        case listening
+    }
 
     // MARK: - Computed Properties
     var currentWord: VocabularyItem? { wordTracker.currentWord }
@@ -24,6 +33,7 @@ final class PracticeViewModel: ObservableObject {
     var combo: Int { sessionManager.combo }
     var accuracy: String { progressService.progress.formattedAccuracy }
     var settings: PracticeSettings { progressService.settings }
+    var canAnswerBySpeaking: Bool { recognizer?.isSupported == true }
 
     var nextChapter: Chapter? {
         completedChapter.flatMap { vocabularyService.nextChapter(after: $0) }
@@ -33,6 +43,8 @@ final class PracticeViewModel: ObservableObject {
     private let vocabularyService: VocabularyServiceProtocol
     private let progressService: UserProgressServiceProtocol
     private let speech: SpeechSpeaking?
+    private let recognizer: SpeechRecognizing?
+    private let spokenChecker = SpokenAnswerChecker()
     private let sessionManager = PracticeSessionManager()
     private let wordTracker = WordProgressTracker()
     private let validator = PinyinValidator()
@@ -50,6 +62,7 @@ final class PracticeViewModel: ObservableObject {
         vocabularyService: VocabularyServiceProtocol = VocabularyService.shared,
         progressService: UserProgressServiceProtocol = UserProgressService.shared,
         speech: SpeechSpeaking? = TextToSpeechService.shared,
+        recognizer: SpeechRecognizing? = SpeechRecognizerFactory.makeDefault(),
         autoSubmitDelay: TimeInterval = AppConstants.Timing.autoSubmitDelay,
         advanceDelay: TimeInterval = AppConstants.Timing.correctAnswerAdvanceDelay
     ) {
@@ -57,6 +70,7 @@ final class PracticeViewModel: ObservableObject {
         self.vocabularyService = vocabularyService
         self.progressService = progressService
         self.speech = speech
+        self.recognizer = recognizer
         self.autoSubmitDelay = autoSubmitDelay
         self.advanceDelay = advanceDelay
         startRound()
@@ -88,13 +102,47 @@ final class PracticeViewModel: ObservableObject {
         autoSubmitWorkItem?.cancel()
 
         let result = validator.validateAnswer(input: userInput, word: word, requireTones: settings.requireTones)
-        sessionManager.recordAttempt(isCorrect: result == .correct)
-        feedbackState = result.feedbackState
+        apply(result, for: word)
+    }
 
-        if result == .correct {
-            handleCorrectAnswer(for: word)
-        } else {
-            recordIncorrect(for: word)
+    func submitSpokenAnswer(_ transcript: String) {
+        guard let word = currentWord, feedbackState == .none else { return }
+        autoSubmitWorkItem?.cancel()
+
+        let spoken = spokenChecker.evaluate(transcript: transcript, word: word)
+        spokenAnswer = spoken
+        apply(spoken.result, for: word)
+    }
+
+    @MainActor
+    func toggleListening() async {
+        guard let recognizer else { return }
+        if listeningState == .listening {
+            recognizer.stopListening()
+            return
+        }
+        guard listeningState == .idle, let word = currentWord, feedbackState == .none else { return }
+
+        speechMessage = nil
+        guard await recognizer.requestPermission() else {
+            speechMessage = SpeechRecognitionError.permissionDenied.errorDescription
+            return
+        }
+
+        do {
+            listeningState = .preparing("Getting ready…")
+            try await recognizer.prepare { [weak self] status in
+                Task { @MainActor in self?.listeningState = .preparing(status) }
+            }
+            speech?.stopSpeaking()
+            listeningState = .listening
+            let transcript = try await recognizer.listen()
+            listeningState = .idle
+            guard currentWord?.id == word.id else { return }
+            submitSpokenAnswer(transcript)
+        } catch {
+            listeningState = .idle
+            speechMessage = (error as? LocalizedError)?.errorDescription ?? SpeechRecognitionError.noSpeech.errorDescription
         }
     }
 
@@ -128,6 +176,7 @@ final class PracticeViewModel: ObservableObject {
     func saveSessionOnExit() {
         autoSubmitWorkItem?.cancel()
         autoAdvanceWorkItem?.cancel()
+        recognizer?.stopListening()
         sessionManager.endSession(progressService: progressService, hskLevels: sessionLevels)
     }
 
@@ -189,6 +238,9 @@ final class PracticeViewModel: ObservableObject {
     private func resetWordState() {
         autoSubmitWorkItem?.cancel()
         autoAdvanceWorkItem?.cancel()
+        recognizer?.stopListening()
+        spokenAnswer = nil
+        speechMessage = nil
         userInput = ""
         feedbackState = .none
         wasSkipped = false
@@ -233,6 +285,17 @@ final class PracticeViewModel: ObservableObject {
     }
 
     // MARK: - Answer outcomes
+    private func apply(_ result: AnswerValidationResult, for word: VocabularyItem) {
+        sessionManager.recordAttempt(isCorrect: result == .correct)
+        feedbackState = result.feedbackState
+
+        if result == .correct {
+            handleCorrectAnswer(for: word)
+        } else {
+            recordIncorrect(for: word)
+        }
+    }
+
     private func handleCorrectAnswer(for word: VocabularyItem) {
         progressService.recordAnswer(for: word, isCorrect: true)
         if settings.speakOnCorrectAnswer {

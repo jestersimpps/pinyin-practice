@@ -1,10 +1,18 @@
 import SwiftUI
 
 struct MobileInputZone: View {
+    enum MicState: Equatable {
+        case idle
+        case preparing
+        case listening
+    }
+
     @Binding var text: String
     var isFocused: FocusState<Bool>.Binding
     let feedbackState: FeedbackState
     let showHintButton: Bool
+    var micState: MicState? = nil
+    var onMicTap: () -> Void = {}
     let onCheck: () -> Void
     let onNext: () -> Void
     let onSkip: () -> Void
@@ -15,6 +23,9 @@ struct MobileInputZone: View {
             inputField
 
             if feedbackState == .none {
+                if let micState {
+                    micButton(micState)
+                }
                 if showHintButton {
                     hintButton
                 }
@@ -39,7 +50,7 @@ struct MobileInputZone: View {
 
     private var inputField: some View {
         HStack {
-            TextField("Type the pinyin", text: $text)
+            TextField(micState == .listening ? "Listening… say the word" : "Type the pinyin", text: $text)
                 .textFieldStyle(.plain)
                 .font(.system(size: 18, weight: .regular))
                 .foregroundColor(Color("PrimaryText"))
@@ -69,6 +80,27 @@ struct MobileInputZone: View {
                         .stroke(borderColor, lineWidth: 2)
                 )
         )
+    }
+
+    private func micButton(_ state: MicState) -> some View {
+        Button(action: onMicTap) {
+            ZStack {
+                Circle()
+                    .fill(state == .listening ? Color.red : Color("SecondaryBackground"))
+                if state == .preparing {
+                    ProgressView()
+                } else {
+                    Image(systemName: state == .listening ? "stop.fill" : "mic.fill")
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundColor(state == .listening ? .white : Color("MidnightGreen"))
+                }
+            }
+            .frame(width: 44, height: 44)
+            .scaleEffect(state == .listening ? 1.08 : 1)
+            .animation(state == .listening ? .easeInOut(duration: 0.6).repeatForever(autoreverses: true) : .default, value: state)
+        }
+        .disabled(state == .preparing)
+        .accessibilityLabel(state == .listening ? "Stop listening" : "Say the answer")
     }
 
     private var hintButton: some View {

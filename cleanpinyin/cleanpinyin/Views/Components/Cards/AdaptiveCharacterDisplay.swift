@@ -7,6 +7,8 @@ struct AdaptiveCharacterDisplay: View {
     let feedbackState: FeedbackState
     let showHint: Bool
     let isKeyboardVisible: Bool
+    var spokenAnswer: SpokenAnswer? = nil
+    var speechMessage: String? = nil
     let onSpeak: () -> Void
 
     @State private var expandedTranslation = false
@@ -21,6 +23,21 @@ struct AdaptiveCharacterDisplay: View {
     var body: some View {
         VStack(spacing: isKeyboardVisible ? 8 : 16) {
             characterSection
+
+            if let spokenAnswer {
+                InfoBanner(
+                    icon: "waveform",
+                    text: "Heard: \(spokenAnswer.heardText)  \(spokenAnswer.heardPinyin)",
+                    color: spokenAnswer.result == .correct ? Color("SuccessGreen") : (spokenAnswer.result == .partial ? .orange : .red),
+                    compact: isKeyboardVisible
+                )
+                .transition(.opacity)
+            }
+
+            if let speechMessage {
+                InfoBanner(icon: "mic.slash", text: speechMessage, color: Color("SecondaryText"), compact: isKeyboardVisible)
+                    .transition(.opacity)
+            }
 
             if isMiss {
                 InfoBanner(

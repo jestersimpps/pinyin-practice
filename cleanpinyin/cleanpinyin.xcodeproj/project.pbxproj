@@ -404,6 +404,8 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = EchoLingo;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "EchoLingo listens when you tap the microphone so you can answer by saying the word.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Your spoken answers are recognised on this device to check your pronunciation. Audio never leaves your iPhone.";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
@@ -436,6 +438,8 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = EchoLingo;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "EchoLingo listens when you tap the microphone so you can answer by saying the word.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Your spoken answers are recognised on this device to check your pronunciation. Audio never leaves your iPhone.";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
