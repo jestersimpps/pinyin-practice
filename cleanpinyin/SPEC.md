@@ -1,6 +1,6 @@
-# cleanpinyin — Product Spec
+# EchoLingo Chinese — Product Spec
 
-cleanpinyin teaches English speakers to read Chinese characters. The app shows a character and the learner types its pinyin. It covers the 4,993 words of HSK levels 1–6 and ships all vocabulary inside the app: no account, no network, no tracking.
+EchoLingo Chinese (project name: cleanpinyin) teaches English speakers to read Chinese characters. The app shows a character and the learner types its pinyin. It covers the 4,993 words of HSK levels 1–6 and ships all vocabulary inside the app: no account, no network, no tracking.
 
 Each rule has an ID (`ANS-3`, `CH-2`, …). Tests in `cleanpinyinTests` name the rule they verify.
 
