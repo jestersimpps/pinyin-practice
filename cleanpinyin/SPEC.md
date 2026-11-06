@@ -60,7 +60,7 @@ Words live in `Resources/Data/<level>.min.json`, one file per HSK level. Optiona
 ## 5. Chapters
 
 - **CH-1** HSK 1–2 words are grouped by their curriculum chapter (`cp`). A chapter appears only if it has words, and it uses its curriculum title (`你好 Hello`).
-- **CH-2** HSK 3–6 words have no curriculum chapter yet. They are split by frequency into near-equal sets of at most 40 words, titled `Set N` with the word range (`Words 1–38`). They don't borrow topical titles they don't match.
+- **CH-2** HSK 3–6 words have no curriculum chapter yet. They are split by frequency into near-equal sets of at most 40 words. Each set is titled and iconed after a featured word it actually contains ("Set 1: 世界 World", globe), so the list reads like chapters without claiming a topic the words don't share. Titles and icons live in `Resources/set-themes.json` (editable); icons are unique within a level. If a theme no longer matches its set, the set falls back to its word range as title.
 - **CH-3** Within a level, the first chapter is always unlocked. Each later chapter unlocks once the chapter before it, in that level's list, is at least 80% complete. Empty curriculum slots are skipped and never block anything.
 - **CH-4** A chapter's completion is the share of its words answered correctly at least once during chapter or custom practice.
 - **CH-5** Completing a chapter shows a celebration with **Continue to Next Chapter** (the next chapter in the level, or the first chapter of the next level), **Review This Chapter** and **Back to Chapters**. **Continue** is only offered when a next chapter exists.

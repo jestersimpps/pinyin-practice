@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 import Testing
 @testable import cleanpinyin
 
@@ -78,8 +79,27 @@ struct ChapterTests {
     func frequencySets(level: Int) {
         let chapters = vocabulary.chaptersForLevel(level)
         #expect(chapters.allSatisfy { $0.kind == .frequencySet && $0.wordCount <= ChapterOrganizer.wordsPerSet })
-        #expect(chapters.first?.displayTitle == "Set 1")
+        #expect(chapters.first?.displayTitle.hasPrefix("Set 1: ") == true)
         #expect(chapters.reduce(0) { $0 + $1.wordCount } == vocabulary.vocabularyForLevel(level).count)
+    }
+
+    @Test("CH-2 every HSK 3–6 set has its own title and icon, named after a word it contains", arguments: [3, 4, 5, 6])
+    func setThemes(level: Int) {
+        let chapters = vocabulary.chaptersForLevel(level)
+        for chapter in chapters {
+            let words = vocabulary.vocabularyByChapter[chapter.id] ?? []
+            let featured = String(chapter.title.prefix { !$0.isWhitespace })
+            #expect(words.contains { $0.simplified == featured }, "\(chapter.id) title \(chapter.title)")
+            #expect(chapter.icon != ChapterOrganizer.fallbackSetIcon, "\(chapter.id) has no themed icon")
+        }
+        #expect(Set(chapters.map(\.icon)).count == chapters.count, "icons repeat within HSK \(level)")
+        #expect(Set(chapters.map(\.title)).count == chapters.count)
+    }
+
+    @Test("Every chapter icon is a real SF Symbol on this iOS version")
+    func iconsExist() {
+        let missing = Set(vocabulary.chapters.map(\.icon)).filter { UIImage(systemName: $0) == nil }
+        #expect(missing.isEmpty, "missing symbols: \(missing.sorted())")
     }
 
     @Test("CH-3 the first chapter of each level is unlocked, the second is locked")

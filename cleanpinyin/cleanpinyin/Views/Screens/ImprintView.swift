@@ -457,14 +457,26 @@ private struct ImprintChapterCard: View {
     let isSelected: Bool
     let action: () -> Void
 
+    private var cardHeadline: String {
+        switch chapter.kind {
+        case .curriculum: return "Chapter \(chapter.chapterNumber)"
+        case .frequencySet: return "Set \(chapter.chapterNumber)"
+        case .custom: return chapter.title
+        }
+    }
+
+    private var cardSubtitle: String {
+        chapter.kind == .custom ? chapter.wordCount.counted("word") : chapter.title
+    }
+
     var body: some View {
         Button(action: action) {
             VStack(spacing: 6) {
-                Text(chapter.kind == .curriculum ? "Chapter \(chapter.chapterNumber)" : chapter.title)
+                Text(cardHeadline)
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(isSelected ? .white : Color("PrimaryText"))
 
-                Text(chapter.kind == .curriculum ? chapter.title : chapter.wordCount.counted("word"))
+                Text(cardSubtitle)
                     .font(.system(size: 12))
                     .foregroundColor(isSelected ? .white.opacity(0.85) : Color("SecondaryText"))
                     .lineLimit(2)

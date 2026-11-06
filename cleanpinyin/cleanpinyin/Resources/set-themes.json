@@ -1,0 +1,605 @@
+{
+ "3": [
+  {
+   "word": "世界",
+   "title": "世界 World",
+   "icon": "globe"
+  },
+  {
+   "word": "国家",
+   "title": "国家 Country",
+   "icon": "building.columns"
+  },
+  {
+   "word": "城市",
+   "title": "城市 City",
+   "icon": "building.2"
+  },
+  {
+   "word": "历史",
+   "title": "历史 History",
+   "icon": "scroll"
+  },
+  {
+   "word": "动物",
+   "title": "动物 Animal",
+   "icon": "pawprint"
+  },
+  {
+   "word": "太阳",
+   "title": "太阳 Sun",
+   "icon": "sun.max"
+  },
+  {
+   "word": "地铁",
+   "title": "地铁 Subway",
+   "icon": "tram"
+  },
+  {
+   "word": "空调",
+   "title": "空调 Air Conditioning",
+   "icon": "wind"
+  }
+ ],
+ "4": [
+  {
+   "word": "感觉",
+   "title": "感觉 Feeling",
+   "icon": "heart.text.square"
+  },
+  {
+   "word": "组织",
+   "title": "组织 Organisation",
+   "icon": "list.bullet.clipboard"
+  },
+  {
+   "word": "技术",
+   "title": "技术 Technology",
+   "icon": "flask"
+  },
+  {
+   "word": "母亲",
+   "title": "母亲 Mother",
+   "icon": "figure.2.and.child.holdinghands"
+  },
+  {
+   "word": "爱情",
+   "title": "爱情 Love",
+   "icon": "heart.fill"
+  },
+  {
+   "word": "经济",
+   "title": "经济 Economy",
+   "icon": "chart.line.uptrend.xyaxis"
+  },
+  {
+   "word": "儿童",
+   "title": "儿童 Child",
+   "icon": "figure.child"
+  },
+  {
+   "word": "语言",
+   "title": "语言 Language",
+   "icon": "bubble.left.and.bubble.right"
+  },
+  {
+   "word": "博士",
+   "title": "博士 Doctor",
+   "icon": "cross.case"
+  },
+  {
+   "word": "小说",
+   "title": "小说 Novel",
+   "icon": "book"
+  },
+  {
+   "word": "森林",
+   "title": "森林 Forest",
+   "icon": "tree"
+  },
+  {
+   "word": "植物",
+   "title": "植物 Plant",
+   "icon": "leaf"
+  },
+  {
+   "word": "加班",
+   "title": "加班 Overtime",
+   "icon": "hammer"
+  },
+  {
+   "word": "研究生",
+   "title": "研究生 Graduate Student",
+   "icon": "graduationcap"
+  },
+  {
+   "word": "导游",
+   "title": "导游 Tour Guide",
+   "icon": "suitcase"
+  }
+ ],
+ "5": [
+  {
+   "word": "政府",
+   "title": "政府 Government",
+   "icon": "building.columns"
+  },
+  {
+   "word": "力量",
+   "title": "力量 Strength",
+   "icon": "bolt"
+  },
+  {
+   "word": "兄弟",
+   "title": "兄弟 Brothers",
+   "icon": "person.2.circle"
+  },
+  {
+   "word": "战争",
+   "title": "战争 War",
+   "icon": "shield.lefthalf.filled"
+  },
+  {
+   "word": "明星",
+   "title": "明星 Star",
+   "icon": "star"
+  },
+  {
+   "word": "风险",
+   "title": "风险 Risk",
+   "icon": "exclamationmark.octagon"
+  },
+  {
+   "word": "实验",
+   "title": "实验 Experiment",
+   "icon": "flask"
+  },
+  {
+   "word": "现金",
+   "title": "现金 Cash",
+   "icon": "banknote"
+  },
+  {
+   "word": "企业",
+   "title": "企业 Company",
+   "icon": "briefcase"
+  },
+  {
+   "word": "费用",
+   "title": "费用 Costs",
+   "icon": "creditcard"
+  },
+  {
+   "word": "婚礼",
+   "title": "婚礼 Wedding",
+   "icon": "heart.circle"
+  },
+  {
+   "word": "脑袋",
+   "title": "脑袋 Head",
+   "icon": "person.crop.circle"
+  },
+  {
+   "word": "课程",
+   "title": "课程 Course",
+   "icon": "book.closed"
+  },
+  {
+   "word": "年纪",
+   "title": "年纪 Age",
+   "icon": "hourglass"
+  },
+  {
+   "word": "宗教",
+   "title": "宗教 Religion",
+   "icon": "sparkles"
+  },
+  {
+   "word": "荣誉",
+   "title": "荣誉 Honour",
+   "icon": "hand.thumbsup"
+  },
+  {
+   "word": "账户",
+   "title": "账户 Bank Account",
+   "icon": "chart.line.uptrend.xyaxis"
+  },
+  {
+   "word": "文学",
+   "title": "文学 Literature",
+   "icon": "book"
+  },
+  {
+   "word": "宠物",
+   "title": "宠物 Pets",
+   "icon": "pawprint"
+  },
+  {
+   "word": "统治",
+   "title": "统治 Rule",
+   "icon": "scalemass"
+  },
+  {
+   "word": "提问",
+   "title": "提问 Questions",
+   "icon": "questionmark.bubble"
+  },
+  {
+   "word": "重量",
+   "title": "重量 Weight",
+   "icon": "scalemass.fill"
+  },
+  {
+   "word": "形状",
+   "title": "形状 Shape",
+   "icon": "cube"
+  },
+  {
+   "word": "辣椒",
+   "title": "辣椒 Chilli",
+   "icon": "flame"
+  },
+  {
+   "word": "项链",
+   "title": "项链 Necklace",
+   "icon": "star.circle"
+  },
+  {
+   "word": "老百姓",
+   "title": "老百姓 Ordinary People",
+   "icon": "person.3"
+  },
+  {
+   "word": "雇佣",
+   "title": "雇佣 Employment",
+   "icon": "hammer"
+  },
+  {
+   "word": "零食",
+   "title": "零食 Snacks",
+   "icon": "fork.knife"
+  },
+  {
+   "word": "信封",
+   "title": "信封 Envelope",
+   "icon": "envelope"
+  },
+  {
+   "word": "姥姥",
+   "title": "姥姥 Grandma",
+   "icon": "figure.2.and.child.holdinghands"
+  },
+  {
+   "word": "矿泉水",
+   "title": "矿泉水 Mineral Water",
+   "icon": "drop"
+  },
+  {
+   "word": "风俗",
+   "title": "风俗 Customs",
+   "icon": "building.columns.circle"
+  },
+  {
+   "word": "成语",
+   "title": "成语 Idioms",
+   "icon": "bubble.left.and.bubble.right"
+  }
+ ],
+ "6": [
+  {
+   "word": "媒体",
+   "title": "媒体 Media",
+   "icon": "newspaper"
+  },
+  {
+   "word": "疾病",
+   "title": "疾病 Disease",
+   "icon": "cross.case"
+  },
+  {
+   "word": "时光",
+   "title": "时光 Time",
+   "icon": "clock"
+  },
+  {
+   "word": "动力",
+   "title": "动力 Driving Force",
+   "icon": "bolt"
+  },
+  {
+   "word": "需求",
+   "title": "需求 Demand",
+   "icon": "list.bullet"
+  },
+  {
+   "word": "治安",
+   "title": "治安 Public Order",
+   "icon": "scalemass"
+  },
+  {
+   "word": "官方",
+   "title": "官方 Government",
+   "icon": "building.columns"
+  },
+  {
+   "word": "娃娃",
+   "title": "娃娃 Baby",
+   "icon": "figure.child"
+  },
+  {
+   "word": "乐趣",
+   "title": "乐趣 Joy",
+   "icon": "face.smiling"
+  },
+  {
+   "word": "体系",
+   "title": "体系 System",
+   "icon": "gearshape.2"
+  },
+  {
+   "word": "级别",
+   "title": "级别 Rank",
+   "icon": "chart.bar"
+  },
+  {
+   "word": "互联网",
+   "title": "互联网 Internet",
+   "icon": "network"
+  },
+  {
+   "word": "家属",
+   "title": "家属 Family Member",
+   "icon": "house"
+  },
+  {
+   "word": "等级",
+   "title": "等级 Grade",
+   "icon": "graduationcap"
+  },
+  {
+   "word": "酒精",
+   "title": "酒精 Alcohol",
+   "icon": "wineglass"
+  },
+  {
+   "word": "外界",
+   "title": "外界 Outside World",
+   "icon": "globe"
+  },
+  {
+   "word": "指令",
+   "title": "指令 Orders",
+   "icon": "list.bullet.clipboard"
+  },
+  {
+   "word": "记载",
+   "title": "记载 Records",
+   "icon": "pencil"
+  },
+  {
+   "word": "是非",
+   "title": "是非 Right and Wrong",
+   "icon": "xmark.circle"
+  },
+  {
+   "word": "数目",
+   "title": "数目 Amount",
+   "icon": "number"
+  },
+  {
+   "word": "智能",
+   "title": "智能 Intelligent",
+   "icon": "brain.head.profile"
+  },
+  {
+   "word": "往事",
+   "title": "往事 Memories",
+   "icon": "scroll"
+  },
+  {
+   "word": "战役",
+   "title": "战役 Military Campaign",
+   "icon": "shield.lefthalf.filled"
+  },
+  {
+   "word": "薪水",
+   "title": "薪水 Salary",
+   "icon": "banknote"
+  },
+  {
+   "word": "奔驰",
+   "title": "奔驰 Speed",
+   "icon": "hare"
+  },
+  {
+   "word": "公关",
+   "title": "公关 Public Relations",
+   "icon": "person.3"
+  },
+  {
+   "word": "把手",
+   "title": "把手 Handshake",
+   "icon": "hands.clap"
+  },
+  {
+   "word": "赠送",
+   "title": "赠送 Gifts",
+   "icon": "gift"
+  },
+  {
+   "word": "公务",
+   "title": "公务 Official Business",
+   "icon": "briefcase"
+  },
+  {
+   "word": "贩卖",
+   "title": "贩卖 Selling",
+   "icon": "cart"
+  },
+  {
+   "word": "航天",
+   "title": "航天 Space Flight",
+   "icon": "airplane"
+  },
+  {
+   "word": "阵地",
+   "title": "阵地 Front Line",
+   "icon": "flag"
+  },
+  {
+   "word": "内幕",
+   "title": "内幕 Inside Story",
+   "icon": "book"
+  },
+  {
+   "word": "心血",
+   "title": "心血 Heart and Soul",
+   "icon": "heart"
+  },
+  {
+   "word": "习俗",
+   "title": "习俗 Traditions",
+   "icon": "building.columns.circle"
+  },
+  {
+   "word": "床单",
+   "title": "床单 Bed Sheet",
+   "icon": "bed.double"
+  },
+  {
+   "word": "祖父",
+   "title": "祖父 Grandfather",
+   "icon": "figure.2.and.child.holdinghands"
+  },
+  {
+   "word": "表彰",
+   "title": "表彰 Honours",
+   "icon": "hand.thumbsup"
+  },
+  {
+   "word": "隐患",
+   "title": "隐患 Hidden Danger",
+   "icon": "exclamationmark.octagon"
+  },
+  {
+   "word": "冷淡",
+   "title": "冷淡 Indifference",
+   "icon": "snowflake"
+  },
+  {
+   "word": "文凭",
+   "title": "文凭 Diploma",
+   "icon": "doc.text"
+  },
+  {
+   "word": "可口",
+   "title": "可口 Tasty",
+   "icon": "mouth"
+  },
+  {
+   "word": "海拔",
+   "title": "海拔 Altitude",
+   "icon": "water.waves"
+  },
+  {
+   "word": "文艺",
+   "title": "文艺 Literature and Art",
+   "icon": "paintbrush"
+  },
+  {
+   "word": "嫂子",
+   "title": "嫂子 Sister-in-law",
+   "icon": "person.2.circle"
+  },
+  {
+   "word": "教养",
+   "title": "教养 Upbringing",
+   "icon": "studentdesk"
+  },
+  {
+   "word": "更正",
+   "title": "更正 Corrections",
+   "icon": "checkmark.circle"
+  },
+  {
+   "word": "素食",
+   "title": "素食 Vegetarian Food",
+   "icon": "fork.knife"
+  },
+  {
+   "word": "开水",
+   "title": "开水 Boiled Water",
+   "icon": "drop"
+  },
+  {
+   "word": "齐心协力",
+   "title": "齐心协力 Teamwork",
+   "icon": "hammer"
+  },
+  {
+   "word": "山脉",
+   "title": "山脉 Mountain Range",
+   "icon": "mountain.2"
+  },
+  {
+   "word": "请示",
+   "title": "请示 Instructions",
+   "icon": "questionmark.bubble"
+  },
+  {
+   "word": "神色",
+   "title": "神色 Expressions",
+   "icon": "bubble.left.and.bubble.right"
+  },
+  {
+   "word": "耕地",
+   "title": "耕地 Farmland",
+   "icon": "leaf.arrow.triangle.circlepath"
+  },
+  {
+   "word": "答辩",
+   "title": "答辩 Defence",
+   "icon": "text.bubble"
+  },
+  {
+   "word": "飙升",
+   "title": "飙升 Soaring",
+   "icon": "arrow.up.circle"
+  },
+  {
+   "word": "衣裳",
+   "title": "衣裳 Clothes",
+   "icon": "tshirt"
+  },
+  {
+   "word": "根深蒂固",
+   "title": "根深蒂固 Deep-rooted",
+   "icon": "arrow.down.circle"
+  },
+  {
+   "word": "寓言",
+   "title": "寓言 Fables",
+   "icon": "book.pages"
+  },
+  {
+   "word": "淡季",
+   "title": "淡季 Off Season",
+   "icon": "calendar.badge.minus"
+  },
+  {
+   "word": "诞辰",
+   "title": "诞辰 Birthday",
+   "icon": "birthday.cake"
+  },
+  {
+   "word": "终年",
+   "title": "终年 All Year",
+   "icon": "calendar"
+  },
+  {
+   "word": "端午节",
+   "title": "端午节 Dragon Boat Festival",
+   "icon": "ferry"
+  }
+ ]
+}

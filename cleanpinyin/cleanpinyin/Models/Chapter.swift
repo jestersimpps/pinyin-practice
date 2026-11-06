@@ -19,6 +19,10 @@ struct Chapter: Identifiable, Equatable {
     let icon: String
 
     var displayTitle: String {
-        kind == .curriculum ? "Chapter \(chapterNumber): \(title)" : title
+        switch kind {
+        case .curriculum: return "Chapter \(chapterNumber): \(title)"
+        case .frequencySet: return "Set \(chapterNumber): \(title)"
+        case .custom: return title
+        }
     }
 }

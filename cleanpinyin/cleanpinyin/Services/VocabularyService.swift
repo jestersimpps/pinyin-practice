@@ -10,7 +10,7 @@ final class VocabularyService: ObservableObject, VocabularyServiceProtocol {
 
     private let fileLoader = VocabularyFileLoader()
     private let customLoader = CustomVocabularyLoader()
-    private let chapterOrganizer = ChapterOrganizer()
+    private let chapterOrganizer = ChapterOrganizer(setThemes: ChapterOrganizer.loadSetThemes())
 
     private init() {
         loadVocabulary()
