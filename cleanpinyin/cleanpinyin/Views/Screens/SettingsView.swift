@@ -4,6 +4,8 @@ import AVFoundation
 struct SettingsView: View {
     @Environment(\.dismiss) var dismiss
     @AppStorage("preferredColorScheme") private var preferredColorScheme: String = "system"
+    @AppStorage(SpeechLanguage.chinese.preferenceKey) private var chineseVoiceId = ""
+    @AppStorage(SpeechLanguage.english.preferenceKey) private var englishVoiceId = ""
     @ObservedObject private var progressService = UserProgressService.shared
     @State private var showingResetAlert = false
     
@@ -316,50 +318,62 @@ struct SettingsView: View {
             SectionHeader(title: "Voice", icon: "waveform")
 
             VStack(spacing: 0) {
-                voiceRow(title: "Chinese", language: TextToSpeechService.chineseLanguage, sample: "你好，欢迎学习中文")
+                voiceRow(.chinese, selection: $chineseVoiceId)
                 Divider()
                     .background(Color.gray.opacity(0.3))
                     .padding(.horizontal, 16)
-                voiceRow(title: "English", language: TextToSpeechService.englishLanguage, sample: "Hello, welcome to EchoLingo")
+                voiceRow(.english, selection: $englishVoiceId)
             }
             .background(
                 RoundedRectangle(cornerRadius: 12)
                     .fill(Color("SecondaryBackground"))
             )
 
-            Text("EchoLingo uses the best voice on your iPhone. For a more natural sound, download an Enhanced or Premium voice in Settings › Accessibility › Spoken Content › Voices.")
+            Text("Automatic picks the best voice on your iPhone. For a more natural sound, download an Enhanced or Premium voice in Settings › Accessibility › Spoken Content › Voices, then choose it here.")
                 .font(.system(size: 13))
                 .foregroundColor(Color("SecondaryText"))
         }
     }
 
-    private func voiceRow(title: String, language: String, sample: String) -> some View {
-        let voice = TextToSpeechService.shared.voice(forLanguage: language)
+    private func voiceRow(_ language: SpeechLanguage, selection: Binding<String>) -> some View {
+        let speech = TextToSpeechService.shared
+        let automatic = speech.bestVoice(for: language).map { "Automatic · \($0.name)" } ?? "Automatic"
         return HStack {
             VStack(alignment: .leading, spacing: 4) {
-                Text(title)
+                Text(language.name)
                     .font(.system(size: 16))
                     .foregroundColor(Color("PrimaryText"))
-                Text(voice.map { "\($0.name) · \(Self.qualityName($0.quality))" } ?? "Not installed")
-                    .font(.system(size: 13))
-                    .foregroundColor(Color("SecondaryText"))
+                Picker("\(language.name) voice", selection: selection) {
+                    Text(automatic).tag("")
+                    ForEach(speech.installedVoices(for: language), id: \.identifier) { voice in
+                        Text(Self.voiceLabel(voice)).tag(voice.identifier)
+                    }
+                }
+                .pickerStyle(.menu)
+                .labelsHidden()
+                .tint(Color("MidnightGreen"))
+                .accessibilityIdentifier("settings.voice.\(language.rawValue)")
+                .onChange(of: selection.wrappedValue) { _, _ in
+                    speech.speak(language.sample, in: language)
+                }
             }
             Spacer()
             Button {
-                if language == TextToSpeechService.chineseLanguage {
-                    TextToSpeechService.shared.speak(chinese: sample)
-                } else {
-                    TextToSpeechService.shared.speak(english: sample)
-                }
+                speech.speak(language.sample, in: language)
             } label: {
                 Image(systemName: "play.circle.fill")
                     .font(.system(size: 28))
                     .foregroundColor(Color("VibrantOrange"))
             }
-            .accessibilityLabel("Play \(title) voice sample")
+            .accessibilityLabel("Play \(language.name) voice sample")
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
+    }
+
+    private static func voiceLabel(_ voice: AVSpeechSynthesisVoice) -> String {
+        let region = voice.language.split(separator: "-").last.flatMap { Locale.current.localizedString(forRegionCode: String($0)) }
+        return [voice.name, qualityName(voice.quality), region].compactMap { $0 }.joined(separator: " · ")
     }
 
     private static func qualityName(_ quality: AVSpeechSynthesisVoiceQuality) -> String {

@@ -97,7 +97,7 @@ The bank is built by `scripts/import_hsk_wordlist.py` from drkameleon/complete-h
 - **SET-2** Quick Practice levels: pick one or more of HSK 1–6. At least one stays selected.
 - **SET-3** Word order: Sequential / Random.
 - **SET-4** Toggles: Require Tones, Show English, Pronunciation Hints, Character Hints, Traditional Characters, Full Meanings, Speak on Correct Answer, Speak English Meaning.
-- **SET-8** Voice: the app speaks with the best installed voice per language (Premium, then Enhanced, then the system default) and shows which one, with a sample button and a note on downloading better voices in iOS Settings.
+- **SET-8** Voice: Chinese and English each have a voice picker listing the voices installed on the device (Mandarin from mainland China and Taiwan; any English), best quality first. **Automatic** (the default) uses the best installed voice in the main dialect (mainland Mandarin, US English). Picking a voice plays a sample, the choice is saved on the device, and if that voice is later removed the app falls back to Automatic. A note explains how to download Enhanced or Premium voices in iOS Settings.
 - **SET-5** Settings are saved immediately. Unknown or missing keys fall back to defaults, so updates never wipe settings.
 - **SET-6** An About section shows the app version.
 - **SET-7** Word list: HSK 3.0 or HSK 2.0, chosen in Settings or from the switcher on the home screen. New learners start on HSK 3.0; settings saved before the word list existed keep HSK 2.0, the list they were studying.

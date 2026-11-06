@@ -16,49 +16,67 @@ extension SpeechSpeaking {
 
 final class TextToSpeechService: NSObject, ObservableObject, SpeechSpeaking {
     static let shared = TextToSpeechService()
-    static let chineseLanguage = "zh-CN"
-    static let englishLanguage = "en-US"
 
     @Published private(set) var isSpeaking = false
 
     private let synthesizer = AVSpeechSynthesizer()
+    private let defaults: UserDefaults
     private var completions: [ObjectIdentifier: () -> Void] = [:]
-    private var voices: [String: AVSpeechSynthesisVoice] = [:]
+    private var bestVoices: [SpeechLanguage: AVSpeechSynthesisVoice] = [:]
 
-    private override init() {
+    init(defaults: UserDefaults = .standard) {
+        self.defaults = defaults
         super.init()
         synthesizer.delegate = self
         NotificationCenter.default.addObserver(
             forName: AVSpeechSynthesizer.availableVoicesDidChangeNotification, object: nil, queue: .main
         ) { [weak self] _ in
-            self?.voices.removeAll()
+            self?.bestVoices.removeAll()
         }
     }
 
     func speak(chinese: String, completion: (() -> Void)? = nil) {
-        speak(text: chinese, language: Self.chineseLanguage, completion: completion)
+        speak(chinese, in: .chinese, completion: completion)
     }
 
     func speak(english: String, completion: (() -> Void)? = nil) {
-        speak(text: english, language: Self.englishLanguage, completion: completion)
+        speak(english, in: .english, completion: completion)
     }
 
     func speakAfterCurrent(english: String) {
-        enqueue(text: english, language: Self.englishLanguage, completion: nil)
+        enqueue(english, in: .english, completion: nil)
     }
 
-    // The best voice installed for a language: Premium, then Enhanced, then the system default
-    func voice(forLanguage language: String) -> AVSpeechSynthesisVoice? {
-        if let cached = voices[language] { return cached }
-        let fallback = AVSpeechSynthesisVoice(language: language)
-        let rank = { (voice: AVSpeechSynthesisVoice) in
-            (voice.quality.rawValue, voice.identifier == fallback?.identifier ? 1 : 0)
+    func speak(_ text: String, in language: SpeechLanguage, completion: (() -> Void)? = nil) {
+        stopSpeaking()
+        enqueue(text, in: language, completion: completion)
+    }
+
+    // Best first: Premium, then Enhanced, then Standard, alphabetically within each
+    func installedVoices(for language: SpeechLanguage) -> [AVSpeechSynthesisVoice] {
+        AVSpeechSynthesisVoice.speechVoices()
+            .filter { language.includes(voiceLanguage: $0.language) && $0.voiceTraits.isDisjoint(with: [.isNoveltyVoice, .isPersonalVoice]) }
+            .sorted { ($0.quality.rawValue, $1.name) > ($1.quality.rawValue, $0.name) }
+    }
+
+    // The voice the learner picked, or the best one installed when they haven't picked or it was removed
+    func voice(for language: SpeechLanguage) -> AVSpeechSynthesisVoice? {
+        if let identifier = defaults.string(forKey: language.preferenceKey), !identifier.isEmpty,
+           let chosen = AVSpeechSynthesisVoice(identifier: identifier) {
+            return chosen
         }
-        let best = AVSpeechSynthesisVoice.speechVoices()
-            .filter { $0.language == language && $0.voiceTraits.isDisjoint(with: [.isNoveltyVoice, .isPersonalVoice]) }
-            .max { rank($0) < rank($1) }
-            ?? fallback
-        voices[language] = best
+        return bestVoice(for: language)
+    }
+
+    // Prefers the main dialect (mainland Mandarin, US English), then quality, then the system default
+    func bestVoice(for language: SpeechLanguage) -> AVSpeechSynthesisVoice? {
+        if let cached = bestVoices[language] { return cached }
+        let fallback = AVSpeechSynthesisVoice(language: language.mainCode)
+        let rank = { (voice: AVSpeechSynthesisVoice) in
+            (voice.language == language.mainCode ? 1 : 0, voice.quality.rawValue, voice.identifier == fallback?.identifier ? 1 : 0)
+        }
+        let best = installedVoices(for: language).max { rank($0) < rank($1) } ?? fallback
+        bestVoices[language] = best
         return best
     }
 
@@ -67,16 +85,11 @@ final class TextToSpeechService: NSObject, ObservableObject, SpeechSpeaking {
         synthesizer.stopSpeaking(at: .immediate)
     }
 
-    private func speak(text: String, language: String, completion: (() -> Void)?) {
-        stopSpeaking()
-        enqueue(text: text, language: language, completion: completion)
-    }
-
-    private func enqueue(text: String, language: String, completion: (() -> Void)?) {
+    private func enqueue(_ text: String, in language: SpeechLanguage, completion: (() -> Void)?) {
         AudioSessionCoordinator.shared.activateForSpeech()
 
         let utterance = AVSpeechUtterance(string: text)
-        utterance.voice = voice(forLanguage: language)
+        utterance.voice = voice(for: language)
         utterance.rate = 0.45
         if let completion {
             completions[ObjectIdentifier(utterance)] = completion
