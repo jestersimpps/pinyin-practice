@@ -44,3 +44,20 @@ struct VoiceSelectionTests {
         #expect(speech.voice(for: language) == speech.bestVoice(for: language))
     }
 }
+
+@Suite("Speech engine (SPEC §10)")
+struct SpeechEngineTests {
+    @Test("SAY-10 Apple is the default engine and the choice is remembered on the device")
+    func engineChoice() {
+        let suite = "cleanpinyin.tests.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defaults.removePersistentDomain(forName: suite)
+        #expect(SpeechEngine.current(in: defaults) == .apple)
+
+        defaults.set(SpeechEngine.whisper.rawValue, forKey: SpeechEngine.preferenceKey)
+        #expect(SpeechEngine.current(in: defaults) == .whisper)
+
+        defaults.set("unknown", forKey: SpeechEngine.preferenceKey)
+        #expect(SpeechEngine.current(in: defaults) == .apple)
+    }
+}

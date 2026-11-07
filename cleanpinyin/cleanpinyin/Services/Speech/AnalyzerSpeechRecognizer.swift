@@ -98,4 +98,8 @@ final class AnalyzerSpeechRecognizer: SpeechRecognizing {
     func stopListening() {
         usesFallback ? fallback.stopListening() : capture.finish()
     }
+
+    var lastTake: RecordedTake? {
+        usesFallback ? fallback.lastTake : capture.lastTake
+    }
 }

@@ -9,6 +9,7 @@ struct PracticeFlowTests {
     private let progress: UserProgressService
     private let speech = SpeechSpy()
     private let cue = CueSpy()
+    private let clips = ClipSpy()
 
     init() {
         let suite = "cleanpinyin.tests.\(UUID().uuidString)"
@@ -25,6 +26,7 @@ struct PracticeFlowTests {
             speech: speech,
             recognizer: recognizer,
             listeningCue: cue,
+            voiceClips: clips,
             autoSubmitDelay: 0.05,
             advanceDelay: 0.05,
             listenPollInterval: .milliseconds(10)
@@ -364,6 +366,22 @@ struct PracticeFlowTests {
         #expect(progress.progress.totalAttempts == 0)
     }
 
+    @Test("SAY-11 a word said correctly keeps the learner's recording; a miss doesn't")
+    func ownRecordingIsKept() async throws {
+        let first = try #require(makeSession(.levels([1])).currentWord)
+        let second = vocabulary.vocabularyForLevel(1).first { $0.id != first.id && !progress.progress.learnedWords.contains($0.id) }!
+        let recognizer = FakeRecognizer(transcripts: [first.simplified, "谢谢谢谢谢谢"])
+        recognizer.lastTake = RecordedTake(url: URL(fileURLWithPath: "/tmp/take.caf"), sampleRate: 16_000, voicedFrames: 0...1)
+        let session = makeSession(.levels([1]), recognizer: recognizer)
+
+        await session.startHandsFree()
+        try await waitUntil { session.currentWord?.id != first.id }
+        try await waitUntil { progress.progress.incorrectWords.contains(second.id) || session.wordsCompleted >= 2 }
+        session.stopHandsFree()
+
+        #expect(clips.savedWords == [first.simplified])
+    }
+
     @Test("SAY-5 the microphone switch turns voice on and off and remembers it")
     func handsFreeToggle() async throws {
         let session = makeSession(.levels([1]), recognizer: FakeRecognizer(transcripts: [], silenceDelay: .seconds(5)))
@@ -428,6 +446,7 @@ final class FakeRecognizer: SpeechRecognizing {
     func stopListening() {}
 
     private(set) var acceptedEarly: [String] = []
+    var lastTake: RecordedTake?
 
     func listen(isAcceptable: @escaping (String) -> Bool) async throws -> String {
         guard !transcripts.isEmpty else {
@@ -469,4 +488,12 @@ final class SpeechSpy: SpeechSpeaking {
 final class CueSpy: ListeningCueing {
     private(set) var plays = 0
     func playReadyCue() async { plays += 1 }
+}
+
+final class ClipSpy: VoiceClipStoring {
+    private(set) var savedWords: [String] = []
+    func save(_ take: RecordedTake, for word: VocabularyItem) { savedWords.append(word.simplified) }
+    func clip(for text: String) -> URL? { nil }
+    var count: Int { savedWords.count }
+    func deleteAll() { savedWords.removeAll() }
 }

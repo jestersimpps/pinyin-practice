@@ -27,10 +27,15 @@ protocol SpeechRecognizing: AnyObject {
     // still speaking; returning true ends the take at once with that transcript.
     func listen(isAcceptable: @escaping (String) -> Bool) async throws -> String
     func stopListening()
+    // The audio of the last take that contained speech, for saving the learner's own pronunciation
+    var lastTake: RecordedTake? { get }
 }
 
 enum SpeechRecognizerFactory {
     static func makeDefault() -> SpeechRecognizing? {
+        if SpeechEngine.current() == .whisper {
+            return WhisperSpeechRecognizer()
+        }
         let recognizer: SpeechRecognizing
         if #available(iOS 26.0, *) {
             recognizer = AnalyzerSpeechRecognizer()

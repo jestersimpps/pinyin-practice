@@ -47,6 +47,7 @@ final class PracticeViewModel: ObservableObject {
     private let speech: SpeechSpeaking?
     private let recognizer: SpeechRecognizing?
     private let listeningCue: ListeningCueing?
+    private let voiceClips: VoiceClipStoring?
     private var cuedWordId: String?
     private let spokenChecker = SpokenAnswerChecker()
     private let listenPollInterval: Duration
@@ -75,6 +76,7 @@ final class PracticeViewModel: ObservableObject {
         speech: SpeechSpeaking? = TextToSpeechService.shared,
         recognizer: SpeechRecognizing? = SpeechRecognizerFactory.makeDefault(),
         listeningCue: ListeningCueing? = ListeningCue.shared,
+        voiceClips: VoiceClipStoring? = VoiceClipStore.shared,
         autoSubmitDelay: TimeInterval = AppConstants.Timing.autoSubmitDelay,
         advanceDelay: TimeInterval = AppConstants.Timing.correctAnswerAdvanceDelay,
         listenPollInterval: Duration = .milliseconds(100)
@@ -85,6 +87,7 @@ final class PracticeViewModel: ObservableObject {
         self.speech = speech
         self.recognizer = recognizer
         self.listeningCue = listeningCue
+        self.voiceClips = voiceClips
         self.autoSubmitDelay = autoSubmitDelay
         self.advanceDelay = advanceDelay
         self.listenPollInterval = listenPollInterval
@@ -128,11 +131,20 @@ final class PracticeViewModel: ObservableObject {
 
         let spoken = spokenChecker.evaluate(transcript: transcript, word: word)
         spokenAnswer = spoken
+        if spoken.result == .correct {
+            keepOwnRecording(of: word)
+        }
         apply(spoken.result, for: word)
 
         if spoken.result != .correct {
             revealAnswerAndMoveOn(for: word)
         }
+    }
+
+    // Saved before the answer is read back, so the learner hears themselves right away
+    private func keepOwnRecording(of word: VocabularyItem) {
+        guard let take = recognizer?.lastTake else { return }
+        voiceClips?.save(take, for: word)
     }
 
     // A heard miss says the right answer aloud, then moves on once it has been spoken
@@ -268,6 +280,7 @@ final class PracticeViewModel: ObservableObject {
             let spoken = spokenChecker.evaluate(transcript: transcript, word: word)
             spokenAnswer = spoken
             if spoken.result == .correct {
+                keepOwnRecording(of: word)
                 acceptCorrection(for: word)
                 scheduleAutoAdvance()
             }

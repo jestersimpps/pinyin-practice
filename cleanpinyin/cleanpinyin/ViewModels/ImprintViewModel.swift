@@ -52,6 +52,7 @@ final class ImprintViewModel: ObservableObject {
     private let recognizer: SpeechRecognizing?
     private let background: BackgroundPlaying?
     private let listeningCue: ListeningCueing?
+    private let voiceClips: VoiceClipStoring?
     private let spokenChecker = SpokenAnswerChecker()
     private let pauseBeforeChinese: TimeInterval
     private let pauseAfterWord: TimeInterval
@@ -70,6 +71,7 @@ final class ImprintViewModel: ObservableObject {
         recognizer: SpeechRecognizing? = SpeechRecognizerFactory.makeDefault(),
         background: BackgroundPlaying? = BackgroundPlayback.shared,
         listeningCue: ListeningCueing? = ListeningCue.shared,
+        voiceClips: VoiceClipStoring? = VoiceClipStore.shared,
         pauseBeforeChinese: TimeInterval = 2.0,
         pauseAfterWord: TimeInterval = 1.5,
         answerWindow: Duration = .seconds(5)
@@ -80,6 +82,7 @@ final class ImprintViewModel: ObservableObject {
         self.recognizer = recognizer
         self.background = background
         self.listeningCue = listeningCue
+        self.voiceClips = voiceClips
         self.pauseBeforeChinese = pauseBeforeChinese
         self.pauseAfterWord = pauseAfterWord
         self.answerWindow = answerWindow
@@ -242,6 +245,9 @@ final class ImprintViewModel: ObservableObject {
         switch spokenChecker.evaluate(transcript: heard, word: word).result {
         case .correct:
             score.correct += 1
+            if let take = recognizer?.lastTake {
+                voiceClips?.save(take, for: word)
+            }
             progressService.recordAnswer(for: word, isCorrect: true, rating: .good)
         case .partial:
             score.partial += 1

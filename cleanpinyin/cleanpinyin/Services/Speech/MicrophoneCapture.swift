@@ -1,5 +1,12 @@
 import AVFoundation
 
+// One microphone take saved to a temporary file, with where the speech starts and ends
+struct RecordedTake: Equatable {
+    let url: URL
+    let sampleRate: Double
+    let voicedFrames: ClosedRange<AVAudioFramePosition>
+}
+
 // Streams microphone audio and ends the take automatically once the speaker falls silent
 final class MicrophoneCapture {
     var onBuffer: ((AVAudioPCMBuffer) -> Void)?
@@ -13,6 +20,21 @@ final class MicrophoneCapture {
     private var lastVoiceTime: Date?
     private var noiseFloor: Float = 1
     private var peakLevel: Float = 0
+    private var takeFile: AVAudioFile?
+    private var framesRecorded: AVAudioFramePosition = 0
+    private var firstVoiceFrame: AVAudioFramePosition?
+    private var lastVoiceFrame: AVAudioFramePosition?
+    private var latestTake: RecordedTake?
+
+    // The last take that contained speech; the file is replaced by the next take unless moved away first
+    var lastTake: RecordedTake? {
+        lock.withLock { latestTake }
+    }
+
+    // Whether the last take had any speech in it, judged by volume
+    var didHearVoice: Bool {
+        lock.withLock { lastVoiceTime != nil }
+    }
 
     private let maxDuration: TimeInterval = 10
     private let trailingSilence: TimeInterval = 0.5
@@ -20,8 +42,19 @@ final class MicrophoneCapture {
 
     func start(convertingTo format: AVAudioFormat? = nil, onEnd: @escaping () -> Void) throws {
         try AudioSessionCoordinator.shared.activateForRecording()
+        let input = engine.inputNode
+        let takeURL = FileManager.default.temporaryDirectory.appendingPathComponent("take-\(UUID().uuidString).caf")
+        let file = try? AVAudioFile(forWriting: takeURL, settings: input.outputFormat(forBus: 0).settings)
 
         lock.withLock {
+            if let previous = latestTake?.url {
+                try? FileManager.default.removeItem(at: previous)
+            }
+            latestTake = nil
+            takeFile = file
+            framesRecorded = 0
+            firstVoiceFrame = nil
+            lastVoiceFrame = nil
             self.onEnd = onEnd
             targetFormat = format
             converter = nil
@@ -31,7 +64,6 @@ final class MicrophoneCapture {
             peakLevel = 0
         }
 
-        let input = engine.inputNode
         input.removeTap(onBus: 0)
         input.installTap(onBus: 0, bufferSize: 1024, format: input.outputFormat(forBus: 0)) { [weak self] buffer, _ in
             self?.handle(buffer)
@@ -50,11 +82,25 @@ final class MicrophoneCapture {
 
         engine.inputNode.removeTap(onBus: 0)
         engine.stop()
+        closeTake()
         AudioSessionCoordinator.shared.deactivateIfIdle()
         callback()
     }
 
+    private func closeTake() {
+        lock.withLock {
+            guard let file = takeFile else { return }
+            takeFile = nil
+            if let first = firstVoiceFrame, let last = lastVoiceFrame {
+                latestTake = RecordedTake(url: file.url, sampleRate: file.processingFormat.sampleRate, voicedFrames: first...last)
+            } else {
+                try? FileManager.default.removeItem(at: file.url)
+            }
+        }
+    }
+
     private func handle(_ buffer: AVAudioPCMBuffer) {
+        lock.withLock { try? takeFile?.write(from: buffer) }
         if let output = convert(buffer) {
             onBuffer?(output)
         }
@@ -74,8 +120,12 @@ final class MicrophoneCapture {
                 peakLevel = max(peakLevel, level)
             }
             // Relative to the speaker's own volume, so steady background noise doesn't count as talking
+            let bufferStart = framesRecorded
+            framesRecorded += AVAudioFramePosition(buffer.frameLength)
             if level > max(speechThreshold, peakLevel * 0.2) {
                 lastVoiceTime = now
+                firstVoiceFrame = firstVoiceFrame ?? bufferStart
+                lastVoiceFrame = framesRecorded
             }
 
             let elapsed = now.timeIntervalSince(startTime)

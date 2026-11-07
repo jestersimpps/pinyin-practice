@@ -59,4 +59,8 @@ final class LegacySpeechRecognizer: SpeechRecognizing {
     func stopListening() {
         capture.finish()
     }
+
+    var lastTake: RecordedTake? {
+        capture.lastTake
+    }
 }

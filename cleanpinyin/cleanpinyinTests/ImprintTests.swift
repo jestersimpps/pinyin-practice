@@ -9,6 +9,7 @@ struct ImprintTests {
     private let speech = SpeechSpy()
     private let background = BackgroundSpy()
     private let cue = CueSpy()
+    private let clips = ClipSpy()
     private let vocabulary = FourWordVocabulary()
 
     init() {
@@ -26,6 +27,7 @@ struct ImprintTests {
             recognizer: recognizer,
             background: background,
             listeningCue: cue,
+            voiceClips: clips,
             pauseBeforeChinese: 0,
             pauseAfterWord: 0,
             answerWindow: .seconds(1)
@@ -57,6 +59,7 @@ struct ImprintTests {
     @Test("IMP-5 spoken answers are graded silently and feed accuracy and Smart Review")
     func answersAreRecorded() async throws {
         let recognizer = FakeRecognizer(transcripts: ["妈", "你好", "再见", ""])
+        recognizer.lastTake = RecordedTake(url: URL(fileURLWithPath: "/tmp/take.caf"), sampleRate: 16_000, voicedFrames: 0...1)
         progress.settings.imprintAnswerAloud = true
         let imprint = makeImprint(recognizer: recognizer)
 
@@ -76,6 +79,7 @@ struct ImprintTests {
         let chinese = speech.spoken.filter { word in vocabulary.words.contains { $0.simplified == word } }
         #expect(chinese == vocabulary.words.map(\.simplified), "every word is still read out, right or wrong")
         #expect(cue.plays == 4, "a beep before each answer window")
+        #expect(clips.savedWords == ["你好"], "only the correct answer is kept as the learner's recording")
     }
 
     @Test("IMP-4 playback runs as a lock-screen session and ends cleanly")

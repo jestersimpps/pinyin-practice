@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		87A1B0C12EC0000000D0E004 /* WhisperKit in Frameworks */ = {isa = PBXBuildFile; productRef = 87A1B0C12EC0000000D0E003 /* WhisperKit */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		877C0EE12DFB1AA4004D6622 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -65,6 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				87A1B0C12EC0000000D0E004 /* WhisperKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -125,6 +130,7 @@
 			);
 			name = cleanpinyin;
 			packageProductDependencies = (
+				87A1B0C12EC0000000D0E003 /* WhisperKit */,
 			);
 			productName = cleanpinyin;
 			productReference = 877C0ED02DFB1AA2004D6622 /* cleanpinyin.app */;
@@ -208,6 +214,9 @@
 			);
 			mainGroup = 877C0EC72DFB1AA2004D6622;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				87A1B0C12EC0000000D0E002 /* XCRemoteSwiftPackageReference "argmax-oss-swift" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 877C0ED12DFB1AA2004D6622 /* Products */;
 			projectDirPath = "";
@@ -583,6 +592,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		87A1B0C12EC0000000D0E002 /* XCRemoteSwiftPackageReference "argmax-oss-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/argmaxinc/argmax-oss-swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		87A1B0C12EC0000000D0E003 /* WhisperKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 87A1B0C12EC0000000D0E002 /* XCRemoteSwiftPackageReference "argmax-oss-swift" */;
+			productName = WhisperKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 877C0EC82DFB1AA2004D6622 /* Project object */;
 }

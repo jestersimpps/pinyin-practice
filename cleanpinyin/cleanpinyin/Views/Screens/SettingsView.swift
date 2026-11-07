@@ -6,6 +6,10 @@ struct SettingsView: View {
     @AppStorage("preferredColorScheme") private var preferredColorScheme: String = "system"
     @AppStorage(SpeechLanguage.chinese.preferenceKey) private var chineseVoiceId = ""
     @AppStorage(SpeechLanguage.english.preferenceKey) private var englishVoiceId = ""
+    @AppStorage(SpeechEngine.preferenceKey) private var speechEngine = SpeechEngine.apple.rawValue
+    @AppStorage(MyVoiceMode.preferenceKey) private var myVoiceMode = MyVoiceMode.afterReference.rawValue
+    @State private var myRecordingCount = VoiceClipStore.shared.count
+    @State private var showingDeleteRecordingsAlert = false
     @ObservedObject private var progressService = UserProgressService.shared
     @State private var showingResetAlert = false
     
@@ -23,6 +27,8 @@ struct SettingsView: View {
                         practiceModeSection
                         displayOptionsSection
                         voiceSection
+                        myVoiceSection
+                        speechEngineSection
                         dataProgressSection
                         aboutSection
                     }
@@ -41,6 +47,15 @@ struct SettingsView: View {
                     .foregroundColor(Color("VibrantOrange"))
                 }
             }
+        }
+        .alert("Delete Your Recordings", isPresented: $showingDeleteRecordingsAlert) {
+            Button("Cancel", role: .cancel) { }
+            Button("Delete", role: .destructive) {
+                VoiceClipStore.shared.deleteAll()
+                myRecordingCount = 0
+            }
+        } message: {
+            Text("This removes every recording of you saying a word. New ones are saved as you answer out loud.")
         }
         .alert("Reset Progress", isPresented: $showingResetAlert) {
             Button("Cancel", role: .cancel) { }
@@ -330,6 +345,96 @@ struct SettingsView: View {
             )
 
             Text("Automatic picks the best voice on your iPhone. For a more natural sound, download an Enhanced or Premium voice in Settings › Accessibility › Spoken Content › Voices, then choose it here.")
+                .font(.system(size: 13))
+                .foregroundColor(Color("SecondaryText"))
+        }
+    }
+
+    private var myVoiceSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            SectionHeader(title: "My Voice", icon: "person.wave.2.fill")
+
+            Text("When you say a word correctly, EchoLingo keeps your recording. Hearing yourself helps you remember.")
+                .font(.system(size: 13))
+                .foregroundColor(Color("SecondaryText"))
+
+            VStack(spacing: 12) {
+                ForEach(MyVoiceMode.allCases) { mode in
+                    let isSelected = myVoiceMode == mode.rawValue
+                    SelectableCard(isSelected: isSelected, action: { myVoiceMode = mode.rawValue }) {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(mode.title)
+                                    .font(.system(size: 16, weight: .semibold))
+                                    .foregroundColor(isSelected ? .white : Color("PrimaryText"))
+                                Text(mode.summary)
+                                    .font(.system(size: 13))
+                                    .foregroundColor(isSelected ? .white.opacity(0.8) : Color("SecondaryText"))
+                                    .multilineTextAlignment(.leading)
+                            }
+                            Spacer()
+                        }
+                    }
+                    .accessibilityIdentifier("settings.myVoice.\(mode.rawValue)")
+                    .accessibilityAddTraits(isSelected ? .isSelected : [])
+                }
+            }
+
+            if myVoiceMode == MyVoiceMode.insteadOfReference.rawValue {
+                Text("Recognition checks the word, not your tones, so a recording can keep a tone you got slightly wrong.")
+                    .font(.system(size: 13))
+                    .foregroundColor(.orange)
+            }
+
+            Button(action: { showingDeleteRecordingsAlert = true }) {
+                HStack {
+                    Text("Delete My Recordings")
+                    Spacer()
+                    Text(myRecordingCount.counted("word"))
+                        .foregroundColor(Color("SecondaryText"))
+                }
+                .font(.system(size: 16))
+                .foregroundColor(.red)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 14)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(Color("SecondaryBackground"))
+                )
+            }
+            .disabled(myRecordingCount == 0)
+            .accessibilityIdentifier("settings.myVoice.delete")
+        }
+        .onAppear { myRecordingCount = VoiceClipStore.shared.count }
+    }
+
+    private var speechEngineSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            SectionHeader(title: "Speech Recognition", icon: "mic.fill")
+
+            VStack(spacing: 12) {
+                ForEach(SpeechEngine.allCases) { engine in
+                    let isSelected = speechEngine == engine.rawValue
+                    SelectableCard(isSelected: isSelected, action: { speechEngine = engine.rawValue }) {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(engine.name)
+                                    .font(.system(size: 16, weight: .semibold))
+                                    .foregroundColor(isSelected ? .white : Color("PrimaryText"))
+                                Text(engine.summary)
+                                    .font(.system(size: 13))
+                                    .foregroundColor(isSelected ? .white.opacity(0.8) : Color("SecondaryText"))
+                                    .multilineTextAlignment(.leading)
+                            }
+                            Spacer()
+                        }
+                    }
+                    .accessibilityIdentifier("settings.speechEngine.\(engine.rawValue)")
+                    .accessibilityAddTraits(isSelected ? .isSelected : [])
+                }
+            }
+
+            Text("Both run entirely on your iPhone. The Whisper model downloads the first time you answer out loud and works offline after that.")
                 .font(.system(size: 13))
                 .foregroundColor(Color("SecondaryText"))
         }
