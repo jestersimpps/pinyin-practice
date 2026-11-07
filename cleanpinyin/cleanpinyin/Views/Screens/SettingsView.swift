@@ -442,27 +442,41 @@ struct SettingsView: View {
 
     private func voiceRow(_ language: SpeechLanguage, selection: Binding<String>) -> some View {
         let speech = TextToSpeechService.shared
+        let voices = speech.installedVoices(for: language)
         let automatic = speech.bestVoice(for: language).map { "Automatic · \($0.name)" } ?? "Automatic"
-        return HStack {
+        let current = voices.first { $0.identifier == selection.wrappedValue }.map(Self.voiceLabel) ?? automatic
+        return HStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 4) {
                 Text(language.name)
                     .font(.system(size: 16))
                     .foregroundColor(Color("PrimaryText"))
-                Picker("\(language.name) voice", selection: selection) {
-                    Text(automatic).tag("")
-                    ForEach(speech.installedVoices(for: language), id: \.identifier) { voice in
-                        Text(Self.voiceLabel(voice)).tag(voice.identifier)
+                // A menu Picker sizes its label to the full voice name, so long names push into the play button
+                Menu {
+                    Picker("\(language.name) voice", selection: selection) {
+                        Text(automatic).tag("")
+                        ForEach(voices, id: \.identifier) { voice in
+                            Text(Self.voiceLabel(voice)).tag(voice.identifier)
+                        }
                     }
+                } label: {
+                    HStack(spacing: 4) {
+                        Text(current)
+                            .lineLimit(1)
+                            .truncationMode(.tail)
+                        Image(systemName: "chevron.up.chevron.down")
+                            .font(.system(size: 11, weight: .semibold))
+                    }
+                    .font(.system(size: 15))
+                    .foregroundColor(Color("MidnightGreen"))
                 }
-                .pickerStyle(.menu)
-                .labelsHidden()
-                .tint(Color("MidnightGreen"))
+                .accessibilityLabel("\(language.name) voice")
+                .accessibilityValue(current)
                 .accessibilityIdentifier("settings.voice.\(language.rawValue)")
                 .onChange(of: selection.wrappedValue) { _, _ in
                     speech.speak(language.sample, in: language)
                 }
             }
-            Spacer()
+            .frame(maxWidth: .infinity, alignment: .leading)
             Button {
                 speech.speak(language.sample, in: language)
             } label: {
